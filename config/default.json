@@ -1,0 +1,21 @@
+{
+  "dbhost": {
+    "url": "mongodb://127.0.0.1",
+    "port": "27017",
+    "db": "inventory",
+    "options": {
+      "server": {
+        "socketOptions": {
+          "keepAlive": 1,
+          "connectTimeOutMS": 30000
+        }
+      },
+      "replset": {
+        "socketOptions": {
+          "keepAlive": 1,
+          "connectTimeOutMS": 30000
+        }
+      }
+    }
+  }
+}
