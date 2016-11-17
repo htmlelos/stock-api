@@ -1,10 +1,10 @@
 "use strict";
 const Role = require('../models/role')
 const User = require('../models/user')
-const message = require('../services/message')
+const message = require('../services/response/message')
 	//Obtiene todos los usuarios
 function getAllUsers(request, response) {
-  
+
 
 	User.find({})
 		.then(users => {

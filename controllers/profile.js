@@ -1,6 +1,6 @@
 "user strict";
 const Profile = require('../models/profile')
-const message = require('../services/message')
+const message = require('../services/response/message')
 
 //Obtener todos los perfiles
 function getAllProfiles(request, response) {

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function ping(request, response) {
 	response.json('pong')

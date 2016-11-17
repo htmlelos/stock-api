@@ -1,6 +1,6 @@
 'use strict';
 const Role = require('../models/role')
-const message = require('../services/message')
+const message = require('../services/response/message')
 
 // Get all roles
 // Obtener todos los roles

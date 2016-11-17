@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const config = require('config')
 
-const mongoose = require('./services/mongoose')
+const mongoose = require('./services/database/mongoose')
 const routes = require('./routes/routes')
 
 const port = process.env.REST_PORT || 3000
