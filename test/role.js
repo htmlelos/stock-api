@@ -1,9 +1,11 @@
-"use strict";
+'use strict';
 // Establecemos la variable de ambien NODE_ENV a test
 process.env.NODE_ENV = 'test'
 
+const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Role = require('../models/role')
+const settings = require('../settings.cfg')
 	// Dependencias de desarrollo
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -20,341 +22,445 @@ describe('ROLE TEST SUITE', () => {
 		})
 		// GET /roles - Obtener todos los roles
 	describe('GET /roles', () => {
-			it('should get all the users', done => {
+			it('deberia obtener todos los roles', done => {
+				let user = {
+					username: 'admin@mail.com',
+					password: 'admin'
+				}
+
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.get('/roles')
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
-            response.body.should.have.property('message').eql('')
-  					response.body.should.have.property('data')
-  					response.body.data.length.should.be.eql(0)
+						response.body.should.have.property('message').eql('')
+						response.body.should.have.property('data')
+						response.body.data.length.should.be.eql(0)
 						done()
 					})
 			})
 		})
 		// POST /role - Crea un nuevo rol
 	describe('POST /role', () => {
-		it('should create a new role', done => {
-			let role = {
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
-			}
+			it('deberia crear un nuevo rol', done => {
+				let role = {
+					name: 'admin_role',
+					description: 'Un usuario con este rol, posee permisos de administrador',
+					status: 'ACTIVO'
+				}
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(200)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Rol creado con exito')
-          response.body.should.have.property('data').eql(null)
-					done()
+				let user = {
+					username: 'admin@mail.com',
+					password: 'admin'
+				}
+
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
 				})
-		})
 
-		it('should not create a role without a name', done => {
-			let role = {
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
-			}
+				chai.request(server)
+					.post('/role')
+					.set('x-access-token', token)
+					.send(role)
+					.end((error, response) => {
+						response.should.have.status(200)
+						response.body.should.be.a('object')
+						response.body.should.have.property('message')
+							.eql('Rol creado con exito')
+						response.body.should.have.property('data').eql(null)
+						done()
+					})
+			})
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(422)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Debe proporcionar un nombre de rol')
-          response.body.should.have.property('data').eql(null)
-					done()
+			it('no deberia crear un rol sin un nombre', done => {
+					let role = {
+						description: 'Un usuario con este rol, posee permisos de administrador',
+						status: 'ACTIVO'
+					}
+
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+					chai.request(server)
+						.post('/role')
+						.set('x-access-token', token)
+						.send(role)
+						.end((error, response) => {
+							response.should.have.status(422)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('Debe proporcionar un nombre de rol')
+							response.body.should.have.property('data').eql(null)
+							done()
+						})
 				})
-		})
-    //
-		it('should not create a role without description', done => {
-			let role = {
-				name: 'admin_role',
-				status: 'ACTIVO'
-			}
+				//
+			it('no deberia crear un rol sin descripcion', done => {
+					let role = {
+						name: 'admin_role',
+						status: 'ACTIVO'
+					}
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(422)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Debe proporcionar una descripcion del rol')
-          response.body.should.have.property('data').eql(null)
-					done()
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+					chai.request(server)
+						.post('/role')
+						.set('x-access-token', token)
+						.send(role)
+						.end((error, response) => {
+							response.should.have.status(422)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('Debe proporcionar una descripcion del rol')
+							response.body.should.have.property('data').eql(null)
+							done()
+						})
 				})
-		})
-    //
-		it('should not create a role without status', done => {
-			let role = {
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-			}
+				//
+			it('no deberia crear un rol sin estado', done => {
+					let role = {
+						name: 'admin_role',
+						description: 'Un usuario con este rol, posee permisos de administrador',
+					}
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(422)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Debe definir el estado del rol')
-          response.body.should.have.property('data').eql(null)
-					done()
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+					chai.request(server)
+						.post('/role')
+						.set('x-access-token', token)
+						.send(role)
+						.end((error, response) => {
+							response.should.have.status(422)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('Debe definir el estado del rol')
+							response.body.should.have.property('data').eql(null)
+							done()
+						})
 				})
-		})
-    //
-		it('role status should be ACTIVO or INACTIVO', done => {
-			let role = {
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'HABILITADO'
-			}
+				//
+			it('es estado del rol deberia ser ACTIVO or INACTIVO', done => {
+					let role = {
+						name: 'admin_role',
+						description: 'Un usuario con este rol, posee permisos de administrador',
+						status: 'HABILITADO'
+					}
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(422)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('El estado del rol solo puede ser ACTIVO o INACTIVO')
-          response.body.should.have.property('data').eql(null)
-					done()
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+					chai.request(server)
+						.post('/role')
+						.set('x-access-token', token)
+						.send(role)
+						.end((error, response) => {
+							response.should.have.status(422)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('El estado del rol solo puede ser ACTIVO o INACTIVO')
+							response.body.should.have.property('data').eql(null)
+							done()
+						})
 				})
-		})
-    //
-		it('should not create a rol with duplicate name', done => {
-			let role = {
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
-			}
+				//
+			it('no deberia crear un rol con nombre duplicado', done => {
+				let role = {
+					name: 'admin_role',
+					description: 'Un usuario con este rol, posee permisos de administrador',
+					status: 'ACTIVO'
+				}
 
-			let newRole = new Role(role)
-			newRole.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
+				let newRole = new Role(role)
+				newRole.save()
+					.then(user => console.log())
+					.catch(error => console.error('TEST:', error))
 
-			chai.request(server)
-				.post('/role')
-				.send(role)
-				.end((error, response) => {
-					response.should.have.status(422)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('El rol ya existe')
-          response.body.should.have.property('data').eql(null)
-					done();
-				})
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+				chai.request(server)
+					.post('/role')
+					.set('x-access-token', token)
+					.send(role)
+					.end((error, response) => {
+						response.should.have.status(422)
+						response.body.should.be.a('object')
+						response.body.should.have.property('message')
+							.eql('El rol ya existe')
+						response.body.should.have.property('data').eql(null)
+						done();
+					})
+			})
 		})
-	})
-  //
+		//
 	describe('GET /role/:roleId', () => {
-		it('should get a user by its roleId', done => {
-			let role = new Role({
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
+			it('deberia obtener un usario por su id', done => {
+				let role = new Role({
+					name: 'admin_role',
+					description: 'Un usuario con este rol, posee permisos de administrador',
+					status: 'ACTIVO'
+				})
+
+				role.save()
+					.then(user => console.log())
+					.catch(error => console.error('TEST:', error))
+
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+				chai.request(server)
+					.get('/role/' + role._id)
+					.set('x-access-token', token)
+					.end((error, response) => {
+						response.should.have.status(200)
+						response.body.should.be.a('object')
+						response.body.should.have.property('message')
+							.eql('Rol obtenido con exito')
+						response.body.should.have.property('data')
+						response.body.data.should.have.property('name')
+							.eql('admin_role')
+						response.body.data.should.have.property('description')
+							.eql('Un usuario con este rol, posee permisos de administrador')
+						response.body.data.should.have.property('status')
+							.eql('ACTIVO')
+						done()
+					})
 			})
 
-			role.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
-
-			chai.request(server)
-				.get('/role/' + role._id)
-				.end((error, response) => {
-					response.should.have.status(200)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Rol obtenido con exito')
-          response.body.should.have.property('data')
-					response.body.data.should.have.property('name')
-						.eql('admin_role')
-					response.body.data.should.have.property('description')
-						.eql('Un usuario con este rol, posee permisos de administrador')
-					response.body.data.should.have.property('status')
-						.eql('ACTIVO')
-					done()
+			it('no deberia obtener un rol de usuario con un id de rol invalido', done => {
+				let role = new Role({
+					name: 'admin_role',
+					description: 'Un usuario con este rol, posee permisos de administrador',
+					status: 'ACTIVO'
 				})
-		})
 
-		it('should not get a role with a invalid roleId', done => {
-			let role = new Role({
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
+				role.save()
+					.then(user => console.log())
+					.catch(error => console.error('TEST:', error))
+
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+				chai.request(server)
+					.get('/role/58dece08eb0548118ce31f11')
+					.set('x-access-token', token)
+					.end((error, response) => {
+						response.should.have.status(404)
+						response.body.should.be.a('object')
+						response.body.should.have.property('message')
+							.eql('No se encontro el rol')
+						response.body.should.have.property('data').eql(null)
+						done()
+					})
 			})
-
-			role.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
-
-			chai.request(server)
-				.get('/role/58dece08eb0548118ce31f11')
-				.end((error, response) => {
-					response.should.have.status(404)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('No se encontro el rol')
-          response.body.should.have.property('data').eql(null)
-					done()
-				})
 		})
-	})
-  //
+		//
 	describe('/PUT /role/:roleId', () => {
-		it('should update a role by its roleId', done => {
-			let role = new Role({
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
+			it('deberia actualizar un rol por su id de rol', done => {
+				let role = new Role({
+					name: 'admin_role',
+					description: 'Un usuario con este rol, posee permisos de administrador',
+					status: 'ACTIVO'
+				})
+
+				role.save()
+					.then(user => console.log())
+					.catch(error => console.error('TEST:', error))
+
+				let user = {
+					username: 'admin@mail.com',
+					password: 'admin'
+				}
+
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
+				chai.request(server)
+					.put('/role/' + role._id)
+					.set('x-access-token', token)
+					.send({
+						name: 'developer_role',
+						description: 'Un usuario con este rol, posee permisos de desarrollador',
+						status: 'INACTIVO'
+					})
+					.end((error, response) => {
+						response.should.have.status(200)
+						response.body.should.be.a('object')
+						response.body.should.have.property('message')
+							.eql('Rol actualizado con exito')
+						response.body.should.have.property('data')
+						done()
+					})
 			})
 
-			role.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
+			it('no deberia actualizar un rol con un id de rol invalido', done => {
+					let role = new Role({
+						name: 'admin_role',
+						description: 'Un usuario con este rol, posee permisos de administrador',
+						status: 'ACTIVO'
+					})
 
-			chai.request(server)
-				.put('/role/' + role._id)
-				.send({
-					name: 'developer_role',
-					description: 'Un usuario con este rol, posee permisos de desarrollador',
-					status: 'INACTIVO'
+					role.save()
+						.then(user => console.log())
+						.catch(error => console.error('TEST:', error))
+
+					let user = {
+						username: 'admin@mail.com',
+						password: 'admin'
+					}
+
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
+					chai.request(server)
+						.put('/role/58dece08eb0548118ce31f11')
+						.set('x-access-token', token)
+						.send({
+							name: 'developer_role',
+							description: 'Un usuario con este rol, posee permisos de desarrollador',
+							status: 'INACTIVO'
+						})
+						.end((error, response) => {
+							response.should.have.status(404)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('El rol, no es un rol valido')
+							done()
+						})
 				})
-				.end((error, response) => {
-					response.should.have.status(200)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Rol actualizado con exito')
-					response.body.should.have.property('data')
-					// response.body.data.should.have.property('name')
-					// 	.eql('developer_role')
-					// response.body.data.should.have.property('description')
-					// 	.eql('Un usuario con este rol, posee permisos de desarrollador')
-					// response.body.data.should.have.property('status')
-					// 	.eql('INACTIVO')
-					done()
-				})
+				//
+				// it('should not update a role to a duplicate name', done => {
+				// 	let role = new Role({
+				// 		name: 'admin_role',
+				// 		description: 'Un usuario con este rol, posee permisos de administrador',
+				// 		status: 'ACTIVO'
+				// 	})
+				//
+				// 	role.save()
+				// 		.then(user => console.log())
+				// 		.catch(error => console.error('TEST:', error))
+				//
+				// 	role = new Role({
+				// 		name: 'developer_role',
+				// 		description: 'Un usuario con este rol, posee permisos de desarrollador',
+				// 		status: 'ACTIVO'
+				// 	})
+				//
+				// 	role.save()
+				// 		.then(user => console.log())
+				// 		.catch(error => console.error('TEST:', error))
+				//
+				// 	chai.request(server)
+				// 		.put('/role/' + role._id)
+				// 		.send({
+				// 			name: 'admin_role',
+				// 			description: 'Un usuario con este rol, posee permisos de desarrollador',
+				// 			status: 'INACTIVO'
+				// 		})
+				// 		.end((error, response) => {
+				// 			response.should.have.status(422)
+				// 			response.body.should.be.a('object')
+				// 			response.body.should.have.property('message')
+				// 				.eql('El rol ya existe')
+				// 			done()
+				// 		})
+				// })
 		})
-
-		it('should not update a role with a invalid roleId', done => {
-			let role = new Role({
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
-			})
-
-			role.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
-
-			chai.request(server)
-				.put('/role/58dece08eb0548118ce31f11')
-				.send({
-					name: 'developer_role',
-					description: 'Un usuario con este rol, posee permisos de desarrollador',
-					status: 'INACTIVO'
-				})
-				.end((error, response) => {
-					response.should.have.status(404)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('El rol, no es un rol valido')
-					done()
-				})
-		})
-    //
-		// it('should not update a role to a duplicate name', done => {
-		// 	let role = new Role({
-		// 		name: 'admin_role',
-		// 		description: 'Un usuario con este rol, posee permisos de administrador',
-		// 		status: 'ACTIVO'
-		// 	})
-    //
-		// 	role.save()
-		// 		.then(user => console.log())
-		// 		.catch(error => console.error('TEST:', error))
-    //
-		// 	role = new Role({
-		// 		name: 'developer_role',
-		// 		description: 'Un usuario con este rol, posee permisos de desarrollador',
-		// 		status: 'ACTIVO'
-		// 	})
-    //
-		// 	role.save()
-		// 		.then(user => console.log())
-		// 		.catch(error => console.error('TEST:', error))
-    //
-		// 	chai.request(server)
-		// 		.put('/role/' + role._id)
-		// 		.send({
+		//
+		// describe('DELETE /role/:roleId', () => {
+		// 	it('should delete a role by its roleId', done => {
+		// 		let role = new Role({
 		// 			name: 'admin_role',
-		// 			description: 'Un usuario con este rol, posee permisos de desarrollador',
-		// 			status: 'INACTIVO'
+		// 			description: 'Un usuario con este rol, posee permisos de administrador',
+		// 			status: 'ACTIVO'
 		// 		})
-		// 		.end((error, response) => {
-		// 			response.should.have.status(422)
-		// 			response.body.should.be.a('object')
-		// 			response.body.should.have.property('message')
-		// 				.eql('El rol ya existe')
-		// 			done()
+		//
+		// 		role.save()
+		// 			.then(user => console.log())
+		// 			.catch(error => console.error('TEST:', error))
+		//
+		// 		chai.request(server)
+		// 			.delete('/role/' + role._id)
+		// 			.end((error, response) => {
+		// 				response.should.have.status(200)
+		// 				response.body.should.be.a('object')
+		// 				response.body.should.have.property('message')
+		// 					.eql('Rol eliminado con exito')
+		// 				done()
+		// 			})
+		// 	})
+		//
+		// 	it('should not delete a role with a invalid roleId', done => {
+		// 		let role = new Role({
+		// 			name: 'admin_role',
+		// 			description: 'Un usuario con este rol, posee permisos de administrador',
+		// 			status: 'ACTIVO'
 		// 		})
+		//
+		// 		role.save()
+		// 			.then(user => console.log())
+		// 			.catch(error => console.error('TEST:', error))
+		//
+		// 		chai.request(server)
+		// 			.delete('/role/58dece08eb0548118ce31f11')
+		// 			.end((error, response) => {
+		// 				response.should.have.status(404)
+		// 				response.body.should.be.a('object')
+		// 				response.body.should.have.property('message')
+		// 					.eql('El rol, no es un rol valido')
+		// 				done()
+		// 			})
+		// 	})
 		// })
-	})
-  //
-	// describe('DELETE /role/:roleId', () => {
-	// 	it('should delete a role by its roleId', done => {
-	// 		let role = new Role({
-	// 			name: 'admin_role',
-	// 			description: 'Un usuario con este rol, posee permisos de administrador',
-	// 			status: 'ACTIVO'
-	// 		})
-  //
-	// 		role.save()
-	// 			.then(user => console.log())
-	// 			.catch(error => console.error('TEST:', error))
-  //
-	// 		chai.request(server)
-	// 			.delete('/role/' + role._id)
-	// 			.end((error, response) => {
-	// 				response.should.have.status(200)
-	// 				response.body.should.be.a('object')
-	// 				response.body.should.have.property('message')
-	// 					.eql('Rol eliminado con exito')
-	// 				done()
-	// 			})
-	// 	})
-  //
-	// 	it('should not delete a role with a invalid roleId', done => {
-	// 		let role = new Role({
-	// 			name: 'admin_role',
-	// 			description: 'Un usuario con este rol, posee permisos de administrador',
-	// 			status: 'ACTIVO'
-	// 		})
-  //
-	// 		role.save()
-	// 			.then(user => console.log())
-	// 			.catch(error => console.error('TEST:', error))
-  //
-	// 		chai.request(server)
-	// 			.delete('/role/58dece08eb0548118ce31f11')
-	// 			.end((error, response) => {
-	// 				response.should.have.status(404)
-	// 				response.body.should.be.a('object')
-	// 				response.body.should.have.property('message')
-	// 					.eql('El rol, no es un rol valido')
-	// 				done()
-	// 			})
-	// 	})
-	// })
 })

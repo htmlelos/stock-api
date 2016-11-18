@@ -2,9 +2,11 @@
 // Establecemos la variable de ambiente NODE_ENV a test
 process.env.NODE_ENV = 'test'
 
+const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const User = require('../models/user')
 const Role = require('../models/role')
+const settings = require('../settings.cfg')
 	// Dependencias de desarrollo
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -23,9 +25,19 @@ describe('USERS TEST SUITE', () => {
 
 	// GET /users - Obtener todos los usuarios
 	describe('GET /users', () => {
-		it('should get all the users', done => {
+		it('deberia obtener todos los usuarios', done => {
+			let user = {
+				username: 'admin@mail.com',
+				password: 'admin'
+			}
+
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: "8h"
+			})
+
 			chai.request(server)
 				.get('/users')
+				.set('x-access-token', token)
 				.end((error, response) => {
 					response.should.have.status(200)
 					response.body.should.be.a('object')
@@ -39,15 +51,20 @@ describe('USERS TEST SUITE', () => {
 
 	// POST /user - Crea un usuario
 	describe('POST /user', () => {
-		it('should create a new user', done => {
+		it('deberia crear un nuevo usuario', done => {
 				let user = {
 					username: 'admin@mail.com',
 					password: 'admin',
 					status: 'ACTIVO'
 				}
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user')
+					.set('x-access-token', token)
 					.send(user)
 					.end((error, response) => {
 						response.should.have.status(200)
@@ -58,14 +75,19 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			// No deberia crear un usuario sin nombre de usuario
-		it('should not create a new user without username', done => {
+		it('no deberia crear un usuario sin username', done => {
 				let user = {
 					password: 'admin',
 					status: 'ACTIVO'
 				}
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user')
+					.set('x-access-token', token)
 					.send(user)
 					.end((error, response) => {
 						response.should.have.status(422)
@@ -77,14 +99,19 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			// No deberia crear un usuario sin la contraseña
-		it('should not create a new user without password', done => {
+		it('no deberia crear un usuario sin contraseña', done => {
 				let user = {
 					username: 'admin@mail.com',
 					status: 'ACTIVO'
 				}
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user')
+					.set('x-access-token', token)
 					.send(user)
 					.end((error, response) => {
 						response.should.have.status(422)
@@ -96,14 +123,19 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			// No deberia crear un usuario sin estado
-		it('should not create a new user without status', done => {
+		it('no deberia crear un nuevo usuario sin estado', done => {
 				let user = {
 					username: 'admin@mail.com',
 					password: 'admin'
 				}
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user')
+					.set('x-access-token', token)
 					.send(user)
 					.end((error, response) => {
 						response.should.have.status(422)
@@ -115,15 +147,20 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			// El valor del estado deberia ser ACTIVO o INACTIVO
-		it('user status should be ACTIVO or INACTIVO', done => {
+		it('el estado deberia ser ACTIVO or INACTIVO', done => {
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
 				status: 'HABILITADO'
 			}
 
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: "8h"
+			})
+
 			chai.request(server)
 				.post('/user')
+				.set('x-access-token', token)
 				.send(user)
 				.end((error, response) => {
 					response.should.have.status(422)
@@ -135,7 +172,7 @@ describe('USERS TEST SUITE', () => {
 				})
 		})
 
-		it('should not create a user with duplicate username', done => {
+		it('no deberia crear un usuario con nombre duplicado', done => {
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
@@ -147,8 +184,13 @@ describe('USERS TEST SUITE', () => {
 				.then(user => console.log())
 				.catch(error => console.error('TEST:', error))
 
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: "8h"
+			})
+
 			chai.request(server)
 				.post('/user')
+				.set('x-access-token', token)
 				.send(user)
 				.end((error, response) => {
 					response.should.have.status(422)
@@ -163,7 +205,7 @@ describe('USERS TEST SUITE', () => {
 
 	// GET /user/:userId
 	describe('GET /user/:userId', () => {
-			it('should get a user by its userId', done => {
+			it('deberia obtener un usuario por su id', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -174,8 +216,18 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let credentials = {
+					username: 'admin@mail.com',
+					password: 'admin'
+				}
+
+				let token = jwt.sign(credentials, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.get('/user/' + user._id)
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
@@ -184,15 +236,13 @@ describe('USERS TEST SUITE', () => {
 						response.body.should.have.property('data')
 						response.body.data.should.have.property('username')
 							.eql('admin@mail.com')
-						response.body.data.should.have.property('password')
-							.eql('admin')
 						response.body.data.should.have.property('status')
 							.eql('ACTIVO')
 						done()
 					})
 			})
 
-			it('should not get a user with a invalid userId', done => {
+			it('no deberia obtener un usuario con id de usuario invalido', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -203,8 +253,13 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.get('/user/58dece08eb0548118ce31f11')
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(404)
 						response.body.should.be.a('object')
@@ -217,7 +272,7 @@ describe('USERS TEST SUITE', () => {
 		})
 		//
 	describe('PUT /user/:userId', () => {
-			it('should update a user by its userId', done => {
+			it('deberia actualizar un usuario por su id de usuario', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -228,8 +283,13 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.put('/user/' + user._id)
+					.set('x-access-token', token)
 					.send({
 						username: 'guest@mail.com',
 						password: 'guest',
@@ -243,15 +303,13 @@ describe('USERS TEST SUITE', () => {
 						response.body.should.have.property('data')
 						response.body.data.should.have.property('username')
 							.eql('guest@mail.com')
-						response.body.data.should.have.property('password')
-							.eql('guest')
 						response.body.data.should.have.property('status')
 							.eql('ACTIVO')
 						done()
 					})
 			})
 
-			it('should not update a user with a invalid userId', done => {
+			it('no deberia actualizar un usuario con un id de usuario invalido', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -262,8 +320,14 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
+
 				chai.request(server)
 					.put('/user/58dece08eb0548118ce31f11')
+					.set('x-access-token', token)
 					.send({
 						username: 'guest@mail.com',
 						password: 'guest',
@@ -279,7 +343,7 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 
-			it('should not update a user to a duplicate username', done => {
+			it('no deberia actualizar un usuario con username duplicado', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -300,8 +364,13 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.put('/user/' + user._id)
+					.set('x-access-token', token)
 					.send({
 						username: 'admin@mail.com',
 						password: 'guest',
@@ -319,7 +388,7 @@ describe('USERS TEST SUITE', () => {
 		})
 		//
 	describe('DELETE /user/:userId', () => {
-		it('should delete a user by its id', done => {
+		it('deberia eliminar un usuario por su id', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -330,8 +399,13 @@ describe('USERS TEST SUITE', () => {
 					.then(user => console.log())
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.delete('/user/' + user._id)
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
@@ -342,7 +416,7 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			//
-		it('shoud not delete a user with a invalid userId', done => {
+		it('no deberia eliminar un usuario con id de usuario invalido', done => {
 			let user = new User({
 				username: 'admin@mail.com',
 				password: 'admin',
@@ -353,8 +427,14 @@ describe('USERS TEST SUITE', () => {
 				.then(user => console.log(''))
 				.catch(error => console.error('TEST:', error))
 
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: "8h"
+			})
+
+
 			chai.request(server)
 				.delete('/user/58dece08eb0548118ce31f11')
+				.set('x-access-token', token)
 				.end((error, response) => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
@@ -368,7 +448,7 @@ describe('USERS TEST SUITE', () => {
 
 	// POST /user/:userId/role
 	describe('POST /user/:userId/role', () => {
-			it('should add a role to a user by its userId', done => {
+			it('deberia agregar un rol a un usuario por su id', done => {
 				let role = new Role({
 					name: 'admin',
 					description: 'un usuario con este rol posee permisos de administrador2',
@@ -388,8 +468,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user/' + user._id + '/role')
+					.set('x-access-token', token)
 					.send({ roleId: role._id.toString() })
 					.end((error, response) => {
 
@@ -402,7 +487,7 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 
-			it('should not add a role if the user does not exist', done => {
+			it('no deberia agregar un rol si el usuario no existe', done => {
 				let role = new Role({
 					name: 'admin',
 					description: 'un usuario con este rol posee permisos de administrador',
@@ -423,8 +508,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user/57e672270b235925dcde798d/role')
+					.set('x-access-token', token)
 					.send({ roleId: role._id.toString() })
 					.end((error, response) => {
 						response.should.have.status(404)
@@ -437,7 +527,7 @@ describe('USERS TEST SUITE', () => {
 			})
 
 			//
-			it('should not add a role to a user if the role is invalid', done => {
+			it('no deberia agregar un rol si el rol es invalido', done => {
 					let role = new Role({
 						name: 'admin',
 						description: 'un usuario con este rol posee permisos de administrador',
@@ -457,8 +547,13 @@ describe('USERS TEST SUITE', () => {
 						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
 					chai.request(server)
 						.post('/user/' + user._id + '/role')
+						.set('x-access-token', token)
 						.send({ roleId: '58b9a7b446c74f540ce99cad' })
 						.end((error, response) => {
 							response.should.have.status(404)
@@ -470,7 +565,7 @@ describe('USERS TEST SUITE', () => {
 						})
 				})
 				//
-			it('should not add a empty role to a user', done => {
+			it('no deberia agregar un rol vacio a un usuario', done => {
 					let role = new Role({
 						name: 'admin',
 						description: 'un usuario con este rol posee permisos de administrador',
@@ -491,8 +586,13 @@ describe('USERS TEST SUITE', () => {
 						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
+					let token = jwt.sign(user, settings.secret, {
+						expiresIn: "8h"
+					})
+
 					chai.request(server)
 						.post('/user/' + user._id + '/role')
+						.set('x-access-token', token)
 						.send({ roleId: '' })
 						.end((error, response) => {
 							response.should.have.status(422)
@@ -504,7 +604,7 @@ describe('USERS TEST SUITE', () => {
 						})
 				})
 				//
-			it('should not add a role to a user if the role is already exist', done => {
+			it('no deberia agregar un rol al usuario si el rol ya se encuentra asociado', done => {
 				let role = new Role({
 					name: 'guest',
 					description: 'un usuario con este rol posee permisos restringidos',
@@ -526,8 +626,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.post('/user/' + user._id + '/role')
+					.set('x-access-token', token)
 					.send({ roleId: role._id })
 					.end((error, response) => {
 						response.should.have.status(422)
@@ -541,7 +646,7 @@ describe('USERS TEST SUITE', () => {
 		})
 		//
 	describe('GET /user/:userId/roles', () => {
-			it('should get all the roles from a user', done => {
+			it('deberia obtener todos los roles de un usuario', done => {
 				let user = new User({
 					username: 'admin@mail.com',
 					password: 'admin',
@@ -551,8 +656,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.get('/user/' + user._id + '/roles')
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
@@ -565,7 +675,7 @@ describe('USERS TEST SUITE', () => {
 		})
 		//
 	describe('DELETE /user/:userId/role/:roleId', () => {
-		it('should delete a role by its roleId from a user', done => {
+		it('deberia eliminar un rol de un usuario por su id de rol', done => {
 				let role = new Role({
 					name: 'guest',
 					description: 'un usuario con este rol posee permisos restringidos',
@@ -586,8 +696,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.delete('/user/' + user._id + '/role/' + role._id)
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
@@ -598,7 +713,7 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			//
-		it('should not delete role of a invalid user id', done => {
+		it('no deberia eliminar un rol de un usuario invalido', done => {
 				let role = new Role({
 					name: 'guest',
 					description: 'un usuario con este rol posee permisos restringidos',
@@ -619,8 +734,13 @@ describe('USERS TEST SUITE', () => {
 					.then(role => console.log(''))
 					.catch(error => console.error('TEST:', error))
 
+				let token = jwt.sign(user, settings.secret, {
+					expiresIn: "8h"
+				})
+
 				chai.request(server)
 					.delete('/user/58dece08eb0548118ce31f11/role/' + role._id)
+					.set('x-access-token', token)
 					.end((error, response) => {
 						response.should.have.status(404)
 						response.body.should.be.a('object')
@@ -632,7 +752,7 @@ describe('USERS TEST SUITE', () => {
 					})
 			})
 			//
-		it('should not delete a role what is not assigned to user', done => {
+		it('no deberia revocar un rol que no esta asignado al usuario', done => {
 			let role = new Role({
 				name: 'guest',
 				description: 'un usuario con este rol posee permisos restringidos',
@@ -654,8 +774,13 @@ describe('USERS TEST SUITE', () => {
 				.then(role => console.log(''))
 				.catch(error => console.error('TEST:', error))
 
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: "8h"
+			})
+
 			chai.request(server)
 				.delete('/user/' + user._id + '/role/58dece08eb0548118ce31f11')
+				.set('x-access-token', token)
 				.end((error, response) => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')

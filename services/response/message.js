@@ -27,5 +27,6 @@ module.exports = {
   success,
   failure,
   duplicate,
-  error
+  error,
+  notAuthorized
 }

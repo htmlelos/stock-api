@@ -2,12 +2,11 @@
 const Role = require('../models/role')
 const message = require('../services/response/message')
 
-// Get all roles
 // Obtener todos los roles
 function getAllRoles(request, response) {
 	Role.find({})
-		.then(role => {
-			message.success(response, { status: 200, message: '', data: role })
+		.then(roles => {
+			message.success(response, { status: 200, message: '', data: roles })
 		})
 		.catch(error => {
 			message.error(response, { status: 422, message: '', data: error })
