@@ -4,7 +4,7 @@ const role = require('./role')
 const profile = require('./profile')
 const user = require('./user')
 
-module.exports = function (server) {
+module.exports = function routes(server) {
   server.use('/', common)
   server.use('/', security)
   server.use('/', role)

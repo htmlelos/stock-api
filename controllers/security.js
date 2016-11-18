@@ -6,7 +6,7 @@ const message = require('../services/response/message')
 const settings = require('../settings.cfg')
 
 const login = (request, response) => {
-  console.log('--HERE--');
+  console.log('--HERE--',request.body.username);
   User.findOne({username: request.body.username})
     .then(user => {
       console.log('--HERE-1-');
@@ -18,8 +18,8 @@ const login = (request, response) => {
       }
     })
     .catch(error => {
-      console.log('--HERE-2-');
-      message.failure(response, {status: 500, message: 'Eror al intentar autenticarse', data: error})
+      console.log('--HERE-2-', error);
+      message.error(response, {status: 500, message: '', data: error})
     })
 }
 

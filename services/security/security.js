@@ -17,3 +17,5 @@ const verifyCredentials = (request, response, user) => {
     })
   }
 }
+
+module.exports = { verifyCredentials }

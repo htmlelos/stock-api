@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-mongoose.Promise = global.Promises
+mongoose.Promise = global.Promise
 	//Role Schema Definition
 	//Definición del Esquema del rol
 let RoleSchema = new Schema({

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-mongoose.Promise = global.Promises
+mongoose.Promise = global.Promise
 	// Profile Schema Definition
 	// Definicion del Esquema del perfil
 let ProfileSchema = new Schema({
