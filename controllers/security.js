@@ -6,10 +6,8 @@ const message = require('../services/response/message')
 const settings = require('../settings.cfg')
 
 const login = (request, response) => {
-  console.log('--HERE--',request.body.username);
   User.findOne({username: request.body.username})
     .then(user => {
-      console.log('--HERE-1-');
 
       if (user) {
         security.verifyCredentials(request, response, user)
@@ -18,16 +16,12 @@ const login = (request, response) => {
       }
     })
     .catch(error => {
-      console.log('--HERE-2-', error);
       message.error(response, {status: 500, message: '', data: error})
     })
 }
 
 const authenticate = (request, response, next) => {
   const token = request.body.token || request.query.token || request.headers['x-access-token']
-  console.log('::token::', request.body.token);
-  console.log('::token::', request.query.token);
-  console.log('::token::', request.headers['x-access-token']);
   if (token) {
     // decodificar el token
     jwt.verify(token, settings.secret, (error, decoded) => {
