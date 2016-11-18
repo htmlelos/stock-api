@@ -6,8 +6,11 @@ const message = require('../services/response/message')
 const settings = require('../settings.cfg')
 
 const login = (request, response) => {
+  console.log('--HERE--');
   User.findOne({username: request.body.username})
     .then(user => {
+      console.log('--HERE-1-');
+
       if (user) {
         security.verifyCredentials(request, response, user)
       } else {
@@ -15,12 +18,16 @@ const login = (request, response) => {
       }
     })
     .catch(error => {
+      console.log('--HERE-2-');
       message.failure(response, {status: 500, message: 'Eror al intentar autenticarse', data: error})
     })
 }
 
 const authenticate = (request, response, next) => {
   const token = request.body.token || request.query.token || request.headers['x-access-token']
+  console.log('::token::', request.body.token);
+  console.log('::token::', request.query.token);
+  console.log('::token::', request.headers['x-access-token']);
   if (token) {
     // decodificar el token
     jwt.verify(token, settings.secret, (error, decoded) => {

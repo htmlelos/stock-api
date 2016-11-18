@@ -7,6 +7,6 @@ router.route('/ping')
 	.get(common.ping)
 
 router.route('/login')
-	.get(security.login)
+	.post(security.login)
 
 module.exports = router
