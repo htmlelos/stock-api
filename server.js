@@ -4,8 +4,7 @@ const server = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const config = require('config')
-
-const mongoose = require('./services/mongoose')
+const mongoose = require('./services/database/mongoose')
 const routes = require('./routes/routes')
 
 const port = process.env.REST_PORT || 3000
@@ -17,18 +16,14 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
 	server.use(morgan('combined'))
 }
 
+server.use(bodyParser.urlencoded({extended: true}))
 server.use(bodyParser.json())
-server.use(bodyParser.urlencoded({
-	extended: true
-}))
-server.use(bodyParser.text())
-server.use(bodyParser.json({
-		type: 'application/json'
-	}))
+// server.use(bodyParser.text())
+// server.use(bodyParser.json({type: 'application/json'}))
 	// Routes
 routes(server)
 
-server.listen(port, function() {
+server.listen(config.port, function() {
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 

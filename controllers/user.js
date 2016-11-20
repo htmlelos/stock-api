@@ -1,10 +1,9 @@
-"use strict";
+'use strict';
 const Role = require('../models/role')
 const User = require('../models/user')
-const message = require('../services/message')
+const message = require('../services/response/message')
 	//Obtiene todos los usuarios
 function getAllUsers(request, response) {
-  
 
 	User.find({})
 		.then(users => {
@@ -24,6 +23,7 @@ function createUser(request, response) {
 			message.success(response, { status: 200, message: 'Usuario creado con exito', data: null })
 		})
 		.catch(error => {
+			// message.error(response, { status: 422, message: '', data: error})
 			if(error.code === 11000) {
 				message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 			} else {
@@ -36,14 +36,14 @@ function createUser(request, response) {
 function findUser(userId) {
 	return User.findById({ _id: userId })
 }
-//Obtener un usuario por su id
+// Obtener un usuario por su id
 function getUser(request, response) {
 	findUser(request.params.userId)
 		.then(user => {
 			if(user) {
 				message.success(response, { status: 200, message: 'Usuario obtenido con exito', data: user })
 			} else {
-				message.failure(response, { status: 404, message: 'No se encontró el usuario', data: user })
+				message.failure(response, { status: 404, message: 'No se encontró el usuario', data: null })
 			}
 		})
 		.catch(error => {
@@ -54,7 +54,7 @@ function getUser(request, response) {
 function assignUser(oldValue, newValue) {
 	return Object.assign(oldValue, newValue).save()
 }
-//Actualiza un usuario
+// Actualiza un usuario
 function updateUser(request, response) {
   // Encuentra el usuario a actualizar
 	findUser(request.params.userId)
@@ -71,6 +71,7 @@ function updateUser(request, response) {
 						} else {
 							message.error(response, { status: 422, message: '', data: error })
 						}
+						// message.error(response, { status: 422, message: '', data: error})
 					})
 			} else {
 				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })

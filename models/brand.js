@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 	// Establece las promesas de mongoose a las promesas nativas de javascript
