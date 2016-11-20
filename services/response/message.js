@@ -11,12 +11,16 @@ const duplicate = function (response, info) {
 }
 //
 const error = function (response, info) {
-  for(let property in info.data.errors) {
-    info.message = info.data.errors[property].message + ','
+  if (info.code === 11000) {
+    return response.status(info.status||422).json(info)
+  } else {
+      for(let property in info.data.errors) {
+        info.message = info.data.errors[property].message + ','
+      }
+      info.message = info.message.replace(/(^,)|(,$)/g, "")
+      info.data = null
+    return response.status(info.status||422).json(info)
   }
-  info.message = info.message.replace(/(^,)|(,$)/g, "")
-  info.data = null
-  return response.status(info.status||422).json(info)
 }
 
 const notAuthorized = function (response, info) {
