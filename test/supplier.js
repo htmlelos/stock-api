@@ -29,7 +29,7 @@ describe('SUPPLIER TEST SUITE', () => {
       }
 
       let token = jwt.sign(user, settings.secret, {
-        expiresIn: "8h"
+        expiresIn: '8h'
       })
 
       chai.request(server)
@@ -43,6 +43,26 @@ describe('SUPPLIER TEST SUITE', () => {
           response.body.data.length.should.be.eql(0)
           done()
         })
+    })
+  })
+
+  describe('POST /supplier', () => {
+    it('deberia crear un nuevo proveedor', done => {
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {expiresIn: '8h'})
+
+      chai.request(server)
+      .post('/supplier')
+      .set('x-access-token', token)
+      .send(supplier)
+      .end((error, response) => {
+        
+        done()
+      })
     })
   })
 })

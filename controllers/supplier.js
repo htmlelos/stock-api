@@ -83,5 +83,6 @@ function updateSupplier(request, response) {
 
 module.exports = {
   getAllSupliers,
-  createSupplier
+  createSupplier,
+  updateSupplier
 }
