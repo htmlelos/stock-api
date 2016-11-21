@@ -32,7 +32,7 @@ describe('USERS TEST SUITE', () => {
 			}
 
 			let token = jwt.sign(user, settings.secret, {
-				expiresIn: "8h"
+				expiresIn: '8h'
 			})
 
 			chai.request(server)
@@ -59,7 +59,7 @@ describe('USERS TEST SUITE', () => {
 				}
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -82,7 +82,7 @@ describe('USERS TEST SUITE', () => {
 				}
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -106,7 +106,7 @@ describe('USERS TEST SUITE', () => {
 				}
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -130,7 +130,7 @@ describe('USERS TEST SUITE', () => {
 				}
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -155,7 +155,7 @@ describe('USERS TEST SUITE', () => {
 			}
 
 			let token = jwt.sign(user, settings.secret, {
-				expiresIn: "8h"
+				expiresIn: '8h'
 			})
 
 			chai.request(server)
@@ -185,7 +185,7 @@ describe('USERS TEST SUITE', () => {
 				.catch(error => console.error('TEST:', error))
 
 			let token = jwt.sign(user, settings.secret, {
-				expiresIn: "8h"
+				expiresIn: '8h'
 			})
 
 			chai.request(server)
@@ -222,7 +222,7 @@ describe('USERS TEST SUITE', () => {
 				}
 
 				let token = jwt.sign(credentials, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -254,7 +254,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -284,7 +284,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -321,7 +321,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 
@@ -365,7 +365,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -400,7 +400,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -428,7 +428,7 @@ describe('USERS TEST SUITE', () => {
 				.catch(error => console.error('TEST:', error))
 
 			let token = jwt.sign(user, settings.secret, {
-				expiresIn: "8h"
+				expiresIn: '8h'
 			})
 
 
@@ -469,7 +469,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -509,7 +509,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -548,7 +548,7 @@ describe('USERS TEST SUITE', () => {
 						.catch(error => console.error('TEST:', error))
 
 					let token = jwt.sign(user, settings.secret, {
-						expiresIn: "8h"
+						expiresIn: '8h'
 					})
 
 					chai.request(server)
@@ -587,7 +587,7 @@ describe('USERS TEST SUITE', () => {
 						.catch(error => console.error('TEST:', error))
 
 					let token = jwt.sign(user, settings.secret, {
-						expiresIn: "8h"
+						expiresIn: '8h'
 					})
 
 					chai.request(server)
@@ -627,7 +627,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -657,7 +657,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -697,7 +697,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -735,7 +735,7 @@ describe('USERS TEST SUITE', () => {
 					.catch(error => console.error('TEST:', error))
 
 				let token = jwt.sign(user, settings.secret, {
-					expiresIn: "8h"
+					expiresIn: '8h'
 				})
 
 				chai.request(server)
@@ -775,7 +775,7 @@ describe('USERS TEST SUITE', () => {
 				.catch(error => console.error('TEST:', error))
 
 			let token = jwt.sign(user, settings.secret, {
-				expiresIn: "8h"
+				expiresIn: '8h'
 			})
 
 			chai.request(server)

@@ -29,9 +29,10 @@ function createSupplier(request, response) {
 
   newSupplier.save()
     .then(supplier => {
-      message.succes(response, {status: 200, message: 'Proveedor creado con exito', data: null})
+      message.success(response, {status: 200, message: 'Proveedor creado con exito', data: null})
     })
     .catch(error => {
+      // console.log('--ERROR-422--', error);
       message.error(response, { status: 422, message: '', data: error})
     })
 }
@@ -42,6 +43,7 @@ function findSupplier(supplierId) {
 }
 //Obtener un proveedor por su id
 function getSupplier(request, response) {
+  console.log('--CALLED--');
   findUser(request.params.supplierId)
     .then(supplier => {
       if (supplier) {
@@ -83,5 +85,7 @@ function updateSupplier(request, response) {
 
 module.exports = {
   getAllSupliers,
-  createSupplier
+  createSupplier,
+  getSupplier,
+  updateSupplier
 }

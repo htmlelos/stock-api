@@ -25,6 +25,14 @@ const SupplierSchema = new Schema({
     unique: true
   },
   address: [Address],
+  status: {
+    type: String,
+    enum: {
+      values: ['ACTIVO', 'INACTIVO'],
+      message: 'El estado del proveedor solo puede ser ACTIVO o INACTIVO'
+    },
+    required: 'Debe definir el estado del proveedor'
+  },
   createdAt: {
     type: Date,
     required: true,

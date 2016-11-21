@@ -247,9 +247,7 @@ describe('ROLE TEST SUITE', () => {
 						password: 'admin'
 					}
 
-					let token = jwt.sign(user, settings.secret, {
-						expiresIn: "8h"
-					})
+					let token = jwt.sign(user, settings.secret, { expiresIn: '8h' })
 
 				chai.request(server)
 					.get('/role/' + role._id)
