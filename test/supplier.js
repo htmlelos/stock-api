@@ -153,47 +153,230 @@ describe('SUPPLIER TEST SUITE', () => {
   })
 
   describe('GET /supplier/:supplierId', () => {
-    it('deberia rescuperar un proveedor por su id', done => {
-      let user = {
-        username: 'admin@mail.com',
-        password: 'admin'
-      }
-
-      let token = jwt.sign(user, settings.secret, {expiresIn: '8h'})
-
+    it('deberia obtener un proveedor por su id', done => {
       let supplier = new Supplier({
-        name: 'Distribuidora Oeste S.R.L',
+        name: 'Distribuidora del Oeste S.R.L.',
         address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
       supplier.save()
-        .then(supplier => console.log())
-        .catch(error => console.log('TEST', error))
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
 
       chai.request(server)
         .get('/supplier/' + supplier._id)
         .set('x-access-token', token)
-        .send((error, response) => {
-          console.log('::RESPONSE-BODY::', response.body);
+        .end((error, response) => {
+          // console.log('::RESPONSE-BODY::', response.body);
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
             .eql('Proveedor obtenido con exito')
           response.body.should.have.property('data')
           response.body.data.should.have.property('name')
-            .eql('admin@mail.com')
-          response.body.data.should.have.property('address')
-          response.body.address.should.have.property('address')
-            .eql('Julio A. Roca 2070')
-          response.body.address.should.have.property('phone')
-            .eql('02664 442473')
-          response.body.address.should.have.property('contact')
-            .eql('Jorge Rodriguez')
+            .eql('Distribuidora del Oeste S.R.L.')
           response.body.data.should.have.property('status')
             .eql('ACTIVO')
           done()
         })
     })
+
+    it('no deberia obtener un proveedor con id de proveedor invalido', done => {
+      let supplier = new Supplier({
+        name: 'Distribuidora del Oeste S.R.L.',
+        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        status: 'ACTIVO'
+      })
+
+      supplier.save()
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
+
+      chai.request(server)
+        .get('/supplier/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .end((error, response) => {
+          // console.log('::RESPONSE-BODY::', response.body);
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontro el proveedor')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
   })
+
+  describe('PUT /supplier/:supplierId', () => {
+    it('deberia actualizar un proveedor por su id de proveedor', done => {
+      let supplier = new Supplier({
+        name: 'Distribuidora del Oeste S.R.L.',
+        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        status: 'ACTIVO'
+      })
+
+      supplier.save()
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
+
+      chai.request(server)
+        .put('/supplier/'+supplier._id)
+        .set('x-access-token', token)
+        .send({
+          name: 'Distribuidora del Atlantico S.A.',
+          address: [{address: 'Julio A. Roca 2050', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+          status: 'INACTIVO'
+        })
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Proveedor actualizado con exito')
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('name')
+            .eql('Distribuidora del Atlantico S.A.')
+          response.body.data.should.have.property('address')
+          response.body.data.address.should.be.a('array')
+            //Comparar el arreglo
+          response.body.data.should.have.property('status')
+            .eql('INACTIVO')
+          done()
+        })
+    })
+
+    it('no deberia actualizar un proveedor con id de proveedor invalido', done => {
+      let supplier = new Supplier({
+        name: 'Distribuidora del Oeste S.R.L.',
+        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        status: 'ACTIVO'
+      })
+
+      supplier.save()
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
+
+      chai.request(server)
+        .put('/supplier/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .send({
+          name: 'Distribuidora del Atlantico S.A.',
+          address: [{address: 'Julio A. Roca 2050', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+          status: 'INACTIVO'
+        })
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('El proveedor, no es un proveedor valido')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+  })
+
+  describe('DELETE /supplier/:supplierId', () => {
+    it('deberia eliminar un proveedor por su id', done => {
+      let supplier = new Supplier({
+        name: 'Distribuidora del Oeste S.R.L.',
+        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        status: 'ACTIVO'
+      })
+
+      supplier.save()
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
+
+      chai.request(server)
+        .delete('/supplier/'+supplier._id)
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Proveedor eliminado con exito')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+
+    it('no deberia eliminar un proveedor con un id de proveedor invalido', done => {
+      let supplier = new Supplier({
+        name: 'Distribuidora del Oeste S.R.L.',
+        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        status: 'ACTIVO'
+      })
+
+      supplier.save()
+      .then(user => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: "8h"
+      })
+
+      chai.request(server)
+        .delete('/supplier/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('El proveedor, no es un proveedor valido')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+  })
+
 })

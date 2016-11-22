@@ -43,8 +43,7 @@ function findSupplier(supplierId) {
 }
 //Obtener un proveedor por su id
 function getSupplier(request, response) {
-  console.log('--CALLED--');
-  findUser(request.params.supplierId)
+  findSupplier(request.params.supplierId)
     .then(supplier => {
       if (supplier) {
         message.success(response, {status: 200, message: 'Proveedor obtenido con exito', data: supplier})
@@ -56,16 +55,21 @@ function getSupplier(request, response) {
       message.error(response, {stauts: 422, message: '', data: error})
     })
 }
+
 // Asigna el nuevo dato o el proveedor
+function assignSupplier(oldValue, newValue) {
+  return Object.assign(oldValue, newValue).save()
+}
+// Actualiza el proveedor
 function updateSupplier(request, response) {
   // Encuentra el proveedor a actualizar
-  findUser(request.params.supplierId)
+  findSupplier(request.params.supplierId)
     .then(supplier => {
       // Si le proveedor existe se actualiza con los datos proporcionados
       if (supplier) {
-        assignUser(supplier, request.body)
+        assignSupplier(supplier, request.body)
           .then(supplier => {
-            message.success(response, { status: 200, message: '', data: supplier})
+            message.success(response, { status: 200, message: 'Proveedor actualizado con exito', data: supplier})
           })
           .catch(error => {
             if (error.code === 11000) {
@@ -82,10 +86,31 @@ function updateSupplier(request, response) {
       message.error(response, { status: 422, message: '', data: error})
     })
 }
+// Elimina un proveedor
+function deleteSupplier(request, response) {
+  findSupplier(request.params.supplierId)
+    .then(supplier => {
+      if (supplier) {
+        Supplier.remove({_id: supplier.id})
+          .then(supplier => {
+            message.success(response, {status: 200, message: 'Proveedor eliminado con exito', data: null})
+          })
+          .catch(error => {
+            message.error(response, {status: 422, message: '', data: error})
+          })
+      } else {
+        message.failure(response, {status: 404, message: 'El proveedor, no es un proveedor valido', data: null})
+      }
+    })
+    .catch(error => {
+      message.error(response, {status: 422, message:'', data: error})
+    })
+}
 
 module.exports = {
   getAllSupliers,
   createSupplier,
   getSupplier,
-  updateSupplier
+  updateSupplier,
+  deleteSupplier
 }
