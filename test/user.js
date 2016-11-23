@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 // Establecemos la variable de ambiente NODE_ENV a test
 process.env.NODE_ENV = 'test'
 
@@ -13,10 +13,10 @@ const chaiHttp = require('chai-http')
 const server = require('../server')
 const should = chai.should()
 
+chai.use(chaiHttp)
 
+// Bloque principal de las pruebas de usuarios
 describe('USERS TEST SUITE', () => {
-	chai.use(chaiHttp)
-		// Bloque principal de las pruebas de usuarios
 	beforeEach(done => {
 		User.remove({}, error => {})
 		Role.remove({}, error => {})

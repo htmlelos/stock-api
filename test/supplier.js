@@ -55,7 +55,7 @@ describe('SUPPLIER TEST SUITE', () => {
 
       let supplier = new Supplier({
         name: 'Distribuidora Oeste S.R.L',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -81,7 +81,7 @@ describe('SUPPLIER TEST SUITE', () => {
       let token = jwt.sign(user, settings.secret, {expiresIn: '8h'})
 
       let supplier = new Supplier({
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -108,7 +108,7 @@ describe('SUPPLIER TEST SUITE', () => {
 
       let supplier = new Supplier({
         name: 'Distribuidora Oeste S.R.L',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
       })
 
       chai.request(server)
@@ -134,7 +134,7 @@ describe('SUPPLIER TEST SUITE', () => {
 
       let supplier = new Supplier({
         name: 'Distribuidora Oeste S.R.L',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'HABILITADO'
       })
 
@@ -156,7 +156,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('deberia obtener un proveedor por su id', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -194,7 +194,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('no deberia obtener un proveedor con id de proveedor invalido', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -230,7 +230,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('deberia actualizar un proveedor por su id de proveedor', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -252,10 +252,12 @@ describe('SUPPLIER TEST SUITE', () => {
         .set('x-access-token', token)
         .send({
           name: 'Distribuidora del Atlantico S.A.',
-          address: [{address: 'Julio A. Roca 2050', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+          addresses: [{address: 'Julio A. Roca 2050'}],
+          contacts: [{phone: '02664 442473', contact: 'Jorge Rodriguez'}],
           status: 'INACTIVO'
         })
         .end((error, response) => {
+          // console.log('--RESPONSE-BODY--', response.body.data.addresses);
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -263,8 +265,10 @@ describe('SUPPLIER TEST SUITE', () => {
           response.body.should.have.property('data')
           response.body.data.should.have.property('name')
             .eql('Distribuidora del Atlantico S.A.')
-          response.body.data.should.have.property('address')
-          response.body.data.address.should.be.a('array')
+          response.body.data.should.have.property('addresses')
+          response.body.data.addresses.should.be.a('array')
+          response.body.data.should.have.property('contacts')
+          response.body.data.contacts.should.be.a('array')
             //Comparar el arreglo
           response.body.data.should.have.property('status')
             .eql('INACTIVO')
@@ -275,7 +279,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('no deberia actualizar un proveedor con id de proveedor invalido', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -297,7 +301,7 @@ describe('SUPPLIER TEST SUITE', () => {
         .set('x-access-token', token)
         .send({
           name: 'Distribuidora del Atlantico S.A.',
-          address: [{address: 'Julio A. Roca 2050', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+          addresses: [{address: 'Julio A. Roca 2050', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
           status: 'INACTIVO'
         })
         .end((error, response) => {
@@ -315,7 +319,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('deberia eliminar un proveedor por su id', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
@@ -348,7 +352,7 @@ describe('SUPPLIER TEST SUITE', () => {
     it('no deberia eliminar un proveedor con un id de proveedor invalido', done => {
       let supplier = new Supplier({
         name: 'Distribuidora del Oeste S.R.L.',
-        address: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
+        addresses: [{address: 'Julio A. Roca 2070', phone: '02664 442473', contact: 'Jorge Rodriguez'}],
         status: 'ACTIVO'
       })
 
