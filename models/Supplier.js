@@ -7,11 +7,16 @@ mongoose.Promise = global.Promise
 const Address = new Schema({
   address: {
     type: String
-  },
+  }
+},{
+  versionKey: false
+})
+
+const Contact = new Schema({
   phone: {
     type: String
   },
-  contact: {
+  name: {
     type: String
   }
 },{
@@ -24,7 +29,16 @@ const SupplierSchema = new Schema({
     required: 'Debe proporcionar un nombre para el proveedor',
     unique: true
   },
-  address: [Address],
+  addresses: [Address],
+  contacts: [Contact],
+  status: {
+    type: String,
+    enum: {
+      values: ['ACTIVO', 'INACTIVO'],
+      message: 'El estado del proveedor solo puede ser ACTIVO o INACTIVO'
+    },
+    required: 'Debe definir el estado del proveedor'
+  },
   createdAt: {
     type: Date,
     required: true,

@@ -40,7 +40,7 @@ function createRole(request, response) {
 				if(role) {
 					message.success(response, { status: 200, message: 'Rol obtenido con exito', data: role })
 				} else {
-					message.failure(response, { status: 404, message: 'No se encontro el rol', data: role })
+					message.failure(response, { status: 404, message: 'No se encontro el rol', data: null })
 				}
 			})
 			.catch(error => {
@@ -88,7 +88,7 @@ function createRole(request, response) {
 							message.error(response, { status: 422, message: '', data: error })
 						})
 				} else {
-					message.error(response, { status: 404, message: 'El rol, no es un rol valido', data: error })
+					message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
 				}
 			})
 			.catch(error => {

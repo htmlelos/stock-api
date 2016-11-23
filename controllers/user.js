@@ -10,7 +10,7 @@ function getAllUsers(request, response) {
 			message.success(response, { status: 200, message: '', data: users })
 		})
 		.catch(error => {
-			message.failure(response, { status: null, message: '', data: error })
+			message.failure(response, { status: 404, message: '', data: error })
 		})
 }
 //Crea un nuevo usuario

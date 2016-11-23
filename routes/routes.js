@@ -4,6 +4,7 @@ const role = require('./role')
 const profile = require('./profile')
 const user = require('./user')
 const supplier = require('./supplier')
+const brand = require('./brand')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -12,4 +13,5 @@ module.exports = function routes(server) {
   server.use('/', profile)
   server.use('/', user)
   server.use('/', supplier)
+  server.use('/', brand)
 }

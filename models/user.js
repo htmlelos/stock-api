@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 	// Establece las promesas de mongoose a las promesas nativas de javascript
 mongoose.Promise = global.Promise
 
-const SALT_WORK_FACTOR = 12;
+let SALT_WORK_FACTOR = 12;
 
 let match = [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'El username debe se un correo electronico por ejemplo "username@servidor.com"']
 
@@ -68,8 +68,12 @@ UserSchema.pre('save', function(next) {
     // Solo encriptar el password si se ha modificado la contraseña o es un nuevo usuario
 
     if (!user.isModified()) return next();
+    // Para acelerar los test, verificamos NODE_ENV
+    // Si estamos realizando test, establecemos el costo SALT_WORK_FACTOR = 1
+    if (process.env.NODE_ENV === 'test') {
+        SALT_WORK_FACTOR = 1
+    }
     // Generar una nueva salt
-
     bcrypt.genSalt(SALT_WORK_FACTOR, function(error, salt) {
         if (error) return next(error);
 

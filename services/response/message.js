@@ -11,8 +11,13 @@ const duplicate = function (response, info) {
 }
 //
 const error = function (response, info) {
-  if (info.code === 11000) {
-    return response.status(info.status||422).json(info)
+  // console.log('--ERROR-INFO--', info);
+  if (info.data.code === 11000) {
+    return response.status(info.status||422).json({
+      status: info.status,
+      message: info.message,
+      data: null
+    })
   } else {
       for(let property in info.data.errors) {
         info.message = info.data.errors[property].message + ','

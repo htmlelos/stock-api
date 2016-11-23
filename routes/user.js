@@ -1,8 +1,10 @@
-"use strict";
+'use strict';
+
 const user = require('../controllers/user')
 const router = require('express').Router()
 
 // GET /users - obtener todos los Usuarios
+// POST /users - obtener todos los usuarios que cumplan con los criterios especificados
 router.route('/users')
 	.get(user.getAllUsers)
 	// POST /user - crear un nuevo usuarios
