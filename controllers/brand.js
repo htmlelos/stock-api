@@ -21,11 +21,9 @@ function createBrand(request, response) {
 
   newBrand.save()
     .then(brand => {
-      console.log('--SUCCESS--'. brand);
       message.success(response, {status: 200, message: 'Marca creada con exito', data: null})
     })
     .catch(error => {
-      console.log('--ERROR--'. error);
       if (error.code === 11000) {
         message.duplicate(response, {status: 422, message: 'La marca ya existe', data: null})
       } else {
@@ -33,8 +31,28 @@ function createBrand(request, response) {
       }
     })
 }
+// Obtener una marca
+function findBrand(brandId) {
+  return Brand.findById({_id: brandId})
+}
+// Obtener un usuario por su id
+function getBrand(request, response) {
+  console.log('--BRAND-ID--', request.params.brandId);
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        message.success(response, {status: 200, message: 'Marca obtenida con exito', data: brand})
+      } else {
+        message.failure(response, {status: 404, message: 'No se encontró la marca', data: null})
+      }
+    })
+    .catch(error => {
+      message.error(response, {status: 422, message: '', data: error})
+    })
+}
 
 module.exports = {
   getAllBrands,
-  createBrand
+  createBrand,
+  getBrand
 }

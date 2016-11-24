@@ -51,7 +51,7 @@ describe('BRAND TEST SUITE', () => {
   describe('POST /brand', () => {
     it('deberia crear una nueva marca', done => {
       let brand ={
-        name: 'Coca cola',
+        name: 'Loca cola',
         description: 'Bebida Gaseosa',
         suppliers: []
       }
@@ -70,7 +70,6 @@ describe('BRAND TEST SUITE', () => {
         .set('x-access-token', token)
         .send(brand)
         .end((error, response) => {
-          console.log('::RESPONSE-BODY::', response.body);
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message').eql('Marca creada con exito')
@@ -78,5 +77,119 @@ describe('BRAND TEST SUITE', () => {
           done()
         })
     })
+
+    it('no deberia crear una marca sin name', done => {
+      let brand ={
+        description: 'Bebida Gaseosa',
+        suppliers: []
+      }
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: '8h'
+      })
+
+      chai.request(server)
+        .post('/brand')
+        .set('x-access-token', token)
+        .send(brand)
+        .end((error, response) => {
+          // console.log('::RESPONSE-BODY::', response.body);
+          response.should.have.status(422)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Debe proporcionar un nombre para la marca')
+          response.body.should.have.property('data').eql(null)
+          done()
+        })
+    })
+    //
+    it('no deberia crear una marca con nombre duplicado', done => {
+      let brand ={
+        name: 'Loca cola',
+        description: 'Bebida Gaseosa',
+        suppliers: []
+      }
+
+      let newBrand = new Brand(brand)
+      newBrand.save()
+      .then(brand => console.log())
+      .catch(error => console.error('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: '8h'
+      })
+
+      chai.request(server)
+        .post('/brand')
+        .set('x-access-token', token)
+        .send(brand)
+        .end((error, response) => {
+
+          response.should.have.status(422)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('La marca ya existe')
+          response.body.should.have.property('data').eql(null)
+          done()
+        })
+    })
+
+  })
+  // GET /user/:userId
+  describe('GET /user/:userId', () => {
+    it('deberia obtener una marca por su id', done => {
+      let brand = new Brand({
+        name: 'Loca cola',
+        description: 'Bebida Gaseosa',
+        suppliers: []
+      })
+
+      brand.save()
+        .then(brand => console.log())
+        .catch(error => console.log('TEST:', error))
+
+      let user = {
+        username: 'admin@mail.com',
+        password: 'admin'
+      }
+
+      let token = jwt.sign(user, settings.secret, {
+        expiresIn: '8h'
+      })
+      console.log('::BRAND-ID::', brand._id);
+
+      chai.request(server)
+        .get('/brand/'+brand._id)
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Marca obtenida con exito')
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('name')
+            .eql('Loca cola')
+          response.body.data.should.have.property('description')
+            .eql('Bebida Gaseosa')
+          response.body.data.should.have.property('suppliers')
+          response.body.data.suppliers.should.be.a('array')
+          response.body.data.suppliers.length.should.be.eql(0)
+          done()
+        })
+    })
+
+    // it('no deberia obtener una marca con id de marca invalido', done => {
+    //
+    // })
   })
 })

@@ -1,4 +1,5 @@
 "use strict";
+const cors = require('cors')
 const express = require('express')
 const server = express()
 const bodyParser = require('body-parser')
@@ -8,7 +9,7 @@ const mongoose = require('./services/database/mongoose')
 const routes = require('./routes/routes')
 
 const port = process.env.REST_PORT || 3000
-
+server.use(cors())
 // No mostrar la bitacora cuando se hacen las pruebas
 if(config.util.getEnv('NODE_ENV') !== 'test') {
 // Utiliza morgan para la bitacora en la linea de comandos
