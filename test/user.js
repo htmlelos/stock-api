@@ -265,7 +265,7 @@ describe('USERS TEST SUITE', () => {
 						response.body.should.be.a('object')
 						response.body.should.have.property('message')
 							.eql('No se encontró el usuario')
-						response.body.should.have.property('data').eql(null)
+						response.body.should.have.property('data').to.be.null
 						done()
 					})
 			})

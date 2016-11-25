@@ -71,7 +71,6 @@ function updateUser(request, response) {
 						} else {
 							message.error(response, { status: 422, message: '', data: error })
 						}
-						// message.error(response, { status: 422, message: '', data: error})
 					})
 			} else {
 				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })

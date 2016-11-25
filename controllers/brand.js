@@ -37,7 +37,6 @@ function findBrand(brandId) {
 }
 // Obtener un usuario por su id
 function getBrand(request, response) {
-  console.log('--BRAND-ID--', request.params.brandId);
   findBrand(request.params.brandId)
     .then(brand => {
       if (brand) {
@@ -51,8 +50,37 @@ function getBrand(request, response) {
     })
 }
 
+function assignBrand(oldValue, newValue) {
+  return Object.assign(oldValue, newValue).save()
+}
+
+function updateBrand(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        assignBrand(brand, request.body)
+          .then(brand => {
+            message.success(response, {status: 200, message: 'Marca actualizada con exito', data: brand})
+          })
+          .catch(error => {
+            if (error.code === 11000) {
+              message.duplicate(response, {status: 422, message: 'La marca ya existe', data: null})
+            } else {
+              message.error(response, {status: 422, message: '', data: error })
+            }
+          })
+      } else {
+        message.failure(response, { status: 404, message: 'La marca, no es una marca valida', data: null})
+      }
+    })
+    .catch(error => {
+      message.error(response, {status: 422, message: '', data: error})
+    })
+}
+
 module.exports = {
   getAllBrands,
   createBrand,
-  getBrand
+  getBrand,
+  updateBrand
 }
