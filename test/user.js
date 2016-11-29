@@ -411,7 +411,7 @@ describe('USERS TEST SUITE', () => {
 						response.body.should.be.a('object')
 						response.body.should.have.property('message')
 							.eql('Usuario eliminado con exito')
-						response.body.should.have.property('data').eql(null)
+						response.body.should.have.property('data').to.be.null
 						done()
 					})
 			})
@@ -440,7 +440,7 @@ describe('USERS TEST SUITE', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('El usuario, no es un usuario valido')
-					response.body.should.have.property('data').eql(null)
+					response.body.should.have.property('data').to.be.null
 					done()
 				})
 		})

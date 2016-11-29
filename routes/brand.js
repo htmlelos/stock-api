@@ -15,5 +15,6 @@ router.route('/brand')
 router.route('/brand/:brandId')
   .get(brand.getBrand)
   .put(brand.updateBrand)
+  .delete(brand.deleteBrand)
 
 module.exports = router

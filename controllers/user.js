@@ -23,7 +23,6 @@ function createUser(request, response) {
 			message.success(response, { status: 200, message: 'Usuario creado con exito', data: null })
 		})
 		.catch(error => {
-			// message.error(response, { status: 422, message: '', data: error})
 			if(error.code === 11000) {
 				message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 			} else {

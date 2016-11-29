@@ -78,9 +78,33 @@ function updateBrand(request, response) {
     })
 }
 
+function deleteBrand(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        Brand.remove({ _id: brand.id })
+          .then(brand => {
+            message.success(response, { status: 200, message: 'Marca eliminada con exito', data: null })
+          })
+          .catch(error => {
+            console.log('ERROR-422-1--', error);
+            message.error(response, { status: 422, message: '', data: error })
+          })
+      } else {
+        console.log('ERROR-404--');
+        message.failure(response, { status: 404, message: 'La marca, no es una marca valida', data: null })
+      }
+    })
+    .catch(error => {
+      console.log('ERROR-422-2--', error);
+      message.error(response, { status: 422, message: '', data: error })
+    })
+}
+
 module.exports = {
   getAllBrands,
   createBrand,
   getBrand,
-  updateBrand
+  updateBrand,
+  deleteBrand
 }

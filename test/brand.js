@@ -73,12 +73,12 @@ describe('BRAND TEST SUITE', () => {
 						response.should.have.status(200)
 						response.body.should.be.a('object')
 						response.body.should.have.property('message').eql('Marca creada con exito')
-						response.body.should.have.property('data').eql(null)
+						response.body.should.have.property('data').to.be.null
 						done()
 					})
 			})
 
-			it('no deberia crear una marca sin name', done => {
+			it('no deberia crear una marca sin nombre', done => {
 					let brand = {
 						description: 'Bebida Gaseosa',
 						suppliers: []
@@ -354,4 +354,100 @@ describe('BRAND TEST SUITE', () => {
 				})
 		})
 	})
+
+  describe('DELETE /brand/:brandId', () => {
+    it('deberia eliminar una marca por su id', done => {
+      let brand = new Brand({
+				name: 'Loca cola',
+				description: 'Bebida Gaseosa',
+				suppliers: []
+			})
+
+			brand.save()
+				.then(brand => console.log())
+				.catch(error => console.log('TEST:', error))
+
+			let user = {
+				username: 'admin@mail.com',
+				password: 'admin'
+			}
+
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: '8h'
+			})
+
+      chai.request(server)
+        .delete('/brand/'+brand._id)
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Marca eliminada con exito')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+
+    it('no deberia eliminar una marca con id invalido', done => {
+      let brand = new Brand({
+				name: 'Loca cola',
+				description: 'Bebida Gaseosa',
+				suppliers: []
+			})
+
+			brand.save()
+				.then(brand => console.log())
+				.catch(error => console.log('TEST:', error))
+
+			let user = {
+				username: 'admin@mail.com',
+				password: 'admin'
+			}
+
+			let token = jwt.sign(user, settings.secret, {
+				expiresIn: '8h'
+			})
+
+      chai.request(server)
+        .delete('/brand/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('La marca, no es una marca valida')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+  })
+  // POST /brand/:userId/supplier
+//   describe('POST /brand/:userId/supplier', () => {
+//     it('deberia agregar un proveedor a una marca', done => {
+//       let brand = new Brand({
+//         name: 'Loca cola',
+//         description: 'Bebida Gaseosa',
+//         supplier: []
+//       })
+
+//       brand.save()
+// 				.then(brand => console.log())
+// 				.catch(error => console.log('TEST:', error))
+
+// 			let user = {
+// 				username: 'admin@mail.com',
+// 				password: 'admin'
+// 			}
+
+// 			let token = jwt.sign(user, settings.secret, {
+// 				expiresIn: '8h'
+// 			})
+
+//       chai.request(server)
+//         .post('/brand/'+brand._id+'/supplier')
+//         .set('x-access-token', token)
+//         .send({ supplierId: supplier._id.toString()})
+//     })
+//   })
 })
