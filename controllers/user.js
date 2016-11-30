@@ -53,7 +53,7 @@ function getUser(request, response) {
 function assignUser(oldValue, newValue) {
 	return Object.assign(oldValue, newValue).save()
 }
-// Actualiza un usuario
+// Actualiza un usuario por su id
 function updateUser(request, response) {
 	// Encuentra el usuario a actualizar
 	findUser(request.params.userId)
@@ -79,7 +79,7 @@ function updateUser(request, response) {
 			message.error(response, { status: 422, message: '', data: error })
 		})
 }
-
+// Elimina un usuario por su id
 function deleteUser(request, response) {
 	findUser(request.params.userId)
 		.then(user => {

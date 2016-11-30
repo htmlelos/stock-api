@@ -52,7 +52,7 @@ function getProduct(request, response) {
 function assignProduct(oldValue, newValue) {
     return Object.assign(oldValue, newValue).save()
 }
-// Actualiza un producto
+// Actualiza un producto por su id
 function updateProduct(request, response) {
     // Encuentra el usuario a actualizar
     findProduct(request.params.productId)
@@ -78,10 +78,30 @@ function updateProduct(request, response) {
             message.error(response, { status: 422, message: '', data: error })
         })
 }
-
+// Elimina un producto por su id
+function deleteProduct(request, response) {
+    findProduct(request.params.productId)
+    .then(product => {
+        if (product) {
+            Product.remove({_id: product.id})
+                .then(product => {
+                    message.success(response, { status: 200, message: 'Producto eliminado con exito', data: null})
+                })
+                .catch(error => {
+                    message.error(response, { status: 422, message: '', data: error})
+                })
+        } else {
+            message.failure(response, { status: 404, message: 'El producto, no es un producto valido', data: null})
+        }
+    })
+    .catch(error => {
+        message.error(response, {status: 422, message: '', data: error})
+    })
+}
 module.exports = {
     getAllProducts,
     createProduct,
     getProduct,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }

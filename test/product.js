@@ -1,5 +1,6 @@
 'use strict'
 // Establecemos la variable de ambiente NODE_ENV a test
+process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
@@ -15,21 +16,23 @@ chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
 describe('PRODUCTS test suite', () => {
+    let user = null;
+    let token = '';
+
     beforeEach(done => {
         Product.remove({}, error => { })
+        user = {
+            username: 'admin@mail.com',
+            password: 'admin'
+        }
+        token = jwt.sign(user, settings.secret, {
+            expiresIn: '8h'
+        })
         done()
     })
     // Obtener /products - Obtener todos los products
     describe('GET /products', () => {
         it('deberia obtener todos los productos', done => {
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
 
             chai.request(server)
                 .get('/products')
@@ -47,15 +50,6 @@ describe('PRODUCTS test suite', () => {
     // POST /product - Crea un producto
     describe('POST /products', () => {
         it('deberia crear un nuevo producto', done => {
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
-
             let product = {
                 name: 'Gaseosa 2L',
                 brand: [],
@@ -78,15 +72,6 @@ describe('PRODUCTS test suite', () => {
         })
 
         it('no deberia crear un nuevo producto sin nombre', done => {
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
-
             let product = {
                 brand: [],
                 price: 35,
@@ -108,15 +93,6 @@ describe('PRODUCTS test suite', () => {
         })
 
         it('no deberia crear un producto con un nombre duplicado', done => {
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
-
             let product = new Product({
                 name: 'Gaseosa 2L',
                 brand: [],
@@ -162,15 +138,6 @@ describe('PRODUCTS test suite', () => {
             product.save()
                 .catch(error => { console.log('TEST: ', error) })
 
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
-
             chai.request(server)
                 .get('/product/' + product._id)
                 .set('x-access-token', token)
@@ -189,7 +156,7 @@ describe('PRODUCTS test suite', () => {
                     response.body.data.should.have.property('components')
                     response.body.data.components.should.be.a('array')
                     response.body.data.should.have.property('status')
-                        .eql('ACTIVO')                    
+                        .eql('ACTIVO')
                     done()
                 })
         })
@@ -205,15 +172,6 @@ describe('PRODUCTS test suite', () => {
 
             product.save()
                 .catch(error => { console.log('TEST: ', error) })
-
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
 
             chai.request(server)
                 .get('/product/58dece08eb0548118ce31f11')
@@ -242,15 +200,6 @@ describe('PRODUCTS test suite', () => {
             product.save()
                 .catch(error => { console.log('TEST: ', error) })
 
-            let user = {
-                username: 'admin@mail.com',
-                password: 'admin'
-            }
-
-            let token = jwt.sign(user, settings.secret, {
-                expiresIn: '8h'
-            })
-
             chai.request(server)
                 .put('/product/' + product._id)
                 .set('x-access-token', token)
@@ -276,7 +225,134 @@ describe('PRODUCTS test suite', () => {
                     response.body.data.should.have.property('components')
                     response.body.data.components.should.be.a('array')
                     response.body.data.should.have.property('status')
-                        .eql('INACTIVO')                    
+                        .eql('INACTIVO')
+                    done()
+                })
+        })
+
+        it('no deberia actualizar un producto con id invalido', done => {
+            let product = new Product({
+                name: 'Gaseosa 2L',
+                brand: '',
+                price: 35.5,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })
+
+            chai.request(server)
+                .put('/product/58dece08eb0548118ce31f11')
+                .set('x-access-token', token)
+                .send({
+                    name: 'Gaseosa 1L',
+                    brand: 'Loca Cola',
+                    price: 30.0,
+                    components: [],
+                    status: 'INACTIVO'
+                })
+                .end((error, response) => {
+                    response.should.have.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('El producto, no es un producto valido')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+
+        it('no deberia actualizar un producto con nombre duplicado', done => {
+            let product = new Product({
+                name: 'Gaseosa 2L',
+                brand: '',
+                price: 35.5,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })
+
+            product = new Product({
+                name: 'Gaseosa 1L',
+                brand: '',
+                price: 30.5,
+                components: [],
+                status: 'INACTIVO'
+            })
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })
+
+            chai.request(server)
+                .put('/product/' + product._id)
+                .set('x-access-token', token)
+                .send({
+                    name: 'Gaseosa 2L',
+                    brand: '',
+                    price: 30.5,
+                    components: [],
+                    status: 'INACTIVO'
+                })
+                .end((error, response) => {
+                    response.should.have.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('El producto ya existe')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+    })
+    // DELETE /product/:productId - Elimina un producto por su id
+    describe('DELETE /product/:productId', () => {
+        it('deberia eliminar un producto por su id', done => {
+            let product = new Product({
+                name: 'Gaseosa 2L',
+                brand: '',
+                price: 35.5,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })
+
+            chai.request(server)
+                .delete('/product/' + product._id)
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Producto eliminado con exito')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+
+        it('no deberia eliminar un product con id invalido', done => {
+            let product = new Product({
+                name: 'Gaseosa 2L',
+                brand: '',
+                price: 35.5,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })
+
+            chai.request(server)
+                .delete('/product/58dece08eb0548118ce31f11')
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    response.should.have.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('El producto, no es un producto valido')
+                    response.body.should.have.property('data').to.be.null
                     done()
                 })
         })

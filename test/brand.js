@@ -15,7 +15,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 //Bloque principal de las pruebas de Marcas
-describe('BRAND TEST SUITE', () => {
+describe('BRAND TEST SUITE', () => {	
 	beforeEach(done => {
 		Brand.remove({}, error => { })
 		Supplier.remove({}, error => { })
@@ -145,7 +145,7 @@ describe('BRAND TEST SUITE', () => {
 		})
 
 	})
-	// GET /user/:userId - obtener un producto por su id
+	// GET /user/:userId - obtener un usuario por su id
 	describe('GET /user/:userId', () => {
 		it('deberia obtener una marca por su id', done => {
 			let brand = new Brand({
@@ -220,7 +220,7 @@ describe('BRAND TEST SUITE', () => {
 				})
 		})
 	})
-	// PUT /user/:userId - actualizar un producto por su id
+	// PUT /user/:userId - actualizar un usuario por su id
 	describe('PUT /user/:userId', () => {
 		it('deberia actualizar una marca por su id', done => {
 			let brand = new Brand({
@@ -295,12 +295,11 @@ describe('BRAND TEST SUITE', () => {
 					suppliers: []
 				})
 				.end((error, response) => {
-					console.log('::RESPONSE-BODY::', response.body);
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('La marca, no es una marca valida')
-					response.body.should.have.property('data').eql(null)
+					response.body.should.have.property('data').to.be.null
 					done()
 				})
 		})
@@ -349,12 +348,12 @@ describe('BRAND TEST SUITE', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('La marca ya existe')
-					response.body.should.have.property('data').eql(null)
+					response.body.should.have.property('data').to.be.null
 					done()
 				})
 		})
 	})
-
+	// DELETE /user/:userId - elimina un usuario por su id
 	describe('DELETE /brand/:brandId', () => {
 		it('deberia eliminar una marca por su id', done => {
 			let brand = new Brand({
