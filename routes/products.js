@@ -11,5 +11,6 @@ router.route('/product')
 // GET /user/:userId - obtener un producto por su Id
 router.route('/product/:productId')
     .get(product.getProduct)        
+    .put(product.updateProduct)
 
 module.exports = router
