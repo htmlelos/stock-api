@@ -21,11 +21,9 @@ function createBrand(request, response) {
 
   newBrand.save()
     .then(brand => {
-      console.log('--SUCCESS--'. brand);
       message.success(response, {status: 200, message: 'Marca creada con exito', data: null})
     })
     .catch(error => {
-      console.log('--ERROR--'. error);
       if (error.code === 11000) {
         message.duplicate(response, {status: 422, message: 'La marca ya existe', data: null})
       } else {
@@ -33,8 +31,80 @@ function createBrand(request, response) {
       }
     })
 }
+// Obtener una marca
+function findBrand(brandId) {
+  return Brand.findById({_id: brandId})
+}
+// Obtener un usuario por su id
+function getBrand(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        message.success(response, {status: 200, message: 'Marca obtenida con exito', data: brand})
+      } else {
+        message.failure(response, {status: 404, message: 'No se encontró la marca', data: null})
+      }
+    })
+    .catch(error => {
+      message.error(response, {status: 422, message: '', data: error})
+    })
+}
+
+function assignBrand(oldValue, newValue) {
+  return Object.assign(oldValue, newValue).save()
+}
+
+function updateBrand(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        assignBrand(brand, request.body)
+          .then(brand => {
+            message.success(response, {status: 200, message: 'Marca actualizada con exito', data: brand})
+          })
+          .catch(error => {
+            if (error.code === 11000) {
+              message.duplicate(response, {status: 422, message: 'La marca ya existe', data: null})
+            } else {
+              message.error(response, {status: 422, message: '', data: error })
+            }
+          })
+      } else {
+        message.failure(response, { status: 404, message: 'La marca, no es una marca valida', data: null})
+      }
+    })
+    .catch(error => {
+      message.error(response, {status: 422, message: '', data: error})
+    })
+}
+
+function deleteBrand(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        Brand.remove({ _id: brand.id })
+          .then(brand => {
+            message.success(response, { status: 200, message: 'Marca eliminada con exito', data: null })
+          })
+          .catch(error => {
+            console.log('ERROR-422-1--', error);
+            message.error(response, { status: 422, message: '', data: error })
+          })
+      } else {
+        console.log('ERROR-404--');
+        message.failure(response, { status: 404, message: 'La marca, no es una marca valida', data: null })
+      }
+    })
+    .catch(error => {
+      console.log('ERROR-422-2--', error);
+      message.error(response, { status: 422, message: '', data: error })
+    })
+}
 
 module.exports = {
   getAllBrands,
-  createBrand
+  createBrand,
+  getBrand,
+  updateBrand,
+  deleteBrand
 }

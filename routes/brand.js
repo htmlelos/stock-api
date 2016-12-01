@@ -11,4 +11,10 @@ router.route('/brands')
 router.route('/brand')
   .post(brand.createBrand)
 
+// GET /brand - obtener una marca por su id
+router.route('/brand/:brandId')
+  .get(brand.getBrand)
+  .put(brand.updateBrand)
+  .delete(brand.deleteBrand)
+
 module.exports = router

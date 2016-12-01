@@ -1,4 +1,5 @@
-"use strict";
+
+'use strict';
 const bcrypt = require('bcrypt-nodejs')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
