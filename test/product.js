@@ -62,8 +62,7 @@ describe('PRODUCTS test suite', () => {
                 .post('/product')
                 .send(product)
                 .set('x-access-token', token)
-                .end((error, response) => {
-                    console.log('::RESPONSE-BODY::', response.body)
+                .end((error, response) => {            
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message').eql('Producto creado con exito')
