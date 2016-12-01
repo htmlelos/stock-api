@@ -20,7 +20,7 @@ const ProductSchema = new Schema({
         unique: true
     },
     brand: {
-        type: Schema.Types.Object,
+        type: Schema.Types.ObjectId,
         ref: 'Brand'        
     },
     code: String,

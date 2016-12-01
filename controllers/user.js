@@ -6,6 +6,7 @@ const message = require('../services/response/message')
 function getAllUsers(request, response) {
 
 	User.find({})
+		.select('-password')
 		.then(users => {
 			message.success(response, { status: 200, message: '', data: users })
 		})
@@ -38,6 +39,7 @@ function findUser(userId) {
 // Obtener un usuario por su id
 function getUser(request, response) {
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			if (user) {
 				message.success(response, { status: 200, message: 'Usuario obtenido con exito', data: user })
@@ -57,6 +59,7 @@ function assignUser(oldValue, newValue) {
 function updateUser(request, response) {
 	// Encuentra el usuario a actualizar
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			// Si el usuario existe se actualiza con los datos proporcionados
 			if (user) {
@@ -82,6 +85,7 @@ function updateUser(request, response) {
 // Elimina un usuario por su id
 function deleteUser(request, response) {
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			if (user) {
 				User.remove({ _id: user.id })
@@ -106,6 +110,7 @@ function findRole(roleId) {
 
 function addUserRole(request, response) {
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			if (user) {
 				let roleId = request.body.roleId
@@ -151,6 +156,7 @@ function addUserRole(request, response) {
 function getUserRoles(request, response) {
 
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			// Role.populate(user, { path: 'roles' })
 			// .then(user => {
@@ -168,6 +174,7 @@ function getUserRoles(request, response) {
 function deleteUserRole(request, response) {
 
 	findUser(request.params.userId)
+		.select('-password')
 		.then(user => {
 			if (user) {
 
@@ -199,6 +206,14 @@ function deleteUserRole(request, response) {
 		})
 }
 
+function getCurrentUser(request, response) {
+	if (global.currentUser) {
+		message.success(response, { status: 200, message: '', data: global.currentUser})
+	} else {
+		message.failure(response, {status: 404, message: 'El usuario no es un usuario valido', data: null})
+	}
+}
+
 module.exports = {
 	getAllUsers,
 	createUser,
@@ -207,5 +222,6 @@ module.exports = {
 	deleteUser,
 	addUserRole,
 	getUserRoles,
-	deleteUserRole
+	deleteUserRole,
+	getCurrentUser
 }

@@ -28,7 +28,8 @@ const authenticate = (request, response, next) => {
       if (error) {
         return message.failure(response, {status: 401, message: 'Error al intentar autenticarse', success: false})
       } else {
-        request.decoded = decoded
+        request.decoded = decoded._doc
+        console.log(decoded);
         next()
       }
     })

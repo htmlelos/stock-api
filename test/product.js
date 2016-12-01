@@ -52,7 +52,7 @@ describe('PRODUCTS test suite', () => {
         it('deberia crear un nuevo producto', done => {
             let product = {
                 name: 'Gaseosa 2L',
-                brand: [],
+                brand: null,
                 price: 35,
                 components: [],
                 status: 'ACTIVO'
@@ -63,6 +63,7 @@ describe('PRODUCTS test suite', () => {
                 .send(product)
                 .set('x-access-token', token)
                 .end((error, response) => {
+                    console.log('::RESPONSE-BODY::', response.body)
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message').eql('Producto creado con exito')
@@ -73,7 +74,7 @@ describe('PRODUCTS test suite', () => {
 
         it('no deberia crear un nuevo producto sin nombre', done => {
             let product = {
-                brand: [],
+                brand: null,
                 price: 35,
                 components: [],
                 status: 'ACTIVO'
@@ -95,7 +96,7 @@ describe('PRODUCTS test suite', () => {
         it('no deberia crear un producto con un nombre duplicado', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: [],
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -109,7 +110,7 @@ describe('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send({
                     name: 'Gaseosa 2L',
-                    brand: [],
+                    brand: null,
                     price: 35.5,
                     components: [],
                     status: 'ACTIVO'
@@ -129,7 +130,7 @@ describe('PRODUCTS test suite', () => {
         it('deberia obtener un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -150,7 +151,7 @@ describe('PRODUCTS test suite', () => {
                     response.body.data.should.have.property('name')
                         .eql('Gaseosa 2L')
                     response.body.data.should.have.property('brand')
-                        .eql('')
+                        .eql(null)
                     response.body.data.should.have.property('price')
                         .eql(35.5)
                     response.body.data.should.have.property('components')
@@ -164,7 +165,7 @@ describe('PRODUCTS test suite', () => {
         it('no deberia obtener un producto con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -191,7 +192,7 @@ describe('PRODUCTS test suite', () => {
         it('deberia actualizar un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -205,7 +206,7 @@ describe('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send({
                     name: 'Gaseosa 1L',
-                    brand: 'Loca Cola',
+                    brand: mongoose.Types.ObjectId('583f4b76fe38ab1154786e84'),
                     price: 30.0,
                     components: [],
                     status: 'INACTIVO'
@@ -219,7 +220,7 @@ describe('PRODUCTS test suite', () => {
                     response.body.data.should.have.property('name')
                         .eql('Gaseosa 1L')
                     response.body.data.should.have.property('brand')
-                        .eql('Loca Cola')
+                        .eql('583f4b76fe38ab1154786e84')
                     response.body.data.should.have.property('price')
                         .eql(30.0)
                     response.body.data.should.have.property('components')
@@ -233,7 +234,7 @@ describe('PRODUCTS test suite', () => {
         it('no deberia actualizar un producto con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -265,7 +266,7 @@ describe('PRODUCTS test suite', () => {
         it('no deberia actualizar un producto con nombre duplicado', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -276,7 +277,7 @@ describe('PRODUCTS test suite', () => {
 
             product = new Product({
                 name: 'Gaseosa 1L',
-                brand: '',
+                brand: null,
                 price: 30.5,
                 components: [],
                 status: 'INACTIVO'
@@ -290,7 +291,7 @@ describe('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send({
                     name: 'Gaseosa 2L',
-                    brand: '',
+                    brand: null,
                     price: 30.5,
                     components: [],
                     status: 'INACTIVO'
@@ -310,7 +311,7 @@ describe('PRODUCTS test suite', () => {
         it('deberia eliminar un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
@@ -335,7 +336,7 @@ describe('PRODUCTS test suite', () => {
         it('no deberia eliminar un product con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
-                brand: '',
+                brand: null,
                 price: 35.5,
                 components: [],
                 status: 'ACTIVO'
