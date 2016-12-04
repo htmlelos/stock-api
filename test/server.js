@@ -10,7 +10,7 @@ chai.use(chaiHttp)
 
 // Check if server is online
 // Verifica si el servicio esta en linea
-describe('SERVER TEST SUITE', () => {
+describe('SERVER: test suite', () => {
 	it('GET /ping should return pong', done => {
 		chai.request(server)
 			.get('/ping')

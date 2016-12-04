@@ -4,6 +4,8 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Brand = require('../models/brand')
+const Supplier = require('../models/supplier')
 const Product = require('../models/product')
 const settings = require('../settings.cfg')
 // Depensencias de desarrollo
@@ -16,16 +18,18 @@ chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
 describe('PRODUCTS test suite', () => {
-    let user = null;
-    let token = '';
+    let mockUser = null
+    let token = ''
 
     beforeEach(done => {
-        Product.remove({}, error => { })
-        user = {
+        Brand.remove({}, error => {})
+        Supplier.remove({}, error => {})
+        Product.remove({}, error => {})
+        mockUser = {
             username: 'admin@mail.com',
             password: 'admin'
         }
-        token = jwt.sign(user, settings.secret, {
+        token = jwt.sign(mockUser, settings.secret, {
             expiresIn: '8h'
         })
         done()
@@ -49,6 +53,7 @@ describe('PRODUCTS test suite', () => {
     })
     // POST /product - Crea un producto
     describe('POST /products', () => {
+        // Deberia crear un nuevo producto
         it('deberia crear un nuevo producto', done => {
             let product = {
                 name: 'Gaseosa 2L',
@@ -70,7 +75,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia crear un nuevo producto sin nombre
         it('no deberia crear un nuevo producto sin nombre', done => {
             let product = {
                 brand: null,
@@ -91,7 +96,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia crear un producto con un nombre duplicado
         it('no deberia crear un producto con un nombre duplicado', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -126,6 +131,7 @@ describe('PRODUCTS test suite', () => {
     })
     // GET /product/:productId - Obtener un producto por su id
     describe('GET /products/:productId', () => {
+        // Deberia obtener un producto por su id
         it('deberia obtener un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -135,6 +141,29 @@ describe('PRODUCTS test suite', () => {
                 status: 'ACTIVO'
             })
 
+            let brand = new Brand({
+                name: 'Loca Cola',
+                description: 'Bebidas Gaseosas',
+                supplier: []
+            })
+
+            let supplier = new Supplier({
+                name: 'Distribuidora Herrero S.A.',
+                addresses: [],
+                contacts: [],
+                status: 'ACTIVO'
+            })
+
+            supplier.save()
+                .catch(error => {console.log('TEST: ', error)})
+
+            brand.suppliers.push(supplier)
+
+            brand.save()
+                .catch(error => {console.log('TEST: ', error)})                
+
+            product.brand = brand
+
             product.save()
                 .catch(error => { console.log('TEST: ', error) })
 
@@ -142,6 +171,7 @@ describe('PRODUCTS test suite', () => {
                 .get('/product/' + product._id)
                 .set('x-access-token', token)
                 .end((error, response) => {
+                    console.log('::RESPONSE-BODY::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -150,7 +180,13 @@ describe('PRODUCTS test suite', () => {
                     response.body.data.should.have.property('name')
                         .eql('Gaseosa 2L')
                     response.body.data.should.have.property('brand')
-                        .eql(null)
+                    response.body.data.brand.should.be.a('object')
+                    response.body.data.brand.should.have.property('name')
+                        .eql('Loca Cola')
+                    response.body.data.brand.should.have.property('description')
+                        .eql('Bebidas Gaseosas')
+                    response.body.data.brand.should.have.property('suppliers')
+                    response.body.data.brand.suppliers.should.be.a('array')                        
                     response.body.data.should.have.property('price')
                         .eql(35.5)
                     response.body.data.should.have.property('components')
@@ -160,7 +196,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia obtener un producto con id invalido
         it('no deberia obtener un producto con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -188,6 +224,7 @@ describe('PRODUCTS test suite', () => {
     })
     // PUT /product/:productId - Actualizar un producto por su id
     describe('PUT /product/:productId', () => {
+        // Deberia actualizar un producto por su id
         it('deberia actualizar un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -229,7 +266,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia actualizar un producto con id invalido
         it('no deberia actualizar un producto con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -261,7 +298,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia actualiza un producto con nombre duplicado
         it('no deberia actualizar un producto con nombre duplicado', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -307,6 +344,7 @@ describe('PRODUCTS test suite', () => {
     })
     // DELETE /product/:productId - Elimina un producto por su id
     describe('DELETE /product/:productId', () => {
+        // Deberia eliminar un producto por su id
         it('deberia eliminar un producto por su id', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -331,7 +369,7 @@ describe('PRODUCTS test suite', () => {
                     done()
                 })
         })
-
+        // No deberia eliminar un producto con id invalido
         it('no deberia eliminar un product con id invalido', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
@@ -353,6 +391,52 @@ describe('PRODUCTS test suite', () => {
                     response.body.should.have.property('message')
                         .eql('El producto, no es un producto valido')
                     response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+    })
+    // GET /product/:productId/brand
+    describe('GET /product/:productId/brand', () => {
+        it('deberia obtener la marca para un producto', done => {
+            let product = new Product({
+                name: 'Gaseosa 2L',
+                brand: null,
+                price: 35.5,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            let brand = new Brand({
+                name: 'Loca Cola',
+                description: 'Bebidas Gaseosas',
+                supplier: []
+            })
+            
+            brand.save()
+                .catch(error => {console.log('TEST: ', error)})
+
+            product.brand = brand
+
+            product.save()
+                .catch(error => { console.log('TEST: ', error) })                        
+
+            chai.request(server)
+                .get('/product/'+product._id+'/brand')
+                .set('x-access-token', token)                
+                .end((error, response) => {
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Marca obtenida con exito')
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('object')
+                    response.body.data.should.have.property('name')
+                        .eql('Loca Cola')
+                    response.body.data.should.have.property('description')
+                        .eql('Bebidas Gaseosas')
+                    response.body.data.should.have.property('suppliers')
+                    response.body.data.suppliers.should.be.a('array')
+                    response.body.data.suppliers.length.should.be.eql(0)
                     done()
                 })
         })

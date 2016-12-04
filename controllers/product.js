@@ -1,4 +1,6 @@
 'use strict';
+const Brand = require('../models/brand')
+const Supplier = require('../models/supplier')
 const Product = require('../models/product')
 const message = require('../services/response/message')
 
@@ -39,7 +41,13 @@ function getProduct(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                message.success(response, { status: 200, message: 'Producto obtenido con exito', data: product })
+                Brand.populate(product, {path: 'brand'})
+                    .then(product => {
+                        message.success(response, { status: 200, message: 'Producto obtenido con exito', data: product })
+                    })
+                    .catch(error => {
+                        message.error(response, { status: 422, message: '', data: error })
+                    })
             } else {
                 message.failure(response, { status: 404, message: 'No se encontró el producto', data: null })
             }
@@ -98,10 +106,33 @@ function deleteProduct(request, response) {
         message.error(response, {status: 422, message: '', data: error})
     })
 }
+
+function getBrand(request, response) {
+    findProduct(request.params.productId)
+        .then(product => {
+            
+            if (product) {
+                Brand.populate(product, {path: 'brand'})
+                    .then(product => {
+                        message.success(response, { status: 200, message: 'Marca obtenida con exito', data: product.brand})
+                    })
+                    .catch(error => {
+                        message.error(response, { status: 422, message: '', data: error})
+                    })
+            } else {
+                message.failure(response, { status: 404, message: 'No se econtro el producto', data: null})
+            }
+        })
+        .catch(error => {
+            message.error(response, { status: 422, message: '', data: error})
+        })
+}
+
 module.exports = {
     getAllProducts,
     createProduct,
     getProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getBrand
 }

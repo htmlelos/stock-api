@@ -7,7 +7,15 @@ const message = require('../services/response/message')
 function getAllBrands(request, response) {
   Brand.find({})
     .then(brands => {
-      message.success(response, {status: 200, message: '', data: brands})
+
+        Supplier.populate(brands, {path: 'suppliers'})
+          .then(user => {
+            message.success(response, {status: 200, message: '', data: brands})
+          })
+          .catch(error => {
+            message.error(response, { status: 422, message: '', data: error})
+          })
+
     })
     .catch(error => {
       message.failure(response, {status: 404, message: '', data: error})
@@ -40,7 +48,13 @@ function getBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
       if (brand) {
-        message.success(response, {status: 200, message: 'Marca obtenida con exito', data: brand})
+        Supplier.populate(brand, {path: 'suppliers'})
+          .then(user => {
+            message.success(response, {status: 200, message: 'Marca obtenida con exito', data: brand})
+          })
+          .catch(error => {
+            message.error(response, { status: 422, message: '', data: error})
+          })        
       } else {
         message.failure(response, {status: 404, message: 'No se encontró la marca', data: null})
       }
@@ -87,16 +101,13 @@ function deleteBrand(request, response) {
             message.success(response, { status: 200, message: 'Marca eliminada con exito', data: null })
           })
           .catch(error => {
-            console.log('ERROR-422-1--', error);
             message.error(response, { status: 422, message: '', data: error })
           })
       } else {
-        console.log('ERROR-404--');
         message.failure(response, { status: 404, message: 'La marca, no es una marca valida', data: null })
       }
     })
     .catch(error => {
-      console.log('ERROR-422-2--', error);
       message.error(response, { status: 422, message: '', data: error })
     })
 }

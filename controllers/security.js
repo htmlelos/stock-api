@@ -1,5 +1,6 @@
 'use strict';
 const jwt = require('jsonwebtoken')
+const Role = require('../models/role')
 const User = require('../models/user')
 const security = require('../services/security/security')
 const message = require('../services/response/message')
@@ -8,9 +9,16 @@ const settings = require('../settings.cfg')
 const login = (request, response) => {
   User.findOne({username: request.body.username})
     .then(user => {
-
+      console.log('--USER---', user)
       if (user) {
-        security.verifyCredentials(request, response, user)
+      Role.populate(user, {path: 'roles'})
+        .then(user => {
+          user.roles = user.roles.map(element => {return element.name})
+          security.verifyCredentials(request, response, user)
+        })
+        .catch(error => {
+          message.error(response, {status: 500, message: '', data: error})
+        })
       } else {
         message.notAuthorized(response, {status: 401, message: 'No se pudo autenticar verifique sus credenciales', token: null})
       }
