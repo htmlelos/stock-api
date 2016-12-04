@@ -15,24 +15,25 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 //Bloque principal de las pruebas de Marcas
-describe('BRAND TEST SUITE', () => {	
+describe('BRAND: test suite', () => {
+    let mockUser = null
+    let token = ''
+
 	beforeEach(done => {
 		Brand.remove({}, error => { })
 		Supplier.remove({}, error => { })
+        mockUser = {
+            username: 'admin@mail.com',
+            password: 'admin'
+        }
+        token = jwt.sign(mockUser, settings.secret, {
+            expiresIn: '8h'
+        })		
 		done()
 	})
-
 	// GET /brands - Obtener todas las marcas
 	describe('GET /brands', () => {
 		it('deberia obtener todas las marcas', done => {
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.get('/brands')
@@ -47,7 +48,7 @@ describe('BRAND TEST SUITE', () => {
 				})
 		})
 	})
-
+	// POST /brand - crear una nueva marca 
 	describe('POST /brand', () => {
 		it('deberia crear una nueva marca', done => {
 			let brand = {
@@ -55,15 +56,6 @@ describe('BRAND TEST SUITE', () => {
 				description: 'Bebida Gaseosa',
 				suppliers: []
 			}
-
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.post('/brand')
@@ -83,15 +75,6 @@ describe('BRAND TEST SUITE', () => {
 				description: 'Bebida Gaseosa',
 				suppliers: []
 			}
-
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.post('/brand')
@@ -120,15 +103,6 @@ describe('BRAND TEST SUITE', () => {
 				.then(brand => console.log())
 				.catch(error => console.error('TEST:', error))
 
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
-
 			chai.request(server)
 				.post('/brand')
 				.set('x-access-token', token)
@@ -145,8 +119,8 @@ describe('BRAND TEST SUITE', () => {
 		})
 
 	})
-	// GET /user/:userId - obtener un usuario por su id
-	describe('GET /user/:userId', () => {
+	// GET /brand/:brandId - obtener una marca por su id
+	describe('GET /brand/:brandId', () => {
 		it('deberia obtener una marca por su id', done => {
 			let brand = new Brand({
 				name: 'Loca cola',
@@ -157,15 +131,6 @@ describe('BRAND TEST SUITE', () => {
 			brand.save()
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
-
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.get('/brand/' + brand._id)
@@ -198,15 +163,6 @@ describe('BRAND TEST SUITE', () => {
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
 
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
-
 			chai.request(server)
 				.get('/brand/58dece08eb0548118ce31f11')
 				.set('x-access-token', token)
@@ -220,8 +176,8 @@ describe('BRAND TEST SUITE', () => {
 				})
 		})
 	})
-	// PUT /user/:userId - actualizar un usuario por su id
-	describe('PUT /user/:userId', () => {
+	// PUT /brand/:brandId - actualizar una marca por su id
+	describe('PUT /brand/:brandId', () => {
 		it('deberia actualizar una marca por su id', done => {
 			let brand = new Brand({
 				name: 'Loca cola',
@@ -232,15 +188,6 @@ describe('BRAND TEST SUITE', () => {
 			brand.save()
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
-
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.put('/brand/' + brand._id)
@@ -276,15 +223,6 @@ describe('BRAND TEST SUITE', () => {
 			brand.save()
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
-
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
 
 			chai.request(server)
 				.put('/brand/58dece08eb0548118ce31f11')
@@ -325,15 +263,6 @@ describe('BRAND TEST SUITE', () => {
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
 
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
-
 			chai.request(server)
 				.put('/brand/' + brand._id)
 				.set('x-access-token', token)
@@ -353,7 +282,7 @@ describe('BRAND TEST SUITE', () => {
 				})
 		})
 	})
-	// DELETE /user/:userId - elimina un usuario por su id
+	// DELETE /brand/:brandId - elimina un usuario por su id
 	describe('DELETE /brand/:brandId', () => {
 		it('deberia eliminar una marca por su id', done => {
 			let brand = new Brand({
@@ -366,19 +295,11 @@ describe('BRAND TEST SUITE', () => {
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
 
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
-
 			chai.request(server)
 				.delete('/brand/' + brand._id)
 				.set('x-access-token', token)
 				.end((error, response) => {
+					// console.log('--RESPONSE-BODY--', response.body)
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
@@ -399,15 +320,6 @@ describe('BRAND TEST SUITE', () => {
 				.then(brand => console.log())
 				.catch(error => console.log('TEST:', error))
 
-			let user = {
-				username: 'admin@mail.com',
-				password: 'admin'
-			}
-
-			let token = jwt.sign(user, settings.secret, {
-				expiresIn: '8h'
-			})
-
 			chai.request(server)
 				.delete('/brand/58dece08eb0548118ce31f11')
 				.set('x-access-token', token)
@@ -422,31 +334,22 @@ describe('BRAND TEST SUITE', () => {
 		})
 	})
 	// POST /brand/:userId/supplier
-	//   describe('POST /brand/:userId/supplier', () => {
-	//     it('deberia agregar un proveedor a una marca', done => {
-	//       let brand = new Brand({
-	//         name: 'Loca cola',
-	//         description: 'Bebida Gaseosa',
-	//         supplier: []
-	//       })
+	describe.skip('POST /brand/:userId/supplier', () => {
+		it('deberia agregar un proveedor a una marca', done => {
+			let brand = new Brand({
+				name: 'Loca cola',
+				description: 'Bebida Gaseosa',
+				supplier: []
+			})
 
-	//       brand.save()
-	// 				.then(brand => console.log())
-	// 				.catch(error => console.log('TEST:', error))
+			brand.save()
+				.then(brand => console.log())
+				.catch(error => console.log('TEST:', error))
 
-	// 			let user = {
-	// 				username: 'admin@mail.com',
-	// 				password: 'admin'
-	// 			}
-
-	// 			let token = jwt.sign(user, settings.secret, {
-	// 				expiresIn: '8h'
-	// 			})
-
-	//       chai.request(server)
-	//         .post('/brand/'+brand._id+'/supplier')
-	//         .set('x-access-token', token)
-	//         .send({ supplierId: supplier._id.toString()})
-	//     })
-	//   })
+			chai.request(server)
+				.post('/brand/' + brand._id + '/supplier')
+				.set('x-access-token', token)
+				.send({ supplierId: supplier._id.toString() })
+		})
+	})
 })

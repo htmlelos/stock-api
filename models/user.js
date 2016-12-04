@@ -15,7 +15,8 @@ const UserSchema = new Schema({
 		type: String,
 		required: 'Debe proporcionar un nombre de usuario',
 		match: match,
-		unique: true
+		unique: true,
+		index: true
 	},
 	password: {
 		type: String,

@@ -206,14 +206,6 @@ function deleteUserRole(request, response) {
 		})
 }
 
-function getCurrentUser(request, response) {
-	if (global.currentUser) {
-		message.success(response, { status: 200, message: '', data: global.currentUser})
-	} else {
-		message.failure(response, {status: 404, message: 'El usuario no es un usuario valido', data: null})
-	}
-}
-
 module.exports = {
 	getAllUsers,
 	createUser,
@@ -222,6 +214,5 @@ module.exports = {
 	deleteUser,
 	addUserRole,
 	getUserRoles,
-	deleteUserRole,
-	getCurrentUser
+	deleteUserRole
 }
