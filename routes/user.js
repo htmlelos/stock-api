@@ -2,6 +2,7 @@
 
 const user = require('../controllers/user')
 const router = require('express').Router()
+const passport = require('passport')  
 
 // GET /users - obtener todos los Usuarios
 // POST /users - obtener todos los usuarios que cumplan con los criterios especificados

@@ -7,7 +7,6 @@ const message = require('../services/response/message')
 function getAllBrands(request, response) {
   Brand.find({})
     .then(brands => {
-
         Supplier.populate(brands, {path: 'suppliers'})
           .then(user => {
             message.success(response, {status: 200, message: '', data: brands})
@@ -71,8 +70,12 @@ function assignBrand(oldValue, newValue) {
 function updateBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
+      console.log('--BRAND--', brand)
       if (brand) {
-        assignBrand(brand, request.body)
+        let newBrand = request.body
+        newBrand.updatedBy = global.currentUser.username
+        newBrand.updatedAt = Date()
+        assignBrand(brand, newBrand)
           .then(brand => {
             message.success(response, {status: 200, message: 'Marca actualizada con exito', data: brand})
           })

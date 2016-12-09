@@ -8,7 +8,14 @@ const message = require('../services/response/message')
 function getAllProducts(request, response) {
     Product.find({})
         .then(products => {
-            message.success(response, { status: 200, message: '', data: products })
+            // Product.populate(products, {path: 'components'})
+            //     .then(products => {
+                    message.success(response, { status: 200, message: '', data: products })
+                // })
+                // .catch(error => {
+                //     console.log('--ERROR-422--', error)
+                //     message.error(response, { status: 422, message: '', data: error})
+                // })            
         })
         .catch(error => {
             message.failucer(response, { status: 404, message: '', data: error })
@@ -69,7 +76,7 @@ function updateProduct(request, response) {
             if (product) {
                 assignProduct(product, request.body)
                     .then(user => {
-                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: product })
+                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: null })
                     })
                     .catch(error => {
                         if (error.code === 11000) {

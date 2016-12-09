@@ -33,11 +33,11 @@ let RoleSchema = new Schema({
 		required: true,
 		default: 'anonimo'
 	},
-	modifiedAt: {
+	updatedAt: {
 		type: Date
 	},
-	modifiedBy: {
-		type: false
+	updatedBy: {
+		type: String
 	}
 }, {
 	versionKey: false

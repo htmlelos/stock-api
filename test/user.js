@@ -16,20 +16,33 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('USERS: test suite', () => {
+describe.only('USERS: test suite', () => {
 	let mockUser = null
 	let token = ''
 
 	beforeEach(done => {
+		// User.remove({}, error => { })
+		// Role.remove({}, error => { })		
+		let superUser = {
+			username: 'super@mail.com',
+			password: 'super'
+		}
+
+		chai.request(server)
+			.post('/login')
+			.send(superUser)
+			.end((error, response) => {
+				response.should.be.status(200)
+				response.body.should.have.property('data')
+				response.body.data.should.have.property('token')
+				token = response.body.data.token
+			})
+		done()
+	})
+
+	afterEach(done => {
 		User.remove({}, error => { })
 		Role.remove({}, error => { })
-		mockUser = {
-			username: 'admin@mail.com',
-			password: 'admin'
-		}
-		token = jwt.sign(mockUser, settings.secret, {
-			expiresIn: '8h'
-		})		
 		done()
 	})
 	// GET /users - Obtener todos los usuarios
@@ -55,18 +68,22 @@ describe('USERS: test suite', () => {
 	})
 	// POST /user - Crea un usuario
 	describe('POST /user', () => {
-		it('deberia crear un nuevo usuario', done => {
+		it.only('deberia crear un nuevo usuario', done => {
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
 				status: 'ACTIVO'
 			}
 
+			console.log('::TOKEN::',token)
 			chai.request(server)
 				.post('/user')
 				.set('x-access-token', token)
 				.send(user)
 				.end((error, response) => {
+					console.log('::RESPONSE-BODY::', response.body)
+					console.log('::RESPONSE-STATUS::', response.status)
+					console.log('::RESPONSE-text::', response.text)
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message').eql('Usuario creado con exito')
@@ -263,11 +280,11 @@ describe('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Usuario actualizado con exito')
-					response.body.should.have.property('data')
-					response.body.data.should.have.property('username')
-						.eql('guest@mail.com')
-					response.body.data.should.have.property('status')
-						.eql('ACTIVO')
+					response.body.should.have.property('data').to.be.null
+					// response.body.data.should.have.property('username')
+					// 	.eql('guest@mail.com')
+					// response.body.data.should.have.property('status')
+					// 	.eql('ACTIVO')
 					done()
 				})
 		})

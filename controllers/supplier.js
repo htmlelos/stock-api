@@ -40,7 +40,6 @@ function createSupplier(request, response) {
       }
     })
 }
-
 // Obtener un proveedor
 function findSupplier(supplierId) {
     return Supplier.findById({ _id: supplierId })
@@ -59,7 +58,6 @@ function getSupplier(request, response) {
       message.error(response, {stauts: 422, message: '', data: error})
     })
 }
-
 // Asigna el nuevo dato o el proveedor
 function assignSupplier(oldValue, newValue) {
   return Object.assign(oldValue, newValue).save()
@@ -71,9 +69,12 @@ function updateSupplier(request, response) {
     .then(supplier => {
       // Si le proveedor existe se actualiza con los datos proporcionados
       if (supplier) {
-        assignSupplier(supplier, request.body)
+        let newSupplier = request.body
+        newSupplier.updatedBy = global.currentUser.username
+        newSupplier.updatedAt = Date()
+        assignSupplier(supplier, newSupplier)
           .then(supplier => {
-            message.success(response, { status: 200, message: 'Proveedor actualizado con exito', data: supplier})
+            message.success(response, { status: 200, message: 'Proveedor actualizado con exito', data: null})
           })
           .catch(error => {
             if (error.code === 11000) {

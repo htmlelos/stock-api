@@ -299,7 +299,6 @@ describe('BRAND: test suite', () => {
 				.delete('/brand/' + brand._id)
 				.set('x-access-token', token)
 				.end((error, response) => {
-					// console.log('--RESPONSE-BODY--', response.body)
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
