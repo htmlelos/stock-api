@@ -14,36 +14,46 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
-describe('ROLE: test suite', () => {
+describe.only('ROLE: test suite', () => {
 	let mockUser = null
 	let token = ''
-
+	// Se ejecuta antes de cada test
 	beforeEach(done => {
-		Role.remove({}, error => {
-		})
-		mockUser = {
-			username: 'admin@mail.com',
-			password: 'admin'
-		}
-		token = jwt.sign(mockUser, settings.secret, {
-			expiresIn: '8h'
-		})
 		done()
+	})
+	// Se ejecuta despues de cada test
+	afterEach(done => {
+		Role.remove({}, error => { })
+		done();
 	})
 	// GET /roles - Obtener todos los roles
 	describe('GET /roles', () => {
 		it('deberia obtener todos los roles', done => {
+			let superUser = {
+				username: 'super@mail.com',
+				password: 'super'
+			}
 
 			chai.request(server)
-				.get('/roles')
-				.set('x-access-token', token)
+				.post('/login')
+				.send(superUser)
 				.end((error, response) => {
-					response.should.have.status(200)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message').eql('')
+					response.should.be.status(200)
 					response.body.should.have.property('data')
-					response.body.data.length.should.be.eql(0)
-					done()
+					response.body.data.should.have.property('token')
+					token = response.body.data.token
+					// Test from here
+					chai.request(server)
+						.get('/roles')
+						.set('x-access-token', token)
+						.end((error, response) => {
+							response.should.have.status(200)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message').eql('')
+							response.body.should.have.property('data')
+							response.body.data.length.should.be.eql(0)
+							done()
+						})
 				})
 		})
 	})
@@ -281,32 +291,47 @@ describe('ROLE: test suite', () => {
 	// PUT /role/:roleId
 	describe('PUT /role/:roleId', () => {
 		it('deberia actualizar un rol por su id de rol', done => {
-			let role = new Role({
-				name: 'admin_role',
-				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
-			})
-
-			role.save()
-				.then(user => console.log())
-				.catch(error => console.error('TEST:', error))
+			let superUser = {
+				username: 'super@mail.com',
+				password: 'super'
+			}
 
 			chai.request(server)
-				.put('/role/' + role._id)
-				.set('x-access-token', token)
-				.send({
-					name: 'developer_role',
-					description: 'Un usuario con este rol, posee permisos de desarrollador',
-					status: 'INACTIVO'
-				})
+				.post('/login')
+				.send(superUser)
 				.end((error, response) => {
-					console.log('::RESPONSE-BODY::', response.body);
-					response.should.have.status(200)
-					response.body.should.be.a('object')
-					response.body.should.have.property('message')
-						.eql('Rol actualizado con exito')
-					response.body.should.have.property('data').to.be.null
-					done()
+					response.should.be.status(200)
+					response.body.should.have.property('data')
+					response.body.data.should.have.property('token')
+					token = response.body.data.token
+					// Test from here
+					let role = new Role({
+						name: 'admin_role',
+						description: 'Un usuario con este rol, posee permisos de administrador',
+						status: 'ACTIVO'
+					})
+
+					role.save()
+						.then(user => console.log())
+						.catch(error => console.error('TEST:', error))
+
+					chai.request(server)
+						.put('/role/' + role._id)
+						.set('x-access-token', token)
+						.send({
+							name: 'developer_role',
+							description: 'Un usuario con este rol, posee permisos de desarrollador',
+							status: 'INACTIVO'
+						})
+						.end((error, response) => {
+							console.log('::RESPONSE-BODY::', response.body);
+							response.should.have.status(200)
+							response.body.should.be.a('object')
+							response.body.should.have.property('message')
+								.eql('Rol actualizado con exito')
+							response.body.should.have.property('data').to.be.null
+							done()
+						})
 				})
 		})
 

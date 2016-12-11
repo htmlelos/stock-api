@@ -7,17 +7,19 @@ const message = require('../services/response/message')
 const settings = require('../settings.cfg')
 
 const login = (request, response) => {
-  // console.log('--LOGIN--CALLED--');
+  // console.log('--LOGIN--CALLED--')
   // console.log('--USERNAME--', request.body.username);
   User.findOne({ username: request.body.username })
     .then(user => {
       if (user) {
         Role.populate(user, { path: 'roles' })
           .then(user => {
+            // console.log('--LOGIN--CALLED-A-')
             user.roles = user.roles.map(element => { return element.name })
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
+            // console.log('--LOGIN--CALLED--ERROR-500-1--')
             message.error(response, { status: 500, message: '', data: error })
           })
       } else {
@@ -25,6 +27,7 @@ const login = (request, response) => {
       }
     })
     .catch(error => {
+      // console.log('--LOGIN--CALLED--ERROR-500-2--')
       message.error(response, { status: 500, message: '', data: error })
     })
 }

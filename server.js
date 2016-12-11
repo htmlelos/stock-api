@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const config = require('config')
 const mongoose = require('./services/database/mongoose')
+const superUser = require('./services/security/superuser')
 const routes = require('./routes/routes')
 
 const port = process.env.REST_PORT || 3000
@@ -21,6 +22,7 @@ server.use(bodyParser.urlencoded({extended: true}))
 server.use(bodyParser.json())
 // server.use(bodyParser.text())
 // server.use(bodyParser.json({type: 'application/json'}))
+superUser(server)
 	// Routes
 routes(server)
 

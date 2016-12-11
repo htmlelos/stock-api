@@ -18,15 +18,15 @@ function getAllUsers(request, response) {
 function createUser(request, response) {
 	//Crea una nueva instacia de usuario con los parametros recibidos
 	let newUser = new User(request.body)
-	console.log('--NEW USER--', newUser)
+	// console.log('--NEW USER--', newUser)
 	newUser.createdBy = global.currentUser.username
 	newUser.save()
 		.then(user => {
-			console.log('CREATE USER THEN')
+			// console.log('CREATE USER THEN')
 			message.success(response, { status: 200, message: 'Usuario creado con exito', data: null })
 		})
 		.catch(error => {
-			console.log('CREATE USER CATCH')
+			// console.log('CREATE USER CATCH')
 			if (error.code === 11000) {
 				message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 			} else {
@@ -74,10 +74,8 @@ function updateUser(request, response) {
 					})
 					.catch(error => {
 						if (error.code === 11000) {
-							console.log('--ERROR-422-1--', error);
 							message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 						} else {
-							console.log('--ERROR-422-2--', error);
 							message.error(response, { status: 422, message: '', data: error })
 						}
 					})
@@ -126,7 +124,7 @@ function addUserRole(request, response) {
 					findRole(roleId)
 						.then(role => {
 							if (role) {
-								let isIncluded = user.roles.includes(role.name)
+								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())								
 
 								if (isIncluded) {
 									message.failure(response, { status: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
@@ -137,7 +135,6 @@ function addUserRole(request, response) {
 											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: null })
 										})
 										.catch(error => {
-											console.log('--ERROR-422-1--', error)
 											message.error(response, { status: 422, message: '', data: error })
 										})
 								}

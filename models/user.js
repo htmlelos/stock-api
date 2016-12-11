@@ -8,7 +8,7 @@ mongoose.Promise = global.Promise
 
 let SALT_WORK_FACTOR = 12;
 
-let match = [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'El username debe se un correo electronico por ejemplo "username@servidor.com"']
+let match = [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'El username debe ser un correo electronico por ejemplo "username@servidor.com"']
 
 const UserSchema = new Schema({
 	username: {
@@ -59,7 +59,6 @@ const UserSchema = new Schema({
 	})
 // Statics
 UserSchema.pre('save', function (next) {
-	console.log('PRE-SAVE')
 	let user = this
 
 	let now = new Date()
