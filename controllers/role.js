@@ -56,11 +56,9 @@ function updateRole(request, response) {
 	findRole(request.params.roleId)
 		.then(role => {
 			if (role) {
-				console.log('--ROLE--', role)
 				let newRole = request.body
 				newRole.updatedBy = global.currentUser.username
 				newRole.updatedAt = Date()
-				console.log('--NEW-ROLE--', newRole)
 				assignRole(role, newRole)
 					.then(role => {
 						message.success(response, { status: 200, message: 'Rol actualizado con exito', data: null })
@@ -70,7 +68,6 @@ function updateRole(request, response) {
 						if (error.code === 11000) {
 							message.duplicate(response, { status: 422, message: 'El rol ya existe', data: null })
 						} else {
-							console.log('--ERROR-404-2--', error)
 							message.error(response, { status: 404, message: '', data: error })
 						}
 					})
@@ -79,7 +76,6 @@ function updateRole(request, response) {
 			}
 		})
 		.catch(error => {
-			console.log('--ERROR-404--3-', error)
 			message.error(response, { status: 404, message: '', data: error })
 		})
 }

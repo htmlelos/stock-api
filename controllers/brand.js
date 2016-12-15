@@ -70,7 +70,6 @@ function assignBrand(oldValue, newValue) {
 function updateBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
-      console.log('--BRAND--', brand)
       if (brand) {
         let newBrand = request.body
         newBrand.updatedBy = global.currentUser.username

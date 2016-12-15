@@ -41,7 +41,7 @@ const UserSchema = new Schema({
 	createdAt: {
 		type: Date,
 		required: true,
-		default: Date()
+		default: Date().now
 	},
 	createdBy: {
 		type: String,
@@ -94,28 +94,5 @@ UserSchema.statics.comparePasswordAndHash = function (password, passwordHash, ne
 	// compara las contraseñas proporcionadas
 	bcrypt.compare(password, passwordHash, next)
 }
-
-// UserSchema.methods.comparePassword = function(password, next) {
-// 	bcrypt.compare(password, this.password, function(error, isMatch) {
-// 		if (error) {
-// 			return next(error)
-// 		} else {
-// 			next(null, isMatch)
-// 		}
-// 	})
-// } 
-
-// UserSchema.statics.hashPassword = function (password, next) {
-// 	// Para acelerar los test, verificamos NODE_ENV
-// 	// Si estamos realizando test, establecemos el costo SALT_WORK_FACTOR = 1
-// 	if (process.env.NODE_ENV === 'test') {
-// 		SALT_WORK_FACTOR = 1
-// 	}
-// 	bcrypt.genSalt(SALT_WORK_FACTOR, function (error, salt) {
-// 		// Encriptar la contraseña utilizando bcrypt; pasa la funcion
-// 		// callback `next`a bcrypt.hash()
-// 		bcrypt.hash(password, salt, function () { }, next)
-// 	});
-// }
 
 module.exports = mongoose.model('user', UserSchema)

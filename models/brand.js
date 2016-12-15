@@ -21,7 +21,7 @@ const BrandSchema = new Schema({
   createdAt: {
 		type: Date,
 		required: true,
-		default: Date()
+		default: Date().now
 	},
   createdBy: {
 		type: String,

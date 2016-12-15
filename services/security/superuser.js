@@ -5,7 +5,6 @@ const settings = require('../../settings.cfg')
 // La contraseña de este usuario debe ser modificada luego de 
 // iniciada la aplicacion por primera vez
 module.exports = function superUser(server) {
-    console.log('--SUPERUSUARIO--');
     server.use(function(request, response, next) {
         User.findOne({username: settings.superuser})
             .then(user => {

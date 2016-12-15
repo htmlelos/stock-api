@@ -217,7 +217,6 @@ describe('SUPPLIER: test suite', () => {
                 .get('/supplier/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('::RESPONSE-BODY::', response.body);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')

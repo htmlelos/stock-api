@@ -81,7 +81,6 @@ describe('USERS: test suite', () => {
 					response.body.should.have.property('data')
 					response.body.data.should.have.property('token')
 					token = response.body.data.token
-					// console.log('<<TOKEN>>', token);
 
 					let user = {
 						username: 'admin@mail.com',
@@ -89,15 +88,11 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					}
 
-					// console.log('::TOKEN::', token, '\n::user::', user)
 					chai.request(server)
 						.post('/user')
 						.set('x-access-token', token)
 						.send(user)
 						.end((error, response) => {
-							// console.log('::RESPONSE-BODY::', response.body)
-							// console.log('::RESPONSE-STATUS::', response.status)
-							// console.log('::RESPONSE-text::', response.text)
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message').eql('Usuario creado con exito')
