@@ -63,7 +63,7 @@ describe('BRAND: test suite', () => {
 		})
 	})
 	// POST /brand - crear una nueva marca 
-	describe.only('POST /brand', () => {
+	describe('POST /brand', () => {
 		it('deberia crear una nueva marca', done => {
 			let superUser = {
 				username: 'super@mail.com',

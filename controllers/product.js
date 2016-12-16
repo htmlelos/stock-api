@@ -29,7 +29,7 @@ function createProduct(request, response) {
 
     newProduct.save()
         .then(product => {
-            message.success(response, { status: 200, message: 'Producto creado con exito', data: null })
+            message.success(response, { status: 200, message: 'Producto creado con exito', data: {id: product._id} })
         })
         .catch(error => {
             if (error.code === 11000) {
@@ -76,7 +76,7 @@ function updateProduct(request, response) {
             if (product) {
                 assignProduct(product, request.body)
                     .then(product => {
-                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: {id: product._id} })
+                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: null })
                     })
                     .catch(error => {
                         if (error.code === 11000) {
