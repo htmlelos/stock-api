@@ -75,8 +75,8 @@ function updateProduct(request, response) {
             // Si el producto existe se actualiza con los datos proporcionados
             if (product) {
                 assignProduct(product, request.body)
-                    .then(user => {
-                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: null })
+                    .then(product => {
+                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: {id: product._id} })
                     })
                     .catch(error => {
                         if (error.code === 11000) {

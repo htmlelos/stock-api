@@ -29,7 +29,7 @@ function createSupplier(request, response) {
 
   newSupplier.save()
     .then(supplier => {
-      message.success(response, {status: 200, message: 'Proveedor creado con exito', data: null})
+      message.success(response, {status: 200, message: 'Proveedor creado con exito', data: {id: supplier._id}})
     })
     .catch(error => {
       // console.log('--ERROR-422--', error);

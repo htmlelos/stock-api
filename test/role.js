@@ -90,7 +90,8 @@ describe('ROLE: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('Rol creado con exito')
-							response.body.should.have.property('data').eql(null)
+							response.body.should.have.property('data')
+							response.body.data.should.have.property('id').to.be.not.null
 							done()
 						})
 				})

@@ -63,7 +63,7 @@ describe('BRAND: test suite', () => {
 		})
 	})
 	// POST /brand - crear una nueva marca 
-	describe('POST /brand', () => {
+	describe.only('POST /brand', () => {
 		it('deberia crear una nueva marca', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -93,7 +93,8 @@ describe('BRAND: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message').eql('Marca creada con exito')
-							response.body.should.have.property('data').to.be.null
+							response.body.should.have.property('data')
+							response.body.data.should.have.property('id').to.be.not.null
 							done()
 						})
 				})

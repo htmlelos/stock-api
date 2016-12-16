@@ -28,7 +28,7 @@ function createBrand(request, response) {
 
   newBrand.save()
     .then(brand => {
-      message.success(response, {status: 200, message: 'Marca creada con exito', data: null})
+      message.success(response, {status: 200, message: 'Marca creada con exito', data: {id: brand._id}})
     })
     .catch(error => {
       if (error.code === 11000) {

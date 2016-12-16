@@ -99,7 +99,8 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message').eql('Producto creado con exito')
-                            response.body.should.have.property('data').to.be.null
+                            response.body.should.have.property('data')
+                            response.body.data.should.have.property('id').to.be.not.null
                             done()
                         })
                 })
