@@ -11,7 +11,7 @@ const verifyCredentials = (request, response, user) => {
       // Se autentica el usuario
       if (user.status === 'ACTIVO' && isAuthenticated) {
         // console.log('--VERIFY-CREDENTIALS--', user);
-        let token = jwt.sign(user, settings.secret, {expiresIn: "1m"})
+        let token = jwt.sign(user, settings.secret, {expiresIn: "8h"})
         if (port = process.env.NODE_ENV = 'test') {
           global.currentUser = {
             token,
