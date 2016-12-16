@@ -66,7 +66,7 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// POST /user - Crea un usuario
-	describe.only('POST /user', () => {
+	describe('POST /user', () => {
 		it('deberia crear un nuevo usuario', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -614,7 +614,8 @@ describe('USERS: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('El rol se añadio con exito')
-							response.body.should.have.property('data').eql(null)
+							response.body.should.have.property('data')
+							response.body.data.should.have.property('id').to.be.not.null
 							done()
 						})
 				})

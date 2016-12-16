@@ -132,7 +132,7 @@ function addUserRole(request, response) {
 									user.roles.push(role)
 									user.save()
 										.then(user => {
-											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: null })
+											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: {id: user._id} })
 										})
 										.catch(error => {
 											message.error(response, { status: 422, message: '', data: error })
