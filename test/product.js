@@ -22,9 +22,6 @@ describe('PRODUCTS test suite', () => {
     let token = ''
 
     beforeEach(done => {
-        // Brand.remove({}, error => {})
-        // Supplier.remove({}, error => {})
-        // Product.remove({}, error => {})
         done()
     })
 
