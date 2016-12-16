@@ -26,18 +26,18 @@ let RoleSchema = new Schema({
 	createdAt: {
 		type: Date,
 		required: true,
-		default: Date()
+		default: Date.now
 	},
 	createdBy: {
 		type: String,
 		required: true,
 		default: 'anonimo'
 	},
-	modifiedAt: {
+	updatedAt: {
 		type: Date
 	},
-	modifiedBy: {
-		type: false
+	updatedBy: {
+		type: String
 	}
 }, {
 	versionKey: false
