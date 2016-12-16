@@ -23,7 +23,7 @@ function createUser(request, response) {
 	newUser.save()
 		.then(user => {
 			// console.log('CREATE USER THEN')
-			message.success(response, { status: 200, message: 'Usuario creado con exito', data: null })
+			message.success(response, { status: 200, message: 'Usuario creado con exito', data: {id: user._id} })
 		})
 		.catch(error => {
 			// console.log('CREATE USER CATCH')
