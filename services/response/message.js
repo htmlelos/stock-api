@@ -11,7 +11,6 @@ const duplicate = function (response, info) {
 }
 //
 const error = function (response, info) {
-  // console.log('--ERROR-INFO--', info);
   if (info.data.code === 11000) {
     return response.status(info.status||422).json({
       status: info.status,

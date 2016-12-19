@@ -49,8 +49,8 @@ const Detail = new Schema({
         type:Schema.Types.ObjectId,
         ref: 'Product' 
     },
-    quantity: number,
-    price: number
+    quantity: Number,
+    price: Number
 })
 
 const DocumentSchema = new Schema({    

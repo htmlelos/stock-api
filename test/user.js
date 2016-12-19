@@ -66,7 +66,7 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// POST /user - Crea un usuario
-	describe.only('POST /user', () => {
+	describe('POST /user', () => {
 		it('deberia crear un nuevo usuario', done => {
 			let superUser = {
 				username: 'super@mail.com',

@@ -13,7 +13,6 @@ function getAllProducts(request, response) {
                     message.success(response, { status: 200, message: '', data: products })
                 // })
                 // .catch(error => {
-                //     console.log('--ERROR-422--', error)
                 //     message.error(response, { status: 422, message: '', data: error})
                 // })            
         })

@@ -6,7 +6,7 @@ const user = require('./user')
 const supplier = require('./supplier')
 const brand = require('./brand')
 const product = require('./product')
-//const documents = require('./document')
+const document = require('./document')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -17,5 +17,5 @@ module.exports = function routes(server) {
   server.use('/', supplier)
   server.use('/', brand)
   server.use('/', product)
-  //server.use('/', document)
+  server.use('/', document)
 }

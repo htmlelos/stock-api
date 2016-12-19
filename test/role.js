@@ -15,7 +15,6 @@ const should = chai.should()
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
 describe('ROLE: test suite', () => {
-	let mockUser = null
 	let token = ''
 	// Se ejecuta antes de cada test
 	beforeEach(done => {
