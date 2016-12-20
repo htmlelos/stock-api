@@ -52,6 +52,8 @@ function getUser(request, response) {
 }
 // Asigna el nuevo dato a el usuario
 function assignUser(oldValue, newValue) {
+	// console.log('--OLDVALUE--', oldValue);
+	// console.log('--NEWVALUE--', newValue);
 	return Object.assign(oldValue, newValue).save()
 }
 // Actualiza un usuario por su id
@@ -64,12 +66,14 @@ function updateUser(request, response) {
 			if (user) {
 				let newUser = request.body
 				newUser.updatedBy = global.currentUser.username
-				newUser.updatedAt = Date()
+				newUser.updatedAt = Date().now
 				assignUser(user, newUser)
 					.then(user => {
+						// console.log('--USER-UPDATED--', user);
 						message.success(response, { status: 200, message: 'Usuario actualizado con exito', data: null })
 					})
 					.catch(error => {
+						// console.error('--ERROR-422-1--', error);
 						if (error.code === 11000) {
 							message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 						} else {
@@ -81,6 +85,7 @@ function updateUser(request, response) {
 			}
 		})
 		.catch(error => {
+			// console.error('--ERROR-422-2--', error);
 			message.error(response, { status: 422, message: '', data: error })
 		})
 }
