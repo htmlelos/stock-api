@@ -5,7 +5,9 @@
   "main": "service.js",
   "scripts": {
     "start": "SET NODE_ENV=dev&& nodemon server.js",
-    "test": "mocha --timeout 5000"
+    "test": "mocha --timeout 5000",
+    "run": "SET NODE_ENV=prod&& nodemon server.js",
+    "build": "echo buildme!"
   },
   "author": "Lucero Sergio Alejandro",
   "license": "MIT",
@@ -19,6 +21,7 @@
     "body-parser": "^1.15.2",
     "config": "^1.21.0",
     "cors": "^2.8.1",
+    "debug": "^2.4.4",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "jsonwebtoken": "^7.1.9",

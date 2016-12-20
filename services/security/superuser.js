@@ -8,7 +8,6 @@ module.exports = function superUser(server) {
     server.use(function(request, response, next) {
         User.findOne({username: settings.superuser})
             .then(user => {
-                // console.log('<<USER>> ', user)
                 if (!user) {
                     const superuser = new User({
                         username: settings.superuser,

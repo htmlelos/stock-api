@@ -18,15 +18,12 @@ function getAllUsers(request, response) {
 function createUser(request, response) {
 	//Crea una nueva instacia de usuario con los parametros recibidos
 	let newUser = new User(request.body)
-	// console.log('--NEW USER--', newUser)
 	newUser.createdBy = global.currentUser.username
 	newUser.save()
 		.then(user => {
-			// console.log('CREATE USER THEN')
 			message.success(response, { status: 200, message: 'Usuario creado con exito', data: {id: user._id} })
 		})
 		.catch(error => {
-			// console.log('CREATE USER CATCH')
 			if (error.code === 11000) {
 				message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 			} else {
@@ -84,7 +81,6 @@ function updateUser(request, response) {
 			}
 		})
 		.catch(error => {
-			console.log('--ERROR-422-3--', error);
 			message.error(response, { status: 422, message: '', data: error })
 		})
 }

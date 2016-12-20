@@ -14,7 +14,6 @@ function getAllSupliers(request, response) {
       })
     })
     .catch(error => {
-      // console.log('--ERROR-422--', error);
       message.error(response, {
         status: 422,
         message: '',
@@ -32,7 +31,6 @@ function createSupplier(request, response) {
       message.success(response, {status: 200, message: 'Proveedor creado con exito', data: null})
     })
     .catch(error => {
-      // console.log('--ERROR-422--', error);
       if (error.code === 11000) {
         message.error(response, {status: 422, message: 'El proveedor ya existe', data: error})
       } else {
