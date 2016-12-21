@@ -9,7 +9,7 @@ const Stackholder = new Schema({
         type: 'String',
         required: 'Debe proporcionar el nombre del interesado'
     },
-    kind: {
+    type: {
         type: 'String',
         enum: {
             values: ['VENDEDOR', 'CLIENTE', 'RECEPTOR', 'DESPACHANTE', 'PROVEEDOR'],
@@ -68,7 +68,7 @@ const DocumentSchema = new Schema({
         ref: 'Bussines'
     },
     stackholder: ['Stackholder'],    
-    document: {
+    type: {
         type: String,
         enum: {
             values: ['FACTURA', 'ORDEN', 'RECIBO', 'REMITO'],

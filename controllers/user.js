@@ -69,11 +69,11 @@ function updateUser(request, response) {
 				newUser.updatedAt = Date().now
 				assignUser(user, newUser)
 					.then(user => {
-						// console.log('--USER-UPDATED--', user);
+						console.log('--USER-UPDATED--', user);
 						message.success(response, { status: 200, message: 'Usuario actualizado con exito', data: null })
 					})
 					.catch(error => {
-						// console.error('--ERROR-422-1--', error);
+						console.error('--ERROR-422-1--', error);
 						if (error.code === 11000) {
 							message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 						} else {
@@ -85,7 +85,7 @@ function updateUser(request, response) {
 			}
 		})
 		.catch(error => {
-			// console.error('--ERROR-422-2--', error);
+			console.error('--ERROR-422-2--', error);
 			message.error(response, { status: 422, message: '', data: error })
 		})
 }

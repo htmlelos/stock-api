@@ -17,7 +17,7 @@ const verifyCredentials = (request, response, user) => {
             username : settings.superuser,
             roles: []
           }
-          // console.log('::CURRENT_USER::', global.currentUser);
+          console.log('::CURRENT_USER::', global.currentUser);
         }
         message.success(response, {status: 200, message: 'Usuario autenticado con exito', data: {token, username: user.username, roles: user.roles}})
       } else {        
