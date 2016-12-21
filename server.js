@@ -15,7 +15,8 @@ server.use(cors())
 if(config.util.getEnv('NODE_ENV') !== 'test') {
 // Utiliza morgan para la bitacora en la linea de comandos
 // Apache log style - Bitacora al estilo de Apache
-	server.use(morgan('combined'))
+	// server.use(morgan('combined'))
+	server.use(morgan('dev'))
 }
 
 server.use(bodyParser.urlencoded({extended: true}))
