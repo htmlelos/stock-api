@@ -17,6 +17,7 @@ function createRole(request, response) {
 	//Crea una nueva instancia de Role con los parametros recibidos
 	let newRole = new Role(request.body)
 
+	newRole.createdBy = request.decoded.username
 	newRole.save()
 		.then(role => {
 			message.success(response, { status: 200, message: 'Rol creado con exito', data: null })
@@ -57,7 +58,7 @@ function updateRole(request, response) {
 		.then(role => {
 			if (role) {
 				let newRole = request.body
-				newRole.updatedBy = global.currentUser.username
+				newRole.updatedBy = request.decoded.username
 				newRole.updatedAt = Date()
 				assignRole(role, newRole)
 					.then(role => {

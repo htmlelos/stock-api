@@ -26,6 +26,7 @@ function createBrand(request, response) {
   //Crea una nueva instancia de marca con los parametros recibidos
   let newBrand = new Brand(request.body)
 
+  newBrand.createdBy = request.decoded.username
   newBrand.save()
     .then(brand => {
       message.success(response, {status: 200, message: 'Marca creada con exito', data: null})
@@ -72,7 +73,7 @@ function updateBrand(request, response) {
     .then(brand => {
       if (brand) {
         let newBrand = request.body
-        newBrand.updatedBy = global.currentUser.username
+        newBrand.updatedBy = request.decoded.username
         newBrand.updatedAt = Date()
         assignBrand(brand, newBrand)
           .then(brand => {

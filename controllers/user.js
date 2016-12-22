@@ -18,7 +18,7 @@ function getAllUsers(request, response) {
 function createUser(request, response) {
 	//Crea una nueva instacia de usuario con los parametros recibidos
 	let newUser = new User(request.body)
-	newUser.createdBy = global.currentUser.username
+	newUser.createdBy = request.decoded.username
 	newUser.save()
 		.then(user => {
 			message.success(response, { status: 200, message: 'Usuario creado con exito', data: { id: user._id } })

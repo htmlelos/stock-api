@@ -14,7 +14,7 @@ const verifyCredentials = (request, response, user) => {
       if (user.status === 'ACTIVO' && isAuthenticated) {
         let token = jwt.sign(user, settings.secret, { expiresIn: "8h" })
         if (process.env.NODE_ENV === 'test') {
-          global.currentUser = {
+          request.decoded = {
             token,
             username: settings.superuser,
             roles: []

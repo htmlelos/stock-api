@@ -37,10 +37,6 @@ const authenticate = (request, response, next) => {
         return message.failure(response, { status: 401, message: 'Error al intentar autenticarse', success: false })
       } else {
         request.decoded = decoded._doc
-            // global.currentUser = {
-            //   username: user.username,
-            //   roles: user.roles
-            // };
         //console.log('--VERIFY--', request.decoded);
         next()
       }
