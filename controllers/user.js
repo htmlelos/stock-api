@@ -21,7 +21,7 @@ function createUser(request, response) {
 	newUser.createdBy = global.currentUser.username
 	newUser.save()
 		.then(user => {
-			message.success(response, { status: 200, message: 'Usuario creado con exito', data: {id: user._id} })
+			message.success(response, { status: 200, message: 'Usuario creado con exito', data: { id: user._id } })
 		})
 		.catch(error => {
 			if (error.code === 11000) {
@@ -52,28 +52,40 @@ function getUser(request, response) {
 }
 // Asigna el nuevo dato a el usuario
 function assignUser(oldValue, newValue) {
-	// console.log('--OLDVALUE--', oldValue);
-	// console.log('--NEWVALUE--', newValue);
-	return Object.assign(oldValue, newValue).save()
+	console.log('OLD_VALUE', oldValue);
+	console.log('NEW_VALUE', newValue);
+
+	// if (newValue.username !== null)
+	// 	oldValue.username = newValue.username	
+	oldValue.username = newValue.username || oldValue.username
+	oldValue.password = newValue.password || oldValue.password
+	oldValue.status = newValue.status || oldValue.status
+	oldValue.roles = newValue.roles || oldValue.roles
+	oldValue.profiles = newValue.profiles || oldValue.profiles
+	oldValue.createdAt = newValue.createdAt || oldValue.createdAt
+	oldValue.createdBy = newValue.createdBy || oldValue.createdBy
+	oldValue.updatedAt = newValue.updatedAt || oldValue.updatedAt
+	oldValue.updatedBy = newValue.updatedBy || oldValue.updatedBy
+
+	return oldValue.save()
 }
 // Actualiza un usuario por su id
 function updateUser(request, response) {
 	// Encuentra el usuario a actualizar
 	findUser(request.params.userId)
-		.select('-password')
+		//.select('-password')
 		.then(user => {
 			// Si el usuario existe se actualiza con los datos proporcionados
 			if (user) {
+				// console.log('--REQUEST--DECODED--', request.decoded);
 				let newUser = request.body
-				newUser.updatedBy = global.currentUser.username
+				newUser.updatedBy = request.decoded.username
 				newUser.updatedAt = Date().now
-				assignUser(user, newUser)
+				User.update({ _id: request.params.userId }, { $set: newUser })
 					.then(user => {
-						console.log('--USER-UPDATED--', user);
 						message.success(response, { status: 200, message: 'Usuario actualizado con exito', data: null })
 					})
 					.catch(error => {
-						console.error('--ERROR-422-1--', error);
 						if (error.code === 11000) {
 							message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
 						} else {
@@ -125,7 +137,7 @@ function addUserRole(request, response) {
 					findRole(roleId)
 						.then(role => {
 							if (role) {
-								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())								
+								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())
 
 								if (isIncluded) {
 									message.failure(response, { status: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
@@ -133,7 +145,7 @@ function addUserRole(request, response) {
 									user.roles.push(role)
 									user.save()
 										.then(user => {
-											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: {id: user._id} })
+											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: { id: user._id } })
 										})
 										.catch(error => {
 											message.error(response, { status: 422, message: '', data: error })
@@ -165,19 +177,19 @@ function getUserRoles(request, response) {
 		.select('-password')
 		.then(user => {
 			Role.populate(user, { path: 'roles' })
-			.then(user => {
-			if (user) {
-				message.success(response, { status: 200, message: '', data: user.roles })
-			} else {
-				message.error(response, { status: 404, message: 'El usuario no es un usuario valido', data: '' })
-			}
-			})
-			.catch(error => { 
-				message.error(response, { status: 422, message: '', data: error }) 
-			})
+				.then(user => {
+					if (user) {
+						message.success(response, { status: 200, message: '', data: user.roles })
+					} else {
+						message.error(response, { status: 404, message: 'El usuario no es un usuario valido', data: '' })
+					}
+				})
+				.catch(error => {
+					message.error(response, { status: 422, message: '', data: error })
+				})
 		})
-		.catch(error => { 
-			message.error(response, { status: 422, message: '', data: error }) 
+		.catch(error => {
+			message.error(response, { status: 422, message: '', data: error })
 		})
 }
 // Eliminar un rol de un usuario
@@ -217,29 +229,29 @@ function deleteUserRole(request, response) {
 }
 
 function createDefaultUser(request, response, next) {
-  User.findOne({username: settings.superuser})
-    .then(user => {
-      if (!user) {
-        let superUser = new User({
-          username: settings.superuser,
-          password: 'super',
-          status: 'ACTIVO'
-        })
+	User.findOne({ username: settings.superuser })
+		.then(user => {
+			if (!user) {
+				let superUser = new User({
+					username: settings.superuser,
+					password: 'super',
+					status: 'ACTIVO'
+				})
 
-        superUser.save()
-          .then(user => {
-            console.log('SUPER USER CREATED')
-            next()
-          })
-          .catch(error => {
-            message.error(response, { status: 500, message: 'No se pudo crear el superusuario', data: null})
-          })
-      }
-      next()
-    })
-    .catch(error => {
-      message.error(response, {status: 500, message: 'No se pudo crear el super usuario', data: null})
-    })
+				superUser.save()
+					.then(user => {
+						console.log('SUPER USER CREATED')
+						next()
+					})
+					.catch(error => {
+						message.error(response, { status: 500, message: 'No se pudo crear el superusuario', data: null })
+					})
+			}
+			next()
+		})
+		.catch(error => {
+			message.error(response, { status: 500, message: 'No se pudo crear el super usuario', data: null })
+		})
 }
 
 module.exports = {

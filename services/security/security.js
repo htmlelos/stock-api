@@ -4,11 +4,13 @@ const message = require('../response/message')
 const settings = require('../../settings.cfg')
 
 const verifyCredentials = (request, response, user) => {
+  
   if (user) {
 
     User.comparePasswordAndHash(request.body.password, user.password, (error, isAuthenticated) => {
       // Si la contraseña es correcta y el usuario esta activo
       // Se autentica el usuario
+
       if (user.status === 'ACTIVO' && isAuthenticated) {
         let token = jwt.sign(user, settings.secret, { expiresIn: "8h" })
         if (process.env.NODE_ENV === 'test') {
@@ -17,14 +19,7 @@ const verifyCredentials = (request, response, user) => {
             username: settings.superuser,
             roles: []
           }
-        } else {
-            // Asigna el usuario actual como el usuario que ha sido verificado y autorizado
-            global.currentUser = {
-              username: user.username,
-              roles: user.roles
-            };
-            //console.log('::CURRENT==USER::', global.currentUser);          
-        }
+         } 
         message.success(response, { status: 200, message: 'Usuario autenticado con exito', data: { token, username: user.username, roles: user.roles } })
       } else {
         if (user.status === 'INACTIVO') {
