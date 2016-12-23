@@ -52,11 +52,6 @@ function getUser(request, response) {
 }
 // Asigna el nuevo dato a el usuario
 function assignUser(oldValue, newValue) {
-	console.log('OLD_VALUE', oldValue);
-	console.log('NEW_VALUE', newValue);
-
-	// if (newValue.username !== null)
-	// 	oldValue.username = newValue.username	
 	oldValue.username = newValue.username || oldValue.username
 	oldValue.password = newValue.password || oldValue.password
 	oldValue.status = newValue.status || oldValue.status
@@ -80,7 +75,7 @@ function updateUser(request, response) {
 				// console.log('--REQUEST--DECODED--', request.decoded);
 				let newUser = request.body
 				newUser.updatedBy = request.decoded.username
-				newUser.updatedAt = Date().now
+				newUser.updatedAt = Date.now()
 				User.update({ _id: request.params.userId }, { $set: newUser })
 					.then(user => {
 						message.success(response, { status: 200, message: 'Usuario actualizado con exito', data: null })
