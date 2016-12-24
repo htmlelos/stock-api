@@ -14,7 +14,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principar de las pruebas de proveedores
-describe.only('SUPPLIER: test suite', () => {
+describe('SUPPLIER: test suite', () => {
     let token = ''
     beforeEach(done => {
         //Supplier.remove({}, error => {})
@@ -198,7 +198,7 @@ describe.only('SUPPLIER: test suite', () => {
     })
     // GET /supplier/:supplierId - obtiene un proveedor por su id
     describe('GET /supplier/:supplierId', () => {
-        it.only('deberia obtener un proveedor por su id', done => {
+        it('deberia obtener un proveedor por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -208,7 +208,6 @@ describe.only('SUPPLIER: test suite', () => {
                 .post('/login')
                 .send(superUser)
                 .end((error, response) => {
-                    console.log('RESPONSE--BODY', response.body);
                     response.should.be.status(200)
                     response.body.should.have.property('data')
                     response.body.data.should.have.property('token')
@@ -223,15 +222,6 @@ describe.only('SUPPLIER: test suite', () => {
                     supplier.save()
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
-
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
 
                     chai.request(server)
                         .get('/supplier/' + supplier._id)
@@ -276,15 +266,6 @@ describe.only('SUPPLIER: test suite', () => {
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
 
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
-
                     chai.request(server)
                         .get('/supplier/58dece08eb0548118ce31f11')
                         .set('x-access-token', token)
@@ -325,15 +306,6 @@ describe.only('SUPPLIER: test suite', () => {
                     supplier.save()
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
-
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
 
                     chai.request(server)
                         .put('/supplier/' + supplier._id)
@@ -379,15 +351,6 @@ describe.only('SUPPLIER: test suite', () => {
                     supplier.save()
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
-
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
 
                     chai.request(server)
                         .put('/supplier/58dece08eb0548118ce31f11')
@@ -435,15 +398,6 @@ describe.only('SUPPLIER: test suite', () => {
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
 
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
-
                     chai.request(server)
                         .delete('/supplier/' + supplier._id)
                         .set('x-access-token', token)
@@ -483,15 +437,6 @@ describe.only('SUPPLIER: test suite', () => {
                     supplier.save()
                         .then(user => console.log())
                         .catch(error => console.error('TEST:', error))
-
-                    let user = {
-                        username: 'admin@mail.com',
-                        password: 'admin'
-                    }
-
-                    let token = jwt.sign(user, settings.secret, {
-                        expiresIn: "8h"
-                    })
 
                     chai.request(server)
                         .delete('/supplier/58dece08eb0548118ce31f11')

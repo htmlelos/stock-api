@@ -8,10 +8,10 @@ function getAllUsers(request, response) {
 	User.find({})
 		.select('-password')
 		.then(users => {
-			message.success(response, { status: 200, message: '', data: users })
+			message.success(response, 200, '', users)
 		})
 		.catch(error => {
-			message.failure(response, { status: 404, message: '', data: error })
+			message.failure(response, 404, 'No se pudieron recuperar los usuarios', error)
 		})
 }
 //Crea un nuevo usuario
@@ -21,13 +21,13 @@ function createUser(request, response) {
 	newUser.createdBy = request.decoded.username
 	newUser.save()
 		.then(user => {
-			message.success(response, { status: 200, message: 'Usuario creado con exito', data: { id: user._id } })
+			message.success(response, 200, 'Usuario creado con exito', { id: user._id })
 		})
 		.catch(error => {
 			if (error.code === 11000) {
-				message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
+				message.duplicate(response, 422, 'El usuario ya existe', null)
 			} else {
-				message.error(response, { status: 422, message: '', data: error })
+				message.error(response, 422, 'No se pudo crear el usuario', error)
 			}
 		})
 }
@@ -41,59 +41,43 @@ function getUser(request, response) {
 		.select('-password')
 		.then(user => {
 			if (user) {
-				message.success(response, { status: 200, message: 'Usuario obtenido con exito', data: user })
+				message.success(response, 200, 'Usuario obtenido con exito', user)
 			} else {
-				message.failure(response, { status: 404, message: 'No se encontró el usuario', data: null })
+				message.failure(response, 404, 'No se encontró el usuario', null)
 			}
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 422, 'No se pudo recuperar el usuario', error)
 		})
 }
-// Asigna el nuevo dato a el usuario
-function assignUser(oldValue, newValue) {
-	oldValue.username = newValue.username || oldValue.username
-	oldValue.password = newValue.password || oldValue.password
-	oldValue.status = newValue.status || oldValue.status
-	oldValue.roles = newValue.roles || oldValue.roles
-	oldValue.profiles = newValue.profiles || oldValue.profiles
-	oldValue.createdAt = newValue.createdAt || oldValue.createdAt
-	oldValue.createdBy = newValue.createdBy || oldValue.createdBy
-	oldValue.updatedAt = newValue.updatedAt || oldValue.updatedAt
-	oldValue.updatedBy = newValue.updatedBy || oldValue.updatedBy
 
-	return oldValue.save()
-}
 // Actualiza un usuario por su id
 function updateUser(request, response) {
 	// Encuentra el usuario a actualizar
 	findUser(request.params.userId)
-		//.select('-password')
 		.then(user => {
 			// Si el usuario existe se actualiza con los datos proporcionados
 			if (user) {
-				// console.log('--REQUEST--DECODED--', request.decoded);
 				let newUser = request.body
 				newUser.updatedBy = request.decoded.username
 				newUser.updatedAt = Date.now()
-				User.update({ _id: request.params.userId }, { $set: newUser })
-					.then(user => {
-						message.success(response, { status: 200, message: 'Usuario actualizado con exito', data: null })
+				User.update({ _id: request.params.userId }, { $set: newUser }, { runValidators: true })
+					.then(result => {
+						message.success(response, 200, 'Usuario actualizado con exito', null)
 					})
 					.catch(error => {
 						if (error.code === 11000) {
-							message.duplicate(response, { status: 422, message: 'El usuario ya existe', data: null })
+							message.duplicate(response, 422, 'El usuario ya existe', null)
 						} else {
-							message.error(response, { status: 422, message: '', data: error })
+							message.error(response, 422, 'No se pudo actualizar el usuario', error)
 						}
 					})
 			} else {
-				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })
+				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
 			}
 		})
 		.catch(error => {
-			console.error('--ERROR-422-2--', error);
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 422, 'No se pudo actualizar el usuario', error)
 		})
 }
 // Elimina un usuario por su id
@@ -104,17 +88,18 @@ function deleteUser(request, response) {
 			if (user) {
 				User.remove({ _id: user.id })
 					.then(user => {
-						message.success(response, { status: 200, message: 'Usuario eliminado con exito', data: null })
+						message.success(response, 200, 'Usuario eliminado con exito', null)
 					})
 					.catch(error => {
 						message.error(response, { status: 422, message: '', data: error })
+						message.error(response, 500, 'No se pudo eliminar el usuario', error)
 					})
 			} else {
-				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })
+				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
 			}
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 500, 'No se pudo eliminar el usuario', error)
 		})
 }
 // Encontrar un rol
@@ -135,34 +120,35 @@ function addUserRole(request, response) {
 								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())
 
 								if (isIncluded) {
-									message.failure(response, { status: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
+									message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
 								} else {
-									user.roles.push(role)
-									user.save()
-										.then(user => {
-											message.success(response, { status: 200, message: 'El rol se añadio con exito', data: { id: user._id } })
+									User.update({ _id: user._id }, { $addToSet: { roles: role } })
+										.then(result => {
+											console.log(result);
+											message.success(response, 200, 'El rol se añadio con exito', { id: user._id })
 										})
 										.catch(error => {
-											message.error(response, { status: 422, message: '', data: error })
+											message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
 										})
 								}
 
 							} else {
-								message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
+								message.failure(response, 404, 'El rol, no es un rol valido', null)
 							}
 						})
 						.catch(error => {
 							message.error(response, { status: 422, message: '', data: error })
+							message.error(response, 500, 'No se pudo encontrar el rol indicado', error)
 						})
 				} else {
-					message.failure(response, { status: 422, message: 'El rol, no es un rol valido', data: null })
+					message.failure(response, 422, 'El rol, no es un rol valido', null)
 				}
 			} else {
-				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })
+				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
 			}
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
 		})
 }
 // Obtener los roles de un usuario
@@ -174,17 +160,18 @@ function getUserRoles(request, response) {
 			Role.populate(user, { path: 'roles' })
 				.then(user => {
 					if (user) {
-						message.success(response, { status: 200, message: '', data: user.roles })
+						message.success(response, 200, '', user.roles)
 					} else {
-						message.error(response, { status: 404, message: 'El usuario no es un usuario valido', data: '' })
+						message.failure(response, 404, 'El usuario no es un usuario valido', null)
 					}
 				})
 				.catch(error => {
-					message.error(response, { status: 422, message: '', data: error })
+					console.error('ERROR--', error);
+					message.error(response, 422, 'No se pudo recuperar los roles1', error)
 				})
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 500, 'No se pudo recuperar los roles del usuario', error)
 		})
 }
 // Eliminar un rol de un usuario
@@ -201,25 +188,23 @@ function deleteUserRole(request, response) {
 							if (index >= 0) {
 								user.roles.splice(index, 1)
 								user.save()
-								message.success(response, { status: 200, message: 'Rol revocado con exito', data: null })
+								message.success(response, 200, 'Rol revocado con exito', null)
 							} else {
-								message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
+								message.failure(response, 404, 'El rol, no es un rol valido', null)
 							}
 						} else {
-							message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
+							message.failure(response, 404, 'El rol, no es un rol valido', null)
 						}
 					})
 					.catch(error => {
-
-						message.error(response, { status: 422, message: '', data: error })
+						message.error(response, 500, 'No se pudo encontrar el rol', error)
 					})
 			} else {
-				message.failure(response, { status: 404, message: 'El usuario, no es un usuario valido', data: null })
+				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
 			}
 		})
 		.catch(error => {
-
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 500, 'No se pudo eliminar el rol del usuario', error)
 		})
 }
 
@@ -239,13 +224,13 @@ function createDefaultUser(request, response, next) {
 						next()
 					})
 					.catch(error => {
-						message.error(response, { status: 500, message: 'No se pudo crear el superusuario', data: null })
+						message.error(response, 500, 'No se pudo crear el superusuario', null)
 					})
 			}
 			next()
 		})
 		.catch(error => {
-			message.error(response, { status: 500, message: 'No se pudo crear el super usuario', data: null })
+			message.error(response, 500, 'No se pudo crear el super usuario', null)
 		})
 }
 

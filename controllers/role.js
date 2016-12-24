@@ -6,10 +6,10 @@ const message = require('../services/response/message')
 function getAllRoles(request, response) {
 	Role.find({})
 		.then(roles => {
-			message.success(response, { status: 200, message: '', data: roles })
+			message.success(response, 200, '', roles)
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 422, '', error)
 		})
 }
 //Crea un nuevo Rol
@@ -20,13 +20,13 @@ function createRole(request, response) {
 	newRole.createdBy = request.decoded.username
 	newRole.save()
 		.then(role => {
-			message.success(response, { status: 200, message: 'Rol creado con exito', data: null })
+			message.success(response, 200, 'Rol creado con exito', null)
 		})
 		.catch(error => {
 			if (error.code === 11000) {
-				message.duplicate(response, { status: 422, message: 'El rol ya existe', data: null })
+				message.duplicate(response, 422, 'El rol ya existe', null)
 			} else {
-				message.error(response, { status: 422, message: '', data: error })
+				message.error(response, 422, '', error)
 			}
 		})
 }
@@ -39,18 +39,14 @@ function getRole(request, response) {
 	findRole(request.params.roleId)
 		.then(role => {
 			if (role) {
-				message.success(response, { status: 200, message: 'Rol obtenido con exito', data: role })
+				message.success(response, 200, 'Rol obtenido con exito', role)
 			} else {
-				message.failure(response, { status: 404, message: 'No se encontro el rol', data: null })
+				message.failure(response, 404, 'No se encontro el rol', null)
 			}
 		})
 		.catch(error => {
-			message.error(reponse, { status: 404, message: '', data: error })
+			message.error(reponse, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
 		})
-}
-// Asigna el nuevo dato al rol
-function assignRole(oldValue, newValue) {
-	return Object.assign(oldValue, newValue).save()
 }
 // Actualizar un rol por su roleId
 function updateRole(request, response) {
@@ -60,24 +56,23 @@ function updateRole(request, response) {
 				let newRole = request.body
 				newRole.updatedBy = request.decoded.username
 				newRole.updatedAt = Date()
-				assignRole(role, newRole)
+				Role.update({ _id: request.params.roleId }, { $set: newRole })
 					.then(role => {
-						message.success(response, { status: 200, message: 'Rol actualizado con exito', data: null })
+						message.success(response, 200, 'Rol actualizado con exito', null)
 					})
 					.catch(error => {
-
 						if (error.code === 11000) {
-							message.duplicate(response, { status: 422, message: 'El rol ya existe', data: null })
+							message.duplicate(response, 422, 'El rol ya existe', null)
 						} else {
-							message.error(response, { status: 404, message: '', data: error })
+							message.error(response, 500, 'No se pudo actualizar el rol', error)
 						}
 					})
 			} else {
-				message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
+				message.failure(response, 404, 'El rol, no es un rol valido', null)
 			}
 		})
 		.catch(error => {
-			message.error(response, { status: 404, message: '', data: error })
+			message.error(response, 500, 'No se pudo recuperar el rol ', error)
 		})
 }
 
@@ -87,17 +82,17 @@ function deleteRole(request, response) {
 			if (role) {
 				Role.remove({ _id: role.id })
 					.then(role => {
-						message.success(response, { status: 200, message: 'Rol eliminado con exito', data: null })
+						message.success(response, 200, 'Rol eliminado con exito', null)
 					})
 					.catch(error => {
-						message.error(response, { status: 422, message: '', data: error })
+						message.error(response, 422, '', error)
 					})
 			} else {
-				message.failure(response, { status: 404, message: 'El rol, no es un rol valido', data: null })
+				message.failure(response, 404, 'El rol, no es un rol valido', null)
 			}
 		})
 		.catch(error => {
-			message.error(response, { status: 422, message: '', data: error })
+			message.error(response, 422, 'No se pudo recuperar el rol', error)
 		})
 }
 

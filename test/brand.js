@@ -50,7 +50,6 @@ describe('BRAND: test suite', () => {
 						.get('/brands')
 						.set('x-access-token', token)
 						.end((error, response) => {
-							// console.log('::RESPONSE-BODY::', response.body);
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message').eql('')
@@ -303,13 +302,7 @@ describe('BRAND: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('Marca actualizada con exito')
-							response.body.should.have.property('data')
-							response.body.data.should.have.property('name')
-								.eql('Exit cola')
-							response.body.data.should.have.property('description')
-								.eql('Otra bebida gaseosa')
-							response.body.data.should.have.property('suppliers')
-							response.body.data.suppliers.should.to.be.a('array')
+							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})

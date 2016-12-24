@@ -7,18 +7,10 @@ function getAllSupliers(request, response) {
 
   Supplier.find({})
     .then(suppliers => {
-      message.success(response, {
-        status: 200,
-        message: '',
-        data: suppliers
-      })
+      message.success(response, 200, '', suppliers)
     })
     .catch(error => {
-      message.error(response, {
-        status: 422,
-        message: '',
-        data: error
-      })
+      message.error(response, 422, '', error)
     })
 }
 // Crea un nuevo proveedores
@@ -28,37 +20,33 @@ function createSupplier(request, response) {
 
   newSupplier.save()
     .then(supplier => {
-      message.success(response, {status: 200, message: 'Proveedor creado con exito', data: null})
+      message.success(response, 200, 'Proveedor creado con exito', null)
     })
     .catch(error => {
       if (error.code === 11000) {
-        message.error(response, {status: 422, message: 'El proveedor ya existe', data: error})
+        message.error(response, 422, 'El proveedor ya existe', error)
       } else {
-        message.error(response, { status: 422, message: '', data: error})
+        message.error(response, 422, 'No se pudo crear el usuario', error)
       }
     })
 }
 // Obtener un proveedor
 function findSupplier(supplierId) {
-    return Supplier.findById({ _id: supplierId })
+  return Supplier.findById({ _id: supplierId })
 }
 //Obtener un proveedor por su id
 function getSupplier(request, response) {
   findSupplier(request.params.supplierId)
     .then(supplier => {
       if (supplier) {
-        message.success(response, {status: 200, message: 'Proveedor obtenido con exito', data: supplier})
+        message.success(response, 200, 'Proveedor obtenido con exito', supplier)
       } else {
-        message.failure(response, {status: 404, message: 'No se encontro el proveedor', data: null})
+        message.failure(response, 404, 'No se encontro el proveedor', null)
       }
     })
     .catch(error => {
-      message.error(response, {stauts: 422, message: '', data: error})
+      message.error(response, 422, 'No se pudo recuperar el proveedor', error)
     })
-}
-// Asigna el nuevo dato o el proveedor
-function assignSupplier(oldValue, newValue) {
-  return Object.assign(oldValue, newValue).save()
 }
 // Actualiza el proveedor
 function updateSupplier(request, response) {
@@ -68,25 +56,25 @@ function updateSupplier(request, response) {
       // Si le proveedor existe se actualiza con los datos proporcionados
       if (supplier) {
         let newSupplier = request.body
-        newSupplier.updatedBy = global.currentUser.username
-        newSupplier.updatedAt = Date()
-        assignSupplier(supplier, newSupplier)
+        newSupplier.updatedBy = request.decoded.username
+        newSupplier.updatedAt = Date.now()
+        Supplier.update({ _id: request.params.userId }, { $set: newSupplier })
           .then(supplier => {
-            message.success(response, { status: 200, message: 'Proveedor actualizado con exito', data: null})
+            message.success(response, 200, 'Proveedor actualizado con exito', null)
           })
           .catch(error => {
             if (error.code === 11000) {
-              message.duplicate(response, {status: 422, message: 'El proveedor ya existe', data: null})
+              message.duplicate(response, 422, 'El proveedor ya existe', null)
             } else {
-              message.error(response, { status: 422, message: '', data: error})
+              message.error(response, 422, '', error)
             }
           })
       } else {
-        message.failure(response, { status: 404, message: 'El proveedor, no es un proveedor valido', data: null})
+        message.failure(response, 404, 'El proveedor, no es un proveedor valido', null)
       }
     })
     .catch(error => {
-      message.error(response, { status: 422, message: '', data: error})
+      message.error(response, 422, 'No se pudo actualizar el proveedor', error)
     })
 }
 // Elimina un proveedor
@@ -94,19 +82,19 @@ function deleteSupplier(request, response) {
   findSupplier(request.params.supplierId)
     .then(supplier => {
       if (supplier) {
-        Supplier.remove({_id: supplier.id})
+        Supplier.remove({ _id: supplier.id })
           .then(supplier => {
-            message.success(response, {status: 200, message: 'Proveedor eliminado con exito', data: null})
+            message.success(response, 200, 'Proveedor eliminado con exito', null)
           })
           .catch(error => {
-            message.error(response, {status: 422, message: '', data: error})
+            message.error(response, 422, '', error)
           })
       } else {
-        message.failure(response, {status: 404, message: 'El proveedor, no es un proveedor valido', data: null})
+        message.failure(response, 404, 'El proveedor, no es un proveedor valido', null)
       }
     })
     .catch(error => {
-      message.error(response, {status: 422, message:'', data: error})
+      message.error(response, 422, 'No se pudo eliminar el proveedor', error)
     })
 }
 

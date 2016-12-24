@@ -10,14 +10,14 @@ function getAllProducts(request, response) {
         .then(products => {
             // Product.populate(products, {path: 'components'})
             //     .then(products => {
-                    message.success(response, { status: 200, message: '', data: products })
-                // })
-                // .catch(error => {
-                //     message.error(response, { status: 422, message: '', data: error})
-                // })            
+            message.success(response, 200, '', products)
+            // })
+            // .catch(error => {
+            //     message.error(response, { status: 422, message: '', data: error})
+            // })            
         })
         .catch(error => {
-            message.failucer(response, { status: 404, message: '', data: error })
+            message.failure(response, 404, 'No se pudieron recuperar los productos', error)
         })
 }
 
@@ -28,13 +28,13 @@ function createProduct(request, response) {
 
     newProduct.save()
         .then(product => {
-            message.success(response, { status: 200, message: 'Producto creado con exito', data: null })
+            message.success(response, 200, 'Producto creado con exito', null)
         })
         .catch(error => {
             if (error.code === 11000) {
-                message.duplicate(response, { status: 422, message: 'El producto ya existe', data: null })
+                message.duplicate(response, 422, 'El producto ya existe', null)
             } else {
-                message.error(response, { status: 422, message: '', data: error })
+                message.error(response, 422, 'No se pudo crear el usuario', error)
             }
         })
 }
@@ -47,24 +47,20 @@ function getProduct(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                Brand.populate(product, {path: 'brand'})
+                Brand.populate(product, { path: 'brand' })
                     .then(product => {
-                        message.success(response, { status: 200, message: 'Producto obtenido con exito', data: product })
+                        message.success(response, 200, 'Producto obtenido con exito', product)
                     })
                     .catch(error => {
-                        message.error(response, { status: 422, message: '', data: error })
+                        message.error(response, 422, '', error)
                     })
             } else {
-                message.failure(response, { status: 404, message: 'No se encontró el producto', data: null })
+                message.failure(response, 404, 'No se encontró el producto', null)
             }
         })
         .catch(error => {
-            message.error(response, { status: 422, message: '', data: error })
+            message.error(response, 422, '', error)
         })
-}
-// Asigna el nuevo dato al producto
-function assignProduct(oldValue, newValue) {
-    return Object.assign(oldValue, newValue).save()
 }
 // Actualiza un producto por su id
 function updateProduct(request, response) {
@@ -73,64 +69,67 @@ function updateProduct(request, response) {
         .then(product => {
             // Si el producto existe se actualiza con los datos proporcionados
             if (product) {
-                assignProduct(product, request.body)
+                let newProduct = request.body
+                newProduct.updatedBy = request.decoded.username
+                newProduct.updatedAt = Date.now()
+                Product.update({ _id: request.params.productId }, { $set: newProduct })
                     .then(user => {
-                        message.success(response, { status: 200, message: 'Producto actualizado con exito', data: null })
+                        message.success(response, 200, 'Producto actualizado con exito', null)
                     })
                     .catch(error => {
                         if (error.code === 11000) {
-                            message.duplicate(response, { status: 422, message: 'El producto ya existe', data: null })
+                            message.duplicate(response, 422, 'El producto ya existe', null)
                         } else {
-                            message.error(response, { status: 422, message: '', data: error })
+                            message.error(response, 422, '', error)
                         }
                     })
             } else {
-                message.failure(response, { status: 404, message: 'El producto, no es un producto valido', data: null })
+                message.failure(response, 404, 'El producto, no es un producto valido', null)
             }
         })
         .catch(error => {
-            message.error(response, { status: 422, message: '', data: error })
+            message.error(response, 422, '', error)
         })
 }
 // Elimina un producto por su id
 function deleteProduct(request, response) {
     findProduct(request.params.productId)
-    .then(product => {
-        if (product) {
-            Product.remove({_id: product.id})
-                .then(product => {
-                    message.success(response, { status: 200, message: 'Producto eliminado con exito', data: null})
-                })
-                .catch(error => {
-                    message.error(response, { status: 422, message: '', data: error})
-                })
-        } else {
-            message.failure(response, { status: 404, message: 'El producto, no es un producto valido', data: null})
-        }
-    })
-    .catch(error => {
-        message.error(response, {status: 422, message: '', data: error})
-    })
+        .then(product => {
+            if (product) {
+                Product.remove({ _id: product.id })
+                    .then(product => {
+                        message.success(response, 200, 'Producto eliminado con exito', null)
+                    })
+                    .catch(error => {
+                        message.error(response, 422, '', error)
+                    })
+            } else {
+                message.failure(response, 404, 'El producto, no es un producto valido', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 422, '', error)
+        })
 }
 
 function getBrand(request, response) {
     findProduct(request.params.productId)
         .then(product => {
-            
+
             if (product) {
-                Brand.populate(product, {path: 'brand'})
+                Brand.populate(product, { path: 'brand' })
                     .then(product => {
-                        message.success(response, { status: 200, message: 'Marca obtenida con exito', data: product.brand})
+                        message.success(response, 200, 'Marca obtenida con exito', product.brand)
                     })
                     .catch(error => {
-                        message.error(response, { status: 422, message: '', data: error})
+                        message.error(response, 422, '', error)
                     })
             } else {
-                message.failure(response, { status: 404, message: 'No se econtro el producto', data: null})
+                message.failure(response, 404, 'No se econtro el producto', null)
             }
         })
         .catch(error => {
-            message.error(response, { status: 422, message: '', data: error})
+            message.error(response, 422, '', error)
         })
 }
 
