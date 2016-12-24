@@ -1,0 +1,32 @@
+{
+    "documentType": "FACTURA",
+    "documentNumber": "00000293",
+    "documentDate": "2016-11-23T23:07:12.000Z",
+    "paymentMethod": "CONTADO",
+    "stackholder": [
+        {
+            "type": "NEGOCIO",
+            "name": "Cola del Fuego S.A",
+            "tributaryCode": "202202231962",
+            "grossIncomeCode": "122022022319623",
+            "address": ["Junin y Maipu", "Lavalle 742"],
+            "taxStatus": "RESPONSABLE INSCRIPTO"
+        },
+        {
+            "type": "CLIENTE",
+            "name": "ELSA LAME",
+            "address": [],
+            "tributaryCode": "29347547891"
+        },
+        {
+            "type": "VENDEDOR",
+            "name": "BENJA MONN"
+        },
+        {
+            "type": "CAJERO",
+            "name": "JAVIER YUYA"
+        },
+    ],
+    "createdBy": "super@mail.com",
+    "createdAt": "2016-11-23T23:07:12.000Z"
+}

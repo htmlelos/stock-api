@@ -26,11 +26,11 @@ function createProfile(request, response) {
 		})
 		.catch(error => {
 			let message = ''
-			if(error.code === 11000) {
+			if (error.code === 11000) {
 				message = 'El perfil ya existe'
 			} else {
-				for(let property in error.errors) {
-					if(error.errors.hasOwnProperty(property)) {
+				for (let property in error.errors) {
+					if (error.errors.hasOwnProperty(property)) {
 						message += error.errors[property].message + '<br>'
 					}
 				}
@@ -47,7 +47,7 @@ function findProfile(profileId) {
 function getProfile(request, response) {
 	findProfile(request.params.profileId)
 		.then(profile => {
-			if(profile) {
+			if (profile) {
 				response.json({ message: 'Perfil obtenido con exito', profile })
 			} else {
 				response.status(404).json({ message: 'No se encontro el perfil', profile })
@@ -66,13 +66,17 @@ function assignProfile(oldValue, newValue) {
 function updateProfile(request, response) {
 	findProfile(request.params.profileId)
 		.then(profile => {
-			if(profile) {
-				assignProfile(profile, request.body)
+			if (profile) {
+				let newProfile = request.body
+				newProfile.updateBy = require.decoded.username
+				newProfile.updatedAt = Date.now()
+				//assignProfile(profile, request.body)
+				Profile.update({ _id: request.params.userId }, { $set: newProfile })
 					.then(profile => {
 						response.json({ message: 'Perfil actualizado con exito', profile })
 					})
 					.catch(error => {
-						if(error.code === 11000) {
+						if (error.code === 11000) {
 							response.status(422).send({ message: 'El perfil ya existe' })
 						} else {
 							response.send(error)
@@ -93,7 +97,7 @@ function updateProfile(request, response) {
 function deleteProfile(request, response) {
 	findProfile(request.params.profileId)
 		.then(profile => {
-			if(profile) {
+			if (profile) {
 				Profile.remove({ _id: profile.id })
 					.then(profile => {
 						response.json({ message: 'Perfil eliminado con exito' })

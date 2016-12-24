@@ -31,6 +31,10 @@ server.listen(config.port, function() {
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 
+
+process.on('unhandledRejection', reason => {
+	console.error('UNHANDLED :' , reason);
+})
 // process.on('uncaughtException', error => {
 //     console.error('--ERROR--', error);
 //     if (error.syscall !== 'listen')

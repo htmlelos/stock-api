@@ -1,34 +1,33 @@
-const success = function (response, info) {
-  return response.status(info.status||200).json(info)
+const success = function(response, status=200, message='', data) {
+  return response.status(status).json({status, message, data})
 }
 
-const failure = function (response, info) {
-  return response.status(info.status||404).json(info)
+const failure = function (response, status=404, message='', data) {
+  return response.status(status).json({status, message, data})
 }
 
-const duplicate = function (response, info) {
-  return response.status(info.status||422).json(info)
+
+const duplicate = function (response, status=422, message='', data) {
+  return response.status(status).json({status, message, data})
 }
-//
-const error = function (response, info) {
-  if (info.data.code === 11000) {
-    return response.status(info.status||422).json({
-      status: info.status,
-      message: info.message,
-      data: null
-    })
-  } else {
-      for(let property in info.data.errors) {
-        info.message = info.data.errors[property].message + ','
+
+const error = function (response, status=422, message='', data) {
+  if (data.code === 11000) {
+    return response.status(status).json({status, message, data})
+  } else {      
+      for(let property in data.errors) {
+        // console.log('PROPERTY: ', property.message);
+        // console.log('**DATA ERROR**', data.errors[property].message);
+        message = data.errors[property].message + ','
       }
-      info.message = info.message.replace(/(^,)|(,$)/g, "")
-      info.data = null
-    return response.status(info.status||422).json(info)
+      message = message.replace(/(^,)|(,$)/g, "")
+      data = null
+    return response.status(status).json({status, message, data})
   }
 }
 
-const notAuthorized = function (response, info) {
-  return response.status(info.status||401).json(info)
+const notAuthorized = function (response, status=401, message='', data) {
+  return response.status(status).json({status, message, data})
 }
 
 module.exports = {

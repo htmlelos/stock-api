@@ -41,6 +41,7 @@ describe('USERS: test suite', () => {
 				.post('/login')
 				.send(superUser)
 				.end((error, response) => {
+					console.log('RESPONSE - LOGIN');
 					response.should.be.status(200)
 					response.body.should.have.property('data')
 					response.body.data.should.have.property('token')
@@ -259,7 +260,6 @@ describe('USERS: test suite', () => {
 	})
 	// GET /user/:userId
 	describe('GET /user/:userId', () => {
-
 		it('deberia obtener un usuario por su id', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -302,7 +302,6 @@ describe('USERS: test suite', () => {
 						})
 				})
 		})
-
 		it('no deberia obtener un usuario con id de usuario invalido', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -387,7 +386,6 @@ describe('USERS: test suite', () => {
 						})
 				})
 		})
-
 		it('no deberia actualizar un usuario con un id de usuario invalido', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -432,7 +430,6 @@ describe('USERS: test suite', () => {
 				})
 
 		})
-
 		it('no deberia actualizar un usuario con username duplicado', done => {
 			let superUser = {
 				username: 'super@mail.com',
@@ -609,7 +606,6 @@ describe('USERS: test suite', () => {
 						.set('x-access-token', token)
 						.send({ roleId: role._id.toString() })
 						.end((error, response) => {
-
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
