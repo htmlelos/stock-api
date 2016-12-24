@@ -58,10 +58,6 @@ function getProfile(request, response) {
 			response.end()
 		})
 }
-//Asigna el nuevo dato al rol
-function assignProfile(oldValue, newValue) {
-	return Object.assign(oldValue, newValue).save()
-}
 //Actualiza un rol por su profileId
 function updateProfile(request, response) {
 	findProfile(request.params.profileId)
@@ -70,7 +66,6 @@ function updateProfile(request, response) {
 				let newProfile = request.body
 				newProfile.updateBy = require.decoded.username
 				newProfile.updatedAt = Date.now()
-				//assignProfile(profile, request.body)
 				Profile.update({ _id: request.params.userId }, { $set: newProfile })
 					.then(profile => {
 						response.json({ message: 'Perfil actualizado con exito', profile })

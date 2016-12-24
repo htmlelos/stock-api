@@ -48,10 +48,6 @@ function getRole(request, response) {
 			message.error(reponse, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
 		})
 }
-// Asigna el nuevo dato al rol
-function assignRole(oldValue, newValue) {
-	return Object.assign(oldValue, newValue).save()
-}
 // Actualizar un rol por su roleId
 function updateRole(request, response) {
 	findRole(request.params.roleId)

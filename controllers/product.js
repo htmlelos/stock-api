@@ -62,10 +62,6 @@ function getProduct(request, response) {
             message.error(response, 422, '', error)
         })
 }
-// Asigna el nuevo dato al producto
-function assignProduct(oldValue, newValue) {
-    return Object.assign(oldValue, newValue).save()
-}
 // Actualiza un producto por su id
 function updateProduct(request, response) {
     // Encuentra el usuario a actualizar
@@ -76,7 +72,6 @@ function updateProduct(request, response) {
                 let newProduct = request.body
                 newProduct.updatedBy = request.decoded.username
                 newProduct.updatedAt = Date.now()
-                //assignProduct(product, request.body)
                 Product.update({ _id: request.params.productId }, { $set: newProduct })
                     .then(user => {
                         message.success(response, 200, 'Producto actualizado con exito', null)

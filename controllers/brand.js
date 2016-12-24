@@ -64,10 +64,6 @@ function getBrand(request, response) {
     })
 }
 
-function assignBrand(oldValue, newValue) {
-  return Object.assign(oldValue, newValue).save()
-}
-
 function updateBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {

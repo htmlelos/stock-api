@@ -48,10 +48,6 @@ function getSupplier(request, response) {
       message.error(response, 422, 'No se pudo recuperar el proveedor', error)
     })
 }
-// Asigna el nuevo dato o el proveedor
-function assignSupplier(oldValue, newValue) {
-  return Object.assign(oldValue, newValue).save()
-}
 // Actualiza el proveedor
 function updateSupplier(request, response) {
   // Encuentra el proveedor a actualizar
@@ -62,7 +58,6 @@ function updateSupplier(request, response) {
         let newSupplier = request.body
         newSupplier.updatedBy = request.decoded.username
         newSupplier.updatedAt = Date.now()
-        //assignSupplier(supplier, newSupplier)
         Supplier.update({ _id: request.params.userId }, { $set: newSupplier })
           .then(supplier => {
             message.success(response, 200, 'Proveedor actualizado con exito', null)

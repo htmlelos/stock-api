@@ -21,7 +21,7 @@ function createUser(request, response) {
 	newUser.createdBy = request.decoded.username
 	newUser.save()
 		.then(user => {
-			message.success(response, 200, 'Usuario creado con exito', {id: user._id})
+			message.success(response, 200, 'Usuario creado con exito', { id: user._id })
 		})
 		.catch(error => {
 			if (error.code === 11000) {
@@ -61,7 +61,7 @@ function updateUser(request, response) {
 				let newUser = request.body
 				newUser.updatedBy = request.decoded.username
 				newUser.updatedAt = Date.now()
-				User.update({ _id: request.params.userId }, { $set: newUser }, {runValidators: true})
+				User.update({ _id: request.params.userId }, { $set: newUser }, { runValidators: true })
 					.then(result => {
 						message.success(response, 200, 'Usuario actualizado con exito', null)
 					})
@@ -122,12 +122,10 @@ function addUserRole(request, response) {
 								if (isIncluded) {
 									message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
 								} else {
-									// user.roles.push(role)
-									// user.save()
-										User.update({_id: user._id}, {$addToSet: {roles: role}})
+									User.update({ _id: user._id }, { $addToSet: { roles: role } })
 										.then(result => {
 											console.log(result);
-											message.success(response, 200, 'El rol se añadio con exito', {id: user._id})
+											message.success(response, 200, 'El rol se añadio con exito', { id: user._id })
 										})
 										.catch(error => {
 											message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
