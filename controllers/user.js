@@ -124,7 +124,6 @@ function addUserRole(request, response) {
 								} else {
 									User.update({ _id: user._id }, { $addToSet: { roles: role } })
 										.then(result => {
-											console.log(result);
 											message.success(response, 200, 'El rol se añadio con exito', { id: user._id })
 										})
 										.catch(error => {
@@ -166,7 +165,6 @@ function getUserRoles(request, response) {
 					}
 				})
 				.catch(error => {
-					console.error('ERROR--', error);
 					message.error(response, 422, 'No se pudo recuperar los roles1', error)
 				})
 		})
@@ -220,7 +218,6 @@ function createDefaultUser(request, response, next) {
 
 				superUser.save()
 					.then(user => {
-						console.log('SUPER USER CREATED')
 						next()
 					})
 					.catch(error => {

@@ -17,14 +17,14 @@ const login = (request, response) => {
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
-            message.error(response, { status: 500, message: '', data: error })
+            message.error(response, 500, '', error)
           })
       } else {
-        message.notAuthorized(response, { status: 401, message: 'No se pudo autenticar verifique sus credenciales', token: null })
+        message.notAuthorized(response, 401, 'No se pudo autenticar verifique sus credenciales', { token: null })
       }
     })
     .catch(error => {
-      message.error(response, { status: 500, message: '', data: error })
+      message.error(response, 500, '', error)
     })
 }
 
@@ -34,7 +34,7 @@ const authenticate = (request, response, next) => {
     // decodificar el token
     jwt.verify(token, settings.secret, (error, decoded) => {
       if (error) {
-        return message.failure(response, { status: 401, message: 'Error al intentar autenticarse', success: false })
+        return message.failure(response, 401, 'Error al intentar autenticarse', { success: false })
       } else {
         request.decoded = decoded._doc
         //console.log('--VERIFY--', request.decoded);
@@ -42,7 +42,7 @@ const authenticate = (request, response, next) => {
       }
     })
   } else {
-    return message.failure(response, { status: 403, message: 'Por favor revise sus credenciales', success: false })
+    return message.failure(response, 403, 'Por favor revise sus credenciales', { success: false })
   }
 }
 

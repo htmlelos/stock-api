@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 // Establece las promesas de mongoose a las promesas nativas de javascript
 mongoose.Promise = global.Promise
 
-const Address = new Schema({
+const AddressSchema = new Schema({
   address: {
     type: String
   }
@@ -12,7 +12,7 @@ const Address = new Schema({
   versionKey: false
 })
 
-const Contact = new Schema({
+const ContactSchema = new Schema({
   phone: {
     type: String
   },
@@ -29,8 +29,8 @@ const SupplierSchema = new Schema({
     required: 'Debe proporcionar un nombre para el proveedor',
     unique: true
   },
-  addresses: [Address],
-  contacts: [Contact],
+  addresses: [AddressSchema],
+  contacts: [ContactSchema],
   status: {
     type: String,
     enum: {
