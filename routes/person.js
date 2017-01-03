@@ -6,4 +6,8 @@ const router = require('express').Router()
 router.route('/persons')
     .get(person.getAllPersons)
 
+// POST /person - Crea una nueva persona
+router.route('/person')
+    .post(person.createPerson)
+
 module.exports = router

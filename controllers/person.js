@@ -1,12 +1,11 @@
 'use strict';
-const Person = require('../models/supplier')
+const Person = require('../models/person')
 const message = require('../services/response/message')
 
 //Obtener todos los proveedores
 function getAllPersons(request, response) {
     Person.find({})
-        .then(persons => {
-            console.log('PERSONAS', persons);
+        .then(persons => {            
             message.success(response, 200, '', persons)
         })
         .catch(error => {
@@ -15,6 +14,7 @@ function getAllPersons(request, response) {
 }
 // Crea una nueva persona en la base de datos
 function createPerson(request, response) {
+    console.log('HERE');
     // Crea una nueva instancia de una persona con los parametros recibidos
     let newPerson = new Person(request.body)
 
@@ -32,5 +32,6 @@ function createPerson(request, response) {
 }
 
 module.exports = {
-    getAllPersons
+    getAllPersons,
+    createPerson
 }
