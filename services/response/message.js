@@ -12,6 +12,7 @@ const duplicate = function (response, status=422, message='', data) {
 }
 
 const error = function (response, status=422, message='', data) {
+  // console.log('CODE', data.code);
   if (data.code === 11000) {
     return response.status(status).json({status, message, data})
   } else {      

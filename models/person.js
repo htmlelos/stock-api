@@ -32,7 +32,7 @@ const PersonSchema = new Schema({
         },
         required: 'Debe proporcionar un tipo de persona'
     },
-    fistName: {
+    firstName: {
         type: String,
         required: 'Debe proporcionar el nombre de la persona'
     },
@@ -47,8 +47,8 @@ const PersonSchema = new Schema({
     taxStatus: {
         type: String,
         enum: {
-            values: ['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO'],
-            message: 'El estado de la persona solo puede ser RESONSABLE INSCRIPTO, RESPONSABLE NO INSCRIPTO, o MONOTRIBUTO'
+            values: ['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'],
+            message: 'El estado de la persona solo puede ser RESPONSABLE INSCRIPTO, RESPONSABLE NO INSCRIPTO, MONOTRIBUTO o EXENTO'
         }
     },
     grossIncomeCode: {
@@ -59,7 +59,7 @@ const PersonSchema = new Schema({
         type: String,
         enum: {
             values: ['ACTIVO', 'INACTIVO'],
-            message: 'El estado del proveedor solo puede ser ACTIVO o INACTIVO'
+            message: 'El estado de la persona solo puede ser ACTIVO o INACTIVO'
         },
         required: 'Debe definir el estado del proveedor'
     },

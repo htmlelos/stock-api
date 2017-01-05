@@ -15,9 +15,7 @@ module.exports = function routes(server) {
   server.use('/', role)
   server.use('/', profile)
   server.use('/', user)
-  console.log('HERE - ROUTE');
   server.use('/', person)
-  //server.use('/', supplier)
   server.use('/', brand)
   server.use('/', product)
   server.use('/', document)
