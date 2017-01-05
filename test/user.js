@@ -17,7 +17,6 @@ chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
 describe('USERS: test suite', () => {
-	let mockUser = null
 	let token = ''
 	// Se ejecuta antes de cada test
 	beforeEach(done => {
@@ -41,7 +40,6 @@ describe('USERS: test suite', () => {
 				.post('/login')
 				.send(superUser)
 				.end((error, response) => {
-					console.log('RESPONSE - LOGIN');
 					response.should.be.status(200)
 					response.body.should.have.property('data')
 					response.body.data.should.have.property('token')

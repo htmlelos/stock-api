@@ -1,11 +1,11 @@
 {
     "header": {
-        "documentType": "FACTURA",
-        "documentStatus": "NUEVA",
-        "documentNumber": "00000293",
-        "documentDate": "2016-11-23T23:07:12.000Z",
+        "type": "FACTURA",
+        "status": "NUEVA",
+        "number": "00000293",
+        "date": "2016-11-23T23:07:12.000Z",
         "paymentMethod": "CONTADO",
-        "stackholder": [
+        "actors": [
             {
                 "type": "NEGOCIO",
                 "name": "Cola del Fuego S.A",
@@ -33,26 +33,29 @@
             }
         ]
     },
-    "details": [{
-        "name": "QUESO CREOMOSO CAJA",
-        "quantity": 2,
-        "priceUnit": 82.50,
-        "discount": 0,
-        "subTotal": 165.00
-    },
-    {
-        "name": "PARRILLERO PUNTA DEL AGUA",
-        "quantity": 1,
-        "priceUnit": 226.80,
-        "discount": 0,
-        "subTotal": 226.80
-    },{
-        "name": "CRUDO CHUCUTEN LOS CALVO",
-        "quantity": 1,
-        "priceUnit": 413.00,
-        "discount": 0,
-        "subTotal": 413.00
-    }],
+    "details": [
+        {
+            "name": "QUESO CREOMOSO CAJA",
+            "quantity": 2,
+            "priceUnit": 82.50,
+            "discount": 0,
+            "subTotal": 165.00
+        },
+        {
+            "name": "PARRILLERO PUNTA DEL AGUA",
+            "quantity": 1,
+            "priceUnit": 226.80,
+            "discount": 0,
+            "subTotal": 226.80
+        },
+        {
+            "name": "CRUDO CHUCUTEN LOS CALVO",
+            "quantity": 1,
+            "priceUnit": 413.00,
+            "discount": 0,
+            "subTotal": 413.00
+        }
+    ],
     "footer": {
         "subtotal": 804.80,
         "discounts": 0,
@@ -61,8 +64,7 @@
     },
     "createdBy": "super@mail.com",
     "createdAt": "2016-11-23T23:07:12.000Z"
-}
-{
+}{
     "header": {
         "documentType": "ORDEN COMPRA",
         "documentStatus": "RECIBIDA",
@@ -97,26 +99,29 @@
             }
         ]
     },
-    "details": [{
-        "name": "QUESO CREOMOSO CAJA",
-        "quantity": 5,
-        "priceUnit": 82.50,
-        "discount": 0,
-        "subTotal": 165.00
-    },
-    {
-        "name": "PARRILLERO PUNTA DEL AGUA",
-        "quantity": 1,
-        "priceUnit": 226.80,
-        "discount": 0,
-        "subTotal": 226.80
-    },{
-        "name": "CRUDO CHUCUTEN LOS CALVO",
-        "quantity": 1,
-        "priceUnit": 413.00,
-        "discount": 0,
-        "subTotal": 413.00
-    }],
+    "details": [
+        {
+            "name": "QUESO CREOMOSO CAJA",
+            "quantity": 5,
+            "priceUnit": 82.50,
+            "discount": 0,
+            "subTotal": 165.00
+        },
+        {
+            "name": "PARRILLERO PUNTA DEL AGUA",
+            "quantity": 1,
+            "priceUnit": 226.80,
+            "discount": 0,
+            "subTotal": 226.80
+        },
+        {
+            "name": "CRUDO CHUCUTEN LOS CALVO",
+            "quantity": 1,
+            "priceUnit": 413.00,
+            "discount": 0,
+            "subTotal": 413.00
+        }
+    ],
     "footer": {
         "subtotal": 804.80,
         "discounts": 0,

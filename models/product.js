@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const Brand = require('./brand')
 const Schema = mongoose.Schema
-// Estrablece las promesas de mongoose como promesas nativas de javascript
+// Establece las promesas nativas como libreria de promesas para mongoose
 mongoose.Promise = global.Promise
 
 const PriceList = new Schema({

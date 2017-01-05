@@ -13,7 +13,7 @@ function getAllSupliers(request, response) {
       message.error(response, 422, '', error)
     })
 }
-// Crea un nuevo proveedores
+// Crea un nuevo proveedor
 function createSupplier(request, response) {
   //Crea una nueva instancia de proveedor con los parametros recibidos
   let newSupplier = new Supplier(request.body)
