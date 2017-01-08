@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: test suite', () => {
+describe('PERSON: test suite', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -365,6 +365,39 @@ describe.only('PERSON: test suite', () => {
                             done()
                         })
                 })            
+        })
+
+        it.skip('el codigo tributario debe ser valido', done => {})
+        it.skip('el codigo tributario debe tener x caracteres', done => {})
+        it.skip('el codigo de ingresos brutos debe tener x caracteres', done => {})
+        it.skip('si la persona es tipo PROVEEDOR debe proporcionar el cuit', done => {})
+    })
+
+    describe('GET /person/:personId', () => {
+        it('deberia obtener una persona por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person  = new Person({
+                        type: 'CLIENTE',
+                        firstName: 'Juan',
+                        lastName: 'Perez',
+                        address: [],
+                        tributaryCode: '202202231962',
+                        taxStatus: ''
+                    });
+                })
         })
     })
 })

@@ -14,7 +14,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principar de las pruebas de proveedores
-describe('SUPPLIER: test suite', () => {
+describe.skip('SUPPLIER: test suite', () => {
     let token = ''
     beforeEach(done => {
         //Supplier.remove({}, error => {})
