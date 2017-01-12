@@ -10,4 +10,10 @@ router.route('/persons')
 router.route('/person')
     .post(person.createPerson)
 
+// GET /person/:personId - Obtener una persona por su id
+router.route('/person/:personId')
+    .get(person.getPerson)
+
+//     
+
 module.exports = router

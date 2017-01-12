@@ -20,7 +20,7 @@ function createRole(request, response) {
 	newRole.createdBy = request.decoded.username
 	newRole.save()
 		.then(role => {
-			message.success(response, 200, 'Rol creado con exito', null)
+			message.success(response, 200, 'Rol creado con exito', {id: role._id})
 		})
 		.catch(error => {
 			if (error.code === 11000) {

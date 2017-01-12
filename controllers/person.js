@@ -30,8 +30,28 @@ function createPerson(request, response) {
             }
         })
 }
+// Obtener una persona
+function findPerson(personId) {
+    return Person.findById({_id: personId})
+}
+// Obtiene una persona por su id
+function getPerson(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                message.success(response, 200, 'Persona obtenida con exito', person)
+            } else {
+                message.failure(response, 404, 'No se encontro la persona', null)
+            }
+        })
+        .catch(error => {
+            // console.error('--ERROR--', error);
+            message.error(response, 422, 'No se pudo recuperar la persona', error)
+        })
+}
 
 module.exports = {
     getAllPersons,
-    createPerson
+    createPerson,
+    getPerson
 }
