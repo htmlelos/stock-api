@@ -483,7 +483,7 @@ describe('PERSON: test suite', () => {
         })
     })
 
-    describe.only('PUT /person/personId', () => {
+    describe.only('PUT /person/:personId', () => {
         it('deberia actualizar una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -493,8 +493,95 @@ describe('PERSON: test suite', () => {
             chai.request(server)
                 .post('/login')
                 .send(superUser)
-                .end()
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'CLIENTE',
+                        firstName: 'Juan',
+                        lastName: 'Perez',
+                        address: [],
+                        tributaryCode: '202202231962',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        contacts: [],
+                        status: 'INACTIVO'
+                    })
+
+                    person.save()
+                        .then(user => console.log())
+                        .catch(error => console.error('TEST', error))
+
+                    // console.log('::PERSONA_ID:: ', person._id);
+
+                    chai.request(server)
+                        .put('/person/' + person._id)
+                        .set('x-access-token', token)
+                        .send({
+                            status: 'ACTIVO'
+                        })
+                        .end((error, response) => {
+                            console.log('::RESPONSE-BODY::', response.body)
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona actualizada con exito')
+                            done()
+                        })
+                })
         })
 
+        it('No deberia actualizar una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'CLIENTE',
+                        firstName: 'Juan',
+                        lastName: 'Perez',
+                        address: [],
+                        tributaryCode: '202202231962',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        contacts: [],
+                        status: 'INACTIVO'
+                    })
+
+                    person.save()
+                        .then(user => console.log())
+                        .catch(error => console.error('TEST', error))
+
+                    // console.log('::PERSONA_ID:: ', person._id);
+
+                    chai.request(server)
+                        .put('/person/58dece08eb0548118ce31f11')
+                        .set('x-access-token', token)
+                        .send({
+                            status: 'ACTIVO'
+                        })
+                        .end((error, response) => {
+                            console.log('::RESPONSE-BODY::', response.body)
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('La persona, no es una persona valida')
+                            done()
+                        })
+                })
+        })
     })
 })

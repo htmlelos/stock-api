@@ -14,6 +14,8 @@ router.route('/person')
 router.route('/person/:personId')
     .get(person.getPerson)
 
-//     
+// PUT /person/:personId - Actualizar una persona por su id
+router.route('/person/:personId')    
+    .put(person.updatePerson)    
 
 module.exports = router
