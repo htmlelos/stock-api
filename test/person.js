@@ -372,7 +372,7 @@ describe('PERSON: test suite', () => {
         it.skip('el codigo de ingresos brutos debe tener x caracteres', done => { })
         it.skip('si la persona es tipo PROVEEDOR debe proporcionar el cuit', done => { })
     })
-
+    // GET /person/:personId
     describe('GET /person/:personId', () => {
         it('deberia obtener una persona por su id', done => {
             let superUser = {
@@ -482,8 +482,8 @@ describe('PERSON: test suite', () => {
                 })
         })
     })
-
-    describe.only('PUT /person/:personId', () => {
+    // PUT /person/:personId
+    describe('PUT /person/:personId', () => {
         it('deberia actualizar una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -524,7 +524,6 @@ describe('PERSON: test suite', () => {
                             status: 'ACTIVO'
                         })
                         .end((error, response) => {
-                            console.log('::RESPONSE-BODY::', response.body)
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
@@ -574,7 +573,6 @@ describe('PERSON: test suite', () => {
                             status: 'ACTIVO'
                         })
                         .end((error, response) => {
-                            console.log('::RESPONSE-BODY::', response.body)
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
@@ -583,5 +581,9 @@ describe('PERSON: test suite', () => {
                         })
                 })
         })
+    })
+    // DELETE /person/:personId
+    describe.skip('DELETE /person/:personId', () => {
+
     })
 })

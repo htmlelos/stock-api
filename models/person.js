@@ -48,7 +48,7 @@ const PersonSchema = new Schema({
         type: String,
         enum: {
             values: ['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'],
-            message: 'El estado impositivo de la persona solo puede ser RESPONSABLE INSCRIPTO, RESPONSABLE NO INSCRIPTO, MONOTRIBUTO o EXENTO'
+            message: 'El estado de la persona solo puede ser RESPONSABLE INSCRIPTO, RESPONSABLE NO INSCRIPTO, MONOTRIBUTO o EXENTO'
         }
     },
     grossIncomeCode: {
