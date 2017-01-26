@@ -81,10 +81,32 @@ function updatePerson(request, response) {
             message.error(response, 422, 'No se pudo actualizar la persona', error)
         })
 }
+// Elimina una persona
+function deletePerson(request, response) {
+    console.log('ELIMINAR');
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                Person.remove({_id: person.id})
+                    .then(person => {
+                        message.success(response, 200, 'Persona eliminada con exito', null)
+                    })
+                    .catch(error => {
+                        message.error(response, 422, '', error)
+                    })
+            } else {
+                message.failure(response, 404, 'La persona no es una persona valida', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 422, 'No se pudo eliminar la persona', error)
+        })
+}
 
 module.exports = {
     getAllPersons,
     createPerson,
     getPerson,
-    updatePerson
+    updatePerson,
+    deletePerson
 }

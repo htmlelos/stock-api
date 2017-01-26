@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PERSON: test suite', () => {
+describe.only('PERSON: test suite', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -583,7 +583,95 @@ describe('PERSON: test suite', () => {
         })
     })
     // DELETE /person/:personId
-    describe.skip('DELETE /person/:personId', () => {
+    describe('DELETE /person/:personId', () => {
+        it('deberia eliminar una persona por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
 
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'CLIENTE',
+                        firstName: 'Juan',
+                        lastName: 'Perez',
+                        address: [],
+                        tributaryCode: '202202231962',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        contacts: [],
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .then(person => console.log())
+                        .catch(error => console.error('TEST: ', error))
+
+                    chai.request(server)
+                        .delete('/person/' + person._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona eliminada con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia eliminar una persona con un id de persona invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'CLIENTE',
+                        firstName: 'Juan',
+                        lastName: 'Perez',
+                        address: [],
+                        tributaryCode: '202202231962',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        contacts: [],
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .then(person => console.log())
+                        .catch(error => console.error('TEST: ', error))
+
+                    chai.request(server)
+                        .delete('/person/58dece08eb0548118ce31f11')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('La persona no es una persona valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })            
+        })
     })
 })

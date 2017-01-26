@@ -3,6 +3,7 @@ const cors = require('cors')
 const express = require('express')
 const server = express()
 const bodyParser = require('body-parser')
+const expressValidator = require('express-validator')
 const morgan = require('morgan')
 const config = require('config')
 const mongoose = require('./services/database/mongoose')
@@ -21,8 +22,7 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
 
 server.use(bodyParser.urlencoded({extended: true}))
 server.use(bodyParser.json())
-// server.use(bodyParser.text())
-// server.use(bodyParser.json({type: 'application/json'}))
+server.use(expressValidator())
 superUser(server)
 	// Routes
 routes(server)
