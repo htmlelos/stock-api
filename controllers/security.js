@@ -7,13 +7,28 @@ const message = require('../services/response/message')
 const settings = require('../settings.cfg')
 
 const login = (request, response) => {
+  request.checkBody('username', 'Nombre de usuario invalido').notEmpty().isEmail()
+  request.checkBody('password', 'Contraseña invalida').notEmpty().isLength({min: 4})
+  // Validar los parametros de entrada
+  request.getValidationResult()
+    .then(result => {
+      let errors = result.useFirstErrorOnly().array()
+      console.log(errors)
+      if (errors) {
+        let messages = []
+        errors.forEach(error => messages.push(error.msg))
+        messages.join()
+        console.log('MESSAGES: ',messages)
+        message.notAuthorized(response, 401, messages, { token: null })
+      }
+    })
+  // Verificar las credenciales
   User.findOne({ username: request.body.username })
     .then(user => {
       if (user) {
         Role.populate(user, { path: 'roles' })
           .then(user => {
             user.roles = user.roles.map(element => { return element.name })
-            // console.log('--USER LOGGED--', user);
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
