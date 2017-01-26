@@ -11,11 +11,12 @@ router.route('/person')
     .post(person.createPerson)
 
 // GET /person/:personId - Obtener una persona por su id
+// PUT /person/:personId - Actualizar una persona por su id
+// DELETE /person/:personId - Eliminar una persona por su id
 router.route('/person/:personId')
     .get(person.getPerson)
+    .put(person.updatePerson)
+    .delete(person.deletePerson)
 
-// PUT /person/:personId - Actualizar una persona por su id
-router.route('/person/:personId')    
-    .put(person.updatePerson)    
 
 module.exports = router
