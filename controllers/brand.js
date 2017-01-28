@@ -1,5 +1,5 @@
 'use strict';
-const Supplier = require('../models/supplier')
+const Person = require('../models/person')
 const Brand = require('../models/brand')
 const message = require('../services/response/message')
 
@@ -7,7 +7,7 @@ const message = require('../services/response/message')
 function getAllBrands(request, response) {
   Brand.find({})
     .then(brands => {
-      Supplier.populate(brands, { path: 'suppliers' })
+      Person.populate(brands, { path: 'suppliers' })
         .then(user => {
           message.success(response, 200, '', brands)
         })
@@ -48,7 +48,7 @@ function getBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
       if (brand) {
-        Supplier.populate(brand, { path: 'suppliers' })
+        Person.populate(brand, { path: 'suppliers' })
           .then(user => {
             message.success(response, 200, 'Marca obtenida con exito', brand)
           })

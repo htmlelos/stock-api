@@ -1,6 +1,5 @@
 'use strict';
 const mongoose = require('mongoose')
-const Supplier = require('./supplier')
 const Schema = mongoose.Schema
 	// Establece las promesas de mongoose a las promesas nativas de javascript
 mongoose.Promise = global.Promise
@@ -16,7 +15,7 @@ const BrandSchema = new Schema({
   },
   suppliers: [{
     type: Schema.Types.ObjectId,
-    ref: 'Supplier'
+    ref: 'Person'
   }],
   createdAt: {
 		type: Date,

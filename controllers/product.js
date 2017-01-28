@@ -1,6 +1,6 @@
 'use strict';
 const Brand = require('../models/brand')
-const Supplier = require('../models/supplier')
+const Person = require('../models/person')
 const Product = require('../models/product')
 const message = require('../services/response/message')
 
@@ -8,13 +8,7 @@ const message = require('../services/response/message')
 function getAllProducts(request, response) {
     Product.find({})
         .then(products => {
-            // Product.populate(products, {path: 'components'})
-            //     .then(products => {
             message.success(response, 200, '', products)
-            // })
-            // .catch(error => {
-            //     message.error(response, { status: 422, message: '', data: error})
-            // })            
         })
         .catch(error => {
             message.failure(response, 404, 'No se pudieron recuperar los productos', error)

@@ -61,7 +61,7 @@ function updatePerson(request, response) {
                 newPerson.updatedBy = request.decoded.username
                 newPerson.updatedAt = Date.now()
                 Person.update({ _id: request.params.userId }, { $set: newPerson })
-                    .then(supplier => {
+                    .then(person => {
                         // console.log('TIPO', person.type)
                         message.success(response, 200, 'Persona actualizada con exito', null)
                     })
@@ -83,7 +83,6 @@ function updatePerson(request, response) {
 }
 // Elimina una persona
 function deletePerson(request, response) {
-    console.log('ELIMINAR');
     findPerson(request.params.personId)
         .then(person => {
             if (person) {

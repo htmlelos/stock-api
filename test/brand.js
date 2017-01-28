@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test'
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Brand = require('../models/brand')
-const Supplier = require('../models/supplier')
+const Person = require('../models/person')
 const settings = require('../settings.cfg')
 // Dependencias de desarrollo
 const chai = require('chai')
@@ -19,14 +19,12 @@ describe('BRAND: test suite', () => {
 	let token = ''
 
 	beforeEach(done => {
-		// Brand.remove({}, error => { })
-		// Supplier.remove({}, error => { })		
 		done()
 	})
 
 	afterEach(done => {
 		Brand.remove({}, error => { })
-		Supplier.remove({}, error => { })
+		Person.remove({}, error => { })
 		done()
 	})
 	// GET /brands - Obtener todas las marcas

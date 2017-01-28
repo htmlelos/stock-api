@@ -9,9 +9,9 @@ const PriceList = new Schema({
     cost: {
         type: Number
     }
-},{
-    versionKey: false
-})
+}, {
+        versionKey: false
+    })
 
 const ProductSchema = new Schema({
     name: {
@@ -21,7 +21,7 @@ const ProductSchema = new Schema({
     },
     brand: {
         type: Schema.Types.ObjectId,
-        ref: 'Brand'        
+        ref: 'Brand'
     },
     code: String,
     price: Number,
@@ -41,24 +41,24 @@ const ProductSchema = new Schema({
         },
         required: 'Debe definir el estado del producto'
     },
-	createdAt: {
-		type: Date,
-		required: true,
-		default: Date.now
-	},
-	createdBy: {
-		type: String,
-		required: true,
-		default: 'anonimo'
-	},
-	modifiedAt: {
-		type: Date
-	},
-	modifiedBy: {
-		type: String
-	}
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    createdBy: {
+        type: String,
+        required: true,
+        default: 'anonimo'
+    },
+    modifiedAt: {
+        type: Date
+    },
+    modifiedBy: {
+        type: String
+    }
 }, {
-	versionKey: false
-})
+        versionKey: false
+    })
 
 module.exports = mongoose.model('product', ProductSchema)

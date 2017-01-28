@@ -272,7 +272,7 @@ describe('ROLE: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('El rol ya existe')
-							response.body.should.have.property('data').eql(null)
+							response.body.should.have.property('data').to.be.null
 							done();
 						})
 				})

@@ -17,8 +17,6 @@ const error = function (response, status=422, message='', data) {
     return response.status(status).json({status, message, data})
   } else {      
       for(let property in data.errors) {
-        // console.log('PROPERTY: ', property.message);
-        // console.log('**DATA ERROR**', data.errors[property].message);
         message = data.errors[property].message + ','
       }
       message = message.replace(/(^,)|(,$)/g, "")

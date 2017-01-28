@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test'
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Brand = require('../models/brand')
-const Supplier = require('../models/supplier')
+const Person = require('../models/person')
 const Product = require('../models/product')
 const settings = require('../settings.cfg')
 // Depensencias de desarrollo
@@ -26,7 +26,7 @@ describe('PRODUCTS test suite', () => {
 
     afterEach(done => {
         Brand.remove({}, error => { })
-        Supplier.remove({}, error => { })
+        Person.remove({}, error => { })
         Product.remove({}, error => { })
         done()
     })
@@ -62,7 +62,7 @@ describe('PRODUCTS test suite', () => {
         })
     })
     // POST /product - Crea un producto
-    describe('POST /products', () => {
+    describe('POST /product', () => {
         // Deberia crear un nuevo producto
         it('deberia crear un nuevo producto', done => {
             let superUser = {
@@ -216,8 +216,9 @@ describe('PRODUCTS test suite', () => {
                         supplier: []
                     })
 
-                    let supplier = new Supplier({
-                        name: 'Distribuidora Herrero S.A.',
+                    let supplier = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Distribuidora Herrero S.A.',
                         addresses: [],
                         contacts: [],
                         status: 'ACTIVO'

@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: test suite', () => {
+describe('PERSON: test suite', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -155,7 +155,7 @@ describe.only('PERSON: test suite', () => {
                 })
         })
 
-        it('no deberia crear una nueva persona sin nombre', done => {
+        it.skip('no deberia crear una nueva persona sin nombre', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -197,7 +197,7 @@ describe.only('PERSON: test suite', () => {
                 })
         })
 
-        it('no deberia crear una nueva persona sin apellido', done => {
+        it.skip('no deberia crear una nueva persona sin apellido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -238,6 +238,8 @@ describe.only('PERSON: test suite', () => {
                         })
                 })
         })
+
+        it.skip('si el tipo de persona es PROVEEDOR no debe crear uno sin razon social', done => {})
 
         it('El tipo de iva debe ser un valor valido', done => {
             let superUser = {
