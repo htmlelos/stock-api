@@ -153,7 +153,6 @@ describe('BRAND: test suite', () => {
 
 					let newBrand = new Brand(brand)
 					newBrand.save()
-						.then(brand => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -197,7 +196,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -243,7 +241,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -284,7 +281,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -328,7 +324,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -372,7 +367,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					brand = new Brand({
@@ -382,7 +376,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -428,7 +421,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -467,7 +459,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)
@@ -508,7 +499,6 @@ describe('BRAND: test suite', () => {
 					})
 
 					brand.save()
-						.then(brand => console.log())
 						.catch(error => console.log('TEST:', error))
 
 					chai.request(server)

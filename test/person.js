@@ -239,7 +239,7 @@ describe('PERSON: test suite', () => {
                 })
         })
 
-        it.skip('si el tipo de persona es PROVEEDOR no debe crear uno sin razon social', done => {})
+        it.skip('si el tipo de persona es PROVEEDOR no debe crear uno sin razon social', done => { })
 
         it('El tipo de iva debe ser un valor valido', done => {
             let superUser = {
@@ -404,7 +404,6 @@ describe('PERSON: test suite', () => {
                     });
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST:', error))
 
                     chai.request(server)
@@ -466,7 +465,6 @@ describe('PERSON: test suite', () => {
                     });
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST:', error))
 
 
@@ -514,10 +512,8 @@ describe('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(user => console.log())
                         .catch(error => console.error('TEST', error))
 
-                    // console.log('::PERSONA_ID:: ', person._id);
 
                     chai.request(server)
                         .put('/person/' + person._id)
@@ -563,10 +559,7 @@ describe('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(user => console.log())
                         .catch(error => console.error('TEST', error))
-
-                    // console.log('::PERSONA_ID:: ', person._id);
 
                     chai.request(server)
                         .put('/person/58dece08eb0548118ce31f11')
@@ -614,7 +607,6 @@ describe('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST: ', error))
 
                     chai.request(server)
@@ -659,7 +651,6 @@ describe('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST: ', error))
 
                     chai.request(server)
@@ -673,7 +664,7 @@ describe('PERSON: test suite', () => {
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
-                })            
+                })
         })
     })
 })

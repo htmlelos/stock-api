@@ -239,7 +239,6 @@ describe('USERS: test suite', () => {
 
 			let newUser = new User(user)
 			newUser.save()
-				.then(user => console.log())
 				.catch(error => console.error('TEST:', error))
 
 			chai.request(server)
@@ -280,7 +279,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -322,7 +320,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -363,7 +360,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -406,7 +402,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -450,7 +446,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					user = new User({
@@ -460,7 +456,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -506,7 +502,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -545,7 +541,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log(''))
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -586,7 +582,7 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -596,7 +592,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -637,7 +633,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -647,7 +642,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -686,7 +680,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -696,7 +689,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -736,7 +728,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -746,7 +737,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -786,7 +776,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -797,7 +786,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -838,7 +826,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -878,7 +865,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -889,7 +875,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -927,7 +912,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -938,7 +922,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -978,7 +961,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -989,7 +971,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)

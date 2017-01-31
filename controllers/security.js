@@ -13,7 +13,6 @@ const login = (request, response) => {
         Role.populate(user, { path: 'roles' })
           .then(user => {
             user.roles = user.roles.map(element => { return element.name })
-            // console.log('--USER LOGGED--', user);
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
@@ -37,7 +36,6 @@ const authenticate = (request, response, next) => {
         return message.failure(response, 401, 'Error al intentar autenticarse', { success: false })
       } else {
         request.decoded = decoded._doc
-        //console.log('--VERIFY--', request.decoded);
         next()
       }
     })

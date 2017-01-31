@@ -68,7 +68,7 @@ function updateRole(request, response) {
 						}
 					})
 			} else {
-				message.failure(response, 404, 'El rol, no es un rol valido', null)
+				message.failure(response, 404, 'El rol no es valido', null)
 			}
 		})
 		.catch(error => {

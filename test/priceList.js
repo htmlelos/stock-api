@@ -85,7 +85,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(200)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -122,7 +121,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -130,9 +128,9 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })      
+        })
     })
-    
+
     it('no deberia crear una Lista de Precios sin descripcion', done => {
       let superUser = {
         username: 'super@mail.com',
@@ -158,7 +156,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -166,7 +163,7 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })      
+        })
     })
 
     it('no deberia crear una Lista de Precios sin estado', done => {
@@ -194,7 +191,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -202,7 +198,7 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })      
+        })
     })
 
     it('el estado de la lista de precios deber ser ACTIVO o INACTIVO', done => {
@@ -231,7 +227,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -239,7 +234,7 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })      
+        })
     })
 
     it('no deberia crear una lista de precios con nombre duplicado', done => {
@@ -265,7 +260,6 @@ describe.only('PRICE LIST: test suite', () => {
 
           let newPriceList = new PriceList(priceList)
           newPriceList.save()
-            .then(user => console.log())
             .catch(error => console.error('TEST:', error))
 
           chai.request(server)
@@ -273,7 +267,6 @@ describe.only('PRICE LIST: test suite', () => {
             .set('x-access-token', token)
             .send(priceList)
             .end((error, response) => {
-              // console.log('::RESPONSE::', response.body);
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
@@ -281,26 +274,26 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null;
               done()
             })
-        })      
+        })
     })
   })
-  // GET /pricelist - obtiene una lista de precios por su id
+  // GET /pricelist/pricelistId - obtiene una lista de precios por su id
   describe('GET /pricelist/:pricelistId', () => {
     it('deberia obtener una Lista de Precios por su id', done => {
-			let superUser = {
-				username: 'super@mail.com',
-				password: 'super'
-			}
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
 
-			chai.request(server)
-				.post('/login')
-				.send(superUser)
-				.end((error, response) => {
-					response.should.be.status(200)
-					response.body.should.have.property('data')
-					response.body.data.should.have.property('token')
-					token = response.body.data.token
-					// Test from here
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
           let priceList = new PriceList({
             name: 'Precios con IVA',
             description: 'Lista de Precios de Clientes inscriptos en el IVA',
@@ -308,11 +301,10 @@ describe.only('PRICE LIST: test suite', () => {
           })
 
           priceList.save()
-            .then(() => console.log())
             .catch(error => console.error('TEST: ', error))
 
           chai.request(server)
-            .get('/pricelist/'+priceList._id)
+            .get('/pricelist/' + priceList._id)
             .set('x-access-token', token)
             .end((error, response) => {
               response.should.have.status(200)
@@ -328,7 +320,176 @@ describe.only('PRICE LIST: test suite', () => {
                 .eql('ACTIVO')
               done()
             })
-        })      
+        })
+    })
+
+    it('no deberia obtener una Lista de Precios con un id invalido', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA',
+            description: 'Lista de Precios de Clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+
+          priceList.save()
+            .catch(error => console.error('TEST: ', error))
+
+          chai.request(server)
+            .get('/pricelist/58dece08eb0548118ce31f11')
+            .set('x-access-token', token)
+            .end((error, response) => {
+              response.should.have.status(404)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('No se encontro la Lista de Precios')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
+    })
+  })
+  //PUT /pricelist/:pricelistId - actualiza una lista de precios identificada por su id
+  describe('PUT /pricelist/:pricelistId', () => {
+    it('deberia actualizar una Lista de Precios por su id', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA',
+            description: 'Lista de precios de clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+
+          chai.request(server)
+            .put('/pricelist/' + priceList._id)
+            .set('x-access-token', token)
+            .send({
+              name: 'Precios con 21%'
+            })
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('Lista de Precios actualizada con exito')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
+    })
+
+    it('no deberia actualizar una Lista de Precios con id invalido', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA',
+            description: 'Lista de precios de clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+
+          chai.request(server)
+            .put('/pricelist/58dece08eb0548118ce31f11')
+            .set('x-access-token', token)
+            .send({
+              name: 'Precios con 21%'
+            })
+            .end((error, response) => {
+              response.should.have.status(404)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('La Lista de Precios no es valida')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
+    })
+
+    it.only('no deberia actualizar una Lista de Precios con nombre duplicado', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA 15%',
+            description: 'Lista de precios de clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+          priceList = new PriceList({
+            name: 'Precios con IVA 21%',
+            description: 'Lista de precios de clientes no inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+
+          chai.request(server)
+            .put('/pricelist/' + priceList._id)
+            .set('x-access-token', token)
+            .send({
+              name: 'Precios con IVA 15%',
+              description: 'Lista de precios de clientes inscriptos en el IVA',
+              status: 'ACTIVO'
+            })
+            .end((error, response) => {
+              response.should.have.status(422)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('La lista de precios ya existe')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
     })
   })
 })

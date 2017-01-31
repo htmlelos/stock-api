@@ -20,11 +20,9 @@ function createPriceList(request, response) {
   newPriceList.createdBy = request.decoded.username
   newPriceList.save()
     .then(priceList => {
-      // console.log('priceList---', priceList);
-      message.success(response, 200, 'Lista de Precios creada con exito', {id: priceList._id})
+      message.success(response, 200, 'Lista de Precios creada con exito', { id: priceList._id })
     })
     .catch(error => {
-      // console.error('ERROR-422----', error);
       if (error.code === 11000) {
         message.duplicate(response, 422, 'La Lista de Precios ya existe', null)
       } else {
@@ -34,7 +32,7 @@ function createPriceList(request, response) {
 }
 // Buscar un rol
 function findPriceList(pricelistId) {
-  return PriceList.findById({_id: pricelistId})
+  return PriceList.findById({ _id: pricelistId })
 }
 
 function getPriceList(request, response) {
@@ -43,7 +41,7 @@ function getPriceList(request, response) {
       if (priceList) {
         message.success(response, 200, 'Lista de Precios obtenida con exito', priceList)
       } else {
-        message.failucer(response, 404, 'No se encontro la Lista de Precios', null)        
+        message.failure(response, 404, 'No se encontro la Lista de Precios', null)
       }
     })
     .catch(error => {
@@ -51,8 +49,36 @@ function getPriceList(request, response) {
     })
 }
 
+function updatePriceList(request, response) {
+  findPriceList(request.params.pricelistId)
+    .then(priceList => {
+      if (priceList) {
+        let newPriceList = request.body
+        newPriceList.updatedBy = request.decoded.username
+        newPriceList.updatedAt = Date()
+        PriceList.update({ _id: request.params.pricelistId }, { $set: newPriceList }, { runValidators: true })
+          .then(result => {
+            message.success(response, 200, 'Lista de Precios actualizada con exito', null)
+          })
+          .catch(error => {
+            if (error.code === 11000) {
+              message.duplicate(response, 422, 'La lista de precios ya existe', null)
+            } else {
+              message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
+            }
+          })
+      } else {
+        message.failure(response, 404, 'La Lista de Precios no es valida', null)
+      }
+    })
+    .catch(error => {
+      message.error(response, 500, 'No se pudo recuperar la Lista de Precios', error)
+    })
+}
+
 module.exports = {
   getAllPriceLists,
   createPriceList,
-  getPriceList
+  getPriceList,
+  updatePriceList
 }

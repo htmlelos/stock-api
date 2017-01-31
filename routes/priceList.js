@@ -11,5 +11,6 @@ router.route('/pricelist')
 //GET /pricelist - Obtener una lista de precios por su id
 router.route('/pricelist/:pricelistId')
   .get(priceList.getPriceList)
+  .put(priceList.updatePriceList)
 
 module.exports = router
