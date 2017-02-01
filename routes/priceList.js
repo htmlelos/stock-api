@@ -12,5 +12,6 @@ router.route('/pricelist')
 router.route('/pricelist/:pricelistId')
   .get(priceList.getPriceList)
   .put(priceList.updatePriceList)
+  .delete(priceList.deletePriceList)
 
 module.exports = router

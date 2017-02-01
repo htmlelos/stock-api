@@ -76,9 +76,30 @@ function updatePriceList(request, response) {
     })
 }
 
+function deletePriceList(request, response) {
+  findPriceList(request.params.pricelistId)
+  .then(priceList => {
+    if (priceList) {
+    PriceList.remove({_id: priceList._id})
+      .then(result => {
+        message.success(response, 200, 'Lista de Precios eliminada con exito', null)
+      })
+      .catch(error => {
+        message.error(response, 422, '', error)
+      })
+    } else {
+      message.failure(response, 404, 'La Lista de Precios no es valida', null)
+    }
+  })
+  .catch(error => {
+    message.error(response, 422, 'No se pudo recuperar la lista de precios', error)
+  })
+}
+
 module.exports = {
   getAllPriceLists,
   createPriceList,
   getPriceList,
-  updatePriceList
+  updatePriceList,
+  deletePriceList
 }

@@ -88,7 +88,7 @@ function deleteRole(request, response) {
 						message.error(response, 422, '', error)
 					})
 			} else {
-				message.failure(response, 404, 'El rol, no es un rol valido', null)
+				message.failure(response, 404, 'El rol no es valido', null)
 			}
 		})
 		.catch(error => {

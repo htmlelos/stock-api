@@ -572,7 +572,7 @@ describe('ROLE: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol, no es un rol valido')
+								.eql('El rol no es valido')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})

@@ -14,7 +14,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
-describe.only('PRICE LIST: test suite', () => {
+describe('PRICE LIST: test suite', () => {
   let token = ''
   // Se ejecuta previo a cada test
   beforeEach(done => {
@@ -443,7 +443,7 @@ describe.only('PRICE LIST: test suite', () => {
         })
     })
 
-    it.only('no deberia actualizar una Lista de Precios con nombre duplicado', done => {
+    it('no deberia actualizar una Lista de Precios con nombre duplicado', done => {
       let superUser = {
         username: 'super@mail.com',
         password: 'super'
@@ -486,6 +486,82 @@ describe.only('PRICE LIST: test suite', () => {
               response.body.should.be.a('object')
               response.body.should.have.property('message')
                 .eql('La lista de precios ya existe')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
+    })
+  })
+  //DELETE /pricelist/:pricelistId - elimina una lista de precios identificada por su id
+  describe('DELETE /pricelist/:pricelistId', () => {
+    it('deberia eliminar una Lista de precios por su id', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA',
+            description: 'Lista de precios clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+
+          chai.request(server)
+            .delete('/pricelist/' + priceList._id)
+            .set('x-access-token', token)
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('Lista de Precios eliminada con exito')
+              response.body.should.have.property('data').to.be.null
+              done()
+            })
+        })
+    })
+
+    it('no deberia eliminar una Lista de precios con un id invalido', done => {
+      let superUser = {
+        username: 'super@mail.com',
+        password: 'super'
+      }
+
+      chai.request(server)
+        .post('/login')
+        .send(superUser)
+        .end((error, response) => {
+          response.should.be.status(200)
+          response.body.should.have.property('data')
+          response.body.data.should.have.property('token')
+          token = response.body.data.token
+          // Test from here
+          let priceList = new PriceList({
+            name: 'Precios con IVA',
+            description: 'Lista de precios clientes inscriptos en el IVA',
+            status: 'ACTIVO'
+          })
+          priceList.save()
+            .catch(error => console.error('TEST:', error))
+
+          chai.request(server)
+            .delete('/pricelist/58dece08eb0548118ce31f11')
+            .set('x-access-token', token)
+            .end((error, response) => {
+              response.should.have.status(404)
+              response.body.should.be.a('object')
+              response.body.should.have.property('message')
+                .eql('La Lista de Precios no es valida')
               response.body.should.have.property('data').to.be.null
               done()
             })
