@@ -5,9 +5,32 @@ const Schema = mongoose.Schema
 // Establece las promesas nativas como libreria de promesas para mongoose
 mongoose.Promise = global.Promise
 
-const PriceList = new Schema({
+const PriceSchema = new Schema({
+    priceList: {
+        type: Schema.Types.ObjectId,
+        ref: 'PriceList'
+    },
     cost: {
         type: Number
+    },
+    profit: {
+        type: Number
+    },
+    status: {
+        type: String,
+        enum: {
+            values: ['ACTIVO', 'INACTIVO'],
+            message: 'El estado del precio de un producto solo puede ser ACTIVO o INACTIVO'
+        },
+        required: 'Debe definir el estado del producto'        
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedBy: {
+        type: String,
+        default: 'anonimo'
     }
 }, {
         versionKey: false
@@ -24,15 +47,11 @@ const ProductSchema = new Schema({
         ref: 'Brand'
     },
     code: String,
-    price: Number,
     components: [{
         type: Schema.Types.ObjectId,
         ref: 'Product'
     }],
-    priceList: {
-        type: Schema.Types.Object,
-        ref: 'PriceList'
-    },
+    priceList: [PriceSchema],
     status: {
         type: String,
         enum: {

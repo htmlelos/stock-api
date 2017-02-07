@@ -2,6 +2,7 @@
 const Brand = require('../models/brand')
 const Person = require('../models/person')
 const Product = require('../models/product')
+const PriceList = require('../models/priceList')
 const message = require('../services/response/message')
 
 //Obtiene todos los productos
@@ -109,11 +110,10 @@ function deleteProduct(request, response) {
 function getBrand(request, response) {
     findProduct(request.params.productId)
         .then(product => {
-
             if (product) {
                 Brand.populate(product, { path: 'brand' })
-                    .then(product => {
-                        message.success(response, 200, 'Marca obtenida con exito', product.brand)
+                    .then(result => {
+                        message.success(response, 200, 'Marca obtenida con exito', result.brand)
                     })
                     .catch(error => {
                         message.error(response, 422, '', error)
@@ -127,11 +127,58 @@ function getBrand(request, response) {
         })
 }
 
+function getAllPriceLists(request, response) {
+    findProduct(request.params.productId)
+        .then(product => {
+            if (product) {
+                PriceList.populate(product, {path: 'priceList'})
+                    .then(result => {
+                        message.success(response, 200, 'Listas de Precios obtenidas con exito', result.priceList)
+                    })
+                    .catch(error => {
+                        message.error(response, 422, '', error)
+                    })
+            } else {
+                message.failure(response, 404, 'El producto no es valido', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 422, '', error)
+        })
+}
+
+// Obtener una lista de precios
+function findPriceList(priceListId) {
+    return PriceList.findById({ _id: priceListId })
+}
+
+function createProductList(request, response) {
+   findProduct(request.params.productId)
+    .then(product => {
+        // console.log('--PRODUCT--',product);
+        console.log('--BODY--', request.body);
+        findPriceList(request.body.priceList)
+            .then(priceList => {
+                // console.log('--PRICE_LIST--', priceList);
+                product.priceList.push(request.body)
+                message.success(response, 200, 'Precio añadido con exito', product) 
+            })
+            .catch(error => {
+                message.error(response, 404, 'La Lista de Precios no es valida', error)
+            })
+    })
+    .catch(error => {
+        message.error(response, 404, 'El producto no es valido', error)
+    })
+}
+
 module.exports = {
     getAllProducts,
     createProduct,
     getProduct,
     updateProduct,
     deleteProduct,
-    getBrand
+    getBrand,
+    getAllPriceLists,
+    createProductList
 }
