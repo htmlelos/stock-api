@@ -40,7 +40,7 @@ const PersonSchema = new Schema({
         type: String
         // required: 'Debe proporcionar el apellido de la persona'
     },
-    address: [AddressSchema],
+    addresses: [AddressSchema],
     tributaryCode: {
         type: String
     },

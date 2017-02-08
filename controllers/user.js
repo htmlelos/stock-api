@@ -185,8 +185,16 @@ function deleteUserRole(request, response) {
 							let index = user.roles.findIndex((element) => element = role._id)
 							if (index >= 0) {
 								user.roles.splice(index, 1)
-								user.save()
-								message.success(response, 200, 'Rol revocado con exito', null)
+								//user.save()
+								console.log('--ANTES DEL UPDATE', user);
+								User.update({_id: user._id}, { $set: { roles: user.roles}})
+								 .then(result => {
+									 console.log('--DESPUES DEL UPDATE', result);
+									message.success(response, 200, 'Rol revocado con exito', null)
+								 })
+								 .catch(error => {
+									 message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
+								 })
 							} else {
 								message.failure(response, 404, 'El rol, no es un rol valido', null)
 							}
