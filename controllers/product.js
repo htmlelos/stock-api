@@ -155,11 +155,9 @@ function findPriceList(priceListId) {
 function createProductList(request, response) {
    findProduct(request.params.productId)
     .then(product => {
-        // console.log('--PRODUCT--',product);
-        console.log('--BODY--', request.body);
+        console.log('PRODUCT--', product)
         findPriceList(request.body.priceList)
             .then(priceList => {
-                // console.log('--PRICE_LIST--', priceList);
                 product.priceList.push(request.body)
                 message.success(response, 200, 'Precio añadido con exito', product) 
             })

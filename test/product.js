@@ -666,7 +666,7 @@ describe('PRODUCTS test suite', () => {
         })
 
         it('no deberia obtener listas de precios de productos con id invalido', done => {
-              let superUser = {
+            let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
             }
@@ -714,14 +714,14 @@ describe('PRODUCTS test suite', () => {
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
-                })          
+                })
         })
     })
 
     // POST /product/:productId/priceList
     describe.only('POST /product/:productId/priceList', () => {
         it('deberia agregar un precio con su lista a un producto', done => {
-let superUser = {
+            let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
             }
@@ -760,9 +760,9 @@ let superUser = {
                         description: 'Lista de Precios para compradores al por Menor',
                         status: 'ACTIVO'
                     })
-                    
+
                     priceList.save()
-                        .catch(error => { console.log('TEST2: ', error)})
+                        .catch(error => { console.log('TEST2: ', error) })
 
                     let price = {
                         priceList: priceList._id,
@@ -780,11 +780,80 @@ let superUser = {
                         .send(price)
                         .end((error, response) => {
                             // El test inicia aqui
-                            // console.log('::RESPONSE::', response.body)
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('Precio añadido con exito')
+                            response.body.should.have.property('data').to.be.not.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia agregar un precio si el id de producto no es valido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let product = new Product({
+                        name: 'Gaseosa 2L',
+                        brand: null,
+                        price: 35.5,
+                        components: [],
+                        status: 'ACTIVO'
+                    })
+
+                    let brand = new Brand({
+                        name: 'Loca Cola',
+                        description: 'Bebidas Gaseosas',
+                        supplier: []
+                    })
+
+
+                    brand.save()
+                        .catch(error => { console.log('TEST1: ', error) })
+
+                    product.brand = brand
+
+                    let priceList = new PriceList({
+                        name: 'Precios al por Menor',
+                        description: 'Lista de Precios para compradores al por Menor',
+                        status: 'ACTIVO'
+                    })
+
+                    priceList.save()
+                        .catch(error => { console.log('TEST2: ', error) })
+
+                    let price = {
+                        priceList: priceList._id,
+                        cost: 30,
+                        profit: 0.3,
+                        status: 'ACTIVO'
+                    }
+
+                    product.save()
+                        .catch(error => { console.log('TEST3: ', error) })
+
+                    chai.request(server)
+                        .post('/product/58dece08eb0548118ce31f11/pricelist')
+                        .set('x-access-token', token)
+                        .send(price)
+                        .end((error, response) => {
+                            // El test inicia aqui
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('El producto no es valido')
                             response.body.should.have.property('data').to.be.not.null
                             done()
                         })
