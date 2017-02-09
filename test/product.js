@@ -764,6 +764,8 @@ describe('PRODUCTS test suite', () => {
                     priceList.save()
                         .catch(error => { console.log('TEST2: ', error) })
 
+                    console.log('::priceList::', priceList._id);
+
                     let price = {
                         priceList: priceList._id,
                         cost: 30,
@@ -780,6 +782,7 @@ describe('PRODUCTS test suite', () => {
                         .send(price)
                         .end((error, response) => {
                             // El test inicia aqui
+                            console.log('::RESPONSE::', response.body);
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
@@ -854,7 +857,7 @@ describe('PRODUCTS test suite', () => {
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('El producto no es valido')
-                            response.body.should.have.property('data').to.be.not.null
+                            response.body.should.have.property('data').to.be.null
                             done()
                         })
                 })            

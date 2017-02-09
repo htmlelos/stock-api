@@ -131,7 +131,7 @@ function getAllPriceLists(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                PriceList.populate(product, {path: 'priceList'})
+                PriceList.populate(product, { path: 'priceList' })
                     .then(result => {
                         message.success(response, 200, 'Listas de Precios obtenidas con exito', result.priceList)
                     })
@@ -153,21 +153,42 @@ function findPriceList(priceListId) {
 }
 
 function createProductList(request, response) {
-   findProduct(request.params.productId)
-    .then(product => {
-        console.log('PRODUCT--', product)
-        findPriceList(request.body.priceList)
-            .then(priceList => {
-                product.priceList.push(request.body)
-                message.success(response, 200, 'Precio añadido con exito', product) 
-            })
-            .catch(error => {
-                message.error(response, 404, 'La Lista de Precios no es valida', error)
-            })
-    })
-    .catch(error => {
-        message.error(response, 404, 'El producto no es valido', error)
-    })
+    findProduct(request.params.productId)
+        .then(product => {
+            if (product) {
+                findPriceList(request.body.priceList)
+                    .then(priceList => {
+                        if (priceList) {
+                            let price = request.body
+                            let isIncluded = product.priceList
+                                .map(current => current.toString())
+                                .includes(priceList._id.toString())
+
+                            if (isIncluded) {
+                                message.failure(response, 422, 'La Lista de Precios ya se encuentra asociada al Producto', null)
+                            } else {
+                                Product.update({ _id: product._id }, { $addToSet: { priceList: price } })
+                                    .then(result => {
+                                        message.success(response, 200, 'Precio añadido con exito', product)
+                                    })
+                                    .catch(error => {
+                                        message.error(response, 500, 'No se pudo añadir la Lista de Precios al producto', error)
+                                    })
+                            }
+                        } else {
+                            message.failucer(response, 404, 'La Lista de Precios no es valida', null)
+                        }
+                    })
+                    .catch(error => {
+                        message.error(response, 422, 'La Lista de Precios no es valida', error)
+                    })
+            } else {
+                message.error(response, 404, 'El producto no es valido', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 404, 'El producto no es valido', error)
+        })
 }
 
 module.exports = {

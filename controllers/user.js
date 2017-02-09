@@ -117,7 +117,9 @@ function addUserRole(request, response) {
 					findRole(roleId)
 						.then(role => {
 							if (role) {
-								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())
+								let isIncluded = user.roles
+									.map(current => current.toString())
+									.includes(role._id.toString())
 
 								if (isIncluded) {
 									message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
@@ -137,7 +139,7 @@ function addUserRole(request, response) {
 						})
 						.catch(error => {
 							message.error(response, { status: 422, message: '', data: error })
-							message.error(response, 500, 'No se pudo encontrar el rol indicado', error)
+							// message.error(response, 500, 'No se pudo encontrar el rol indicado', error)
 						})
 				} else {
 					message.failure(response, 422, 'El rol, no es un rol valido', null)
@@ -186,10 +188,8 @@ function deleteUserRole(request, response) {
 							if (index >= 0) {
 								user.roles.splice(index, 1)
 								//user.save()
-								console.log('--ANTES DEL UPDATE', user);
 								User.update({_id: user._id}, { $set: { roles: user.roles}})
 								 .then(result => {
-									 console.log('--DESPUES DEL UPDATE', result);
 									message.success(response, 200, 'Rol revocado con exito', null)
 								 })
 								 .catch(error => {
