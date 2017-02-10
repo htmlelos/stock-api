@@ -22,5 +22,5 @@ router.route('/product/:productId/pricelists')
     .get(product.getAllPriceLists)
 // Product /product/:productId/price
 router.route('/product/:productId/pricelist')
-    .post(product.createProductList)
+    .post(product.addPriceList)
 module.exports = router

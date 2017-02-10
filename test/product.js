@@ -719,7 +719,7 @@ describe('PRODUCTS test suite', () => {
     })
 
     // POST /product/:productId/priceList
-    describe.only('POST /product/:productId/priceList', () => {
+    describe('POST /product/:productId/priceList', () => {
         it('deberia agregar un precio con su lista a un producto', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -764,7 +764,6 @@ describe('PRODUCTS test suite', () => {
                     priceList.save()
                         .catch(error => { console.log('TEST2: ', error) })
 
-                    console.log('::priceList::', priceList._id);
 
                     let price = {
                         priceList: priceList._id,
@@ -782,7 +781,6 @@ describe('PRODUCTS test suite', () => {
                         .send(price)
                         .end((error, response) => {
                             // El test inicia aqui
-                            console.log('::RESPONSE::', response.body);
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
@@ -860,7 +858,78 @@ describe('PRODUCTS test suite', () => {
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
-                })            
+                })
+        })
+
+        it('No deberia agregar una lista de precio con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let product = new Product({
+                        name: 'Gaseosa 2L',
+                        brand: null,
+                        price: 35.5,
+                        components: [],
+                        status: 'ACTIVO'
+                    })
+
+                    let brand = new Brand({
+                        name: 'Loca Cola',
+                        description: 'Bebidas Gaseosas',
+                        supplier: []
+                    })
+
+
+                    brand.save()
+                        .catch(error => { console.log('TEST1: ', error) })
+
+                    product.brand = brand
+
+                    let priceList = new PriceList({
+                        name: 'Precios al por Menor',
+                        description: 'Lista de Precios para compradores al por Menor',
+                        status: 'ACTIVO'
+                    })
+
+                    priceList.save()
+                        .catch(error => { console.log('TEST2: ', error) })
+
+
+                    let price = {
+                        priceList: '58dece08eb0548118ce31f11',
+                        cost: 30,
+                        profit: 0.3,
+                        status: 'ACTIVO'
+                    }
+
+                    product.save()
+                        .catch(error => { console.log('TEST3: ', error) })
+
+                    chai.request(server)
+                        .post('/product/' + product._id + '/pricelist')
+                        .set('x-access-token', token)
+                        .send(price)
+                        .end((error, response) => {
+                            // El test inicia aqui
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('La Lista de Precios no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
         })
     })
 })

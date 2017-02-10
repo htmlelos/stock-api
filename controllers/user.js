@@ -134,18 +134,17 @@ function addUserRole(request, response) {
 								}
 
 							} else {
-								message.failure(response, 404, 'El rol, no es un rol valido', null)
+								message.failure(response, 404, 'El rol no es valido', null)
 							}
 						})
 						.catch(error => {
 							message.error(response, { status: 422, message: '', data: error })
-							// message.error(response, 500, 'No se pudo encontrar el rol indicado', error)
 						})
 				} else {
-					message.failure(response, 422, 'El rol, no es un rol valido', null)
+					message.failure(response, 422, 'El rol no es valido', null)
 				}
 			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
+				message.failure(response, 404, 'El usuario no es valido', null)
 			}
 		})
 		.catch(error => {
@@ -188,13 +187,13 @@ function deleteUserRole(request, response) {
 							if (index >= 0) {
 								user.roles.splice(index, 1)
 								//user.save()
-								User.update({_id: user._id}, { $set: { roles: user.roles}})
-								 .then(result => {
-									message.success(response, 200, 'Rol revocado con exito', null)
-								 })
-								 .catch(error => {
-									 message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
-								 })
+								User.update({ _id: user._id }, { $set: { roles: user.roles } })
+									.then(result => {
+										message.success(response, 200, 'Rol revocado con exito', null)
+									})
+									.catch(error => {
+										message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
+									})
 							} else {
 								message.failure(response, 404, 'El rol, no es un rol valido', null)
 							}

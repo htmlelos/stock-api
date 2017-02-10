@@ -152,7 +152,7 @@ function findPriceList(priceListId) {
     return PriceList.findById({ _id: priceListId })
 }
 
-function createProductList(request, response) {
+function addPriceList(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
@@ -176,18 +176,18 @@ function createProductList(request, response) {
                                     })
                             }
                         } else {
-                            message.failucer(response, 404, 'La Lista de Precios no es valida', null)
+                            message.failure(response, 404, 'La Lista de Precios no es valida', null)
                         }
                     })
                     .catch(error => {
                         message.error(response, 422, 'La Lista de Precios no es valida', error)
                     })
             } else {
-                message.error(response, 404, 'El producto no es valido', null)
+                message.failure(response, 404, 'El producto no es valido', null)
             }
         })
         .catch(error => {
-            message.error(response, 404, 'El producto no es valido', error)
+            message.error(response, 500, 'El producto no es valido', error)
         })
 }
 
@@ -199,5 +199,5 @@ module.exports = {
     deleteProduct,
     getBrand,
     getAllPriceLists,
-    createProductList
+    addPriceList
 }

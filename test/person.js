@@ -93,7 +93,7 @@ describe('PERSON: test suite', () => {
                         address: [],
                         tributaryCode: '202202231962',
                         taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
+                        grossIncomeCode: '12202202231962',
                         contacts: [],
                         status: 'ACTIVO'
                     }
@@ -665,6 +665,53 @@ describe('PERSON: test suite', () => {
                             done()
                         })
                 })
+        })
+    })
+    // GET /person/:personId/contacts
+    describe.only('GET /person/:personId/contanct', () => {
+        it('deberia obtener todos los contactos de una persona', done => {
+            			let superUser = {
+				username: 'super@mail.com',
+				password: 'super'
+			}
+
+			chai.request(server)
+				.post('/login')
+				.send(superUser)
+				.end((error, response) => {
+					response.should.be.status(200)
+					response.body.should.have.property('data')
+					response.body.data.should.have.property('token')
+					token = response.body.data.token
+					// Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jane',
+                        lastName: 'Jetson',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE NO INSCRIPTO',
+                        grosssIncomeCode: '120232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST:', error))
+
+                    chai.request(server)
+                        .get('/person/' + person._id + '/contacts')
+                        .set('x-access-token', token)
+                        .send(person)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contactos obtenidos con exito')
+                            response.body.should.have.property('data')
+                            response.body.data.length.should.be.eql(0)
+                            done()
+                        })
+                })       
         })
     })
 })
