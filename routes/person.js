@@ -17,6 +17,11 @@ router.route('/person/:personId')
     .get(person.getPerson)
     .put(person.updatePerson)
     .delete(person.deletePerson)
-
+// GET /person/:personId/contacts - Obtener todos los contactos de una Persona
+router.route('/person/:personId/contacts')
+    .get(person.getAllContacts)
+// POST /person/:personId/contact - Agregar un contacto a una persona
+router.route('/person/:personId/contact')
+    .post(person.addContact)
 
 module.exports = router

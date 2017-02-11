@@ -96,10 +96,50 @@ function deletePerson(request, response) {
         })
 }
 
+function getAllContacts(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if(person) {
+            message.success(response, 200, 'Contactos obtenidos con exito', person.contacts)
+            } else {
+                message.failure(response, 404, 'La Persona no es valida', null)
+            }
+        })
+        .catch(error => {
+            console.error('--ERROR--', error);
+            message.error(response, 422, 'No se pudo recuperar los Contactos de la Persona', error)
+        })
+}
+
+function addContact(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                let contact = request.body;
+                // console.log('BODY--', contact);
+                Person.update({_id: person._id}, { $addToSet: {contacts: contact}})
+                    .then(result => {
+                        message.success(response, 200, 'Contacto añadido con exito', 1)
+                    })
+                    .catch(error => {
+                        message.error(422, 'No se pudo agregar el Contacto de la Persona', error)
+                    })
+            } else {
+                message.failure(response, 404, 'La Persona no es valida', null)
+            }
+        })
+        .catch(error => {
+            console.error('--ERROR--', error)
+            message.error(response, 422, 'No se pudo agregar el Contacto de la Persona', error)
+        })
+}
+
 module.exports = {
     getAllPersons,
     createPerson,
     getPerson,
     updatePerson,
-    deletePerson
+    deletePerson,
+    getAllContacts,
+    addContact
 }

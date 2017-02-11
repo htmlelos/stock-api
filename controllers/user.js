@@ -175,7 +175,6 @@ function getUserRoles(request, response) {
 }
 // Eliminar un rol de un usuario
 function deleteUserRole(request, response) {
-
 	findUser(request.params.userId)
 		.select('-password')
 		.then(user => {
