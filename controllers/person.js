@@ -134,6 +134,34 @@ function addContact(request, response) {
         })
 }
 
+function removeContact(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                let index = person.contacts.findIndex(element => {
+                    return (element._id.toString() === request.params.contactId.toString())
+                })
+                if (index >= 0) {
+                    person.contacts.splice(index, 1)
+                    Person.update({_id: person._id}, {$set: {contacts: person.contacts}})
+                        .then(result => {
+                            message.success(response, 200, 'Contacto eliminado con exito', null)
+                        })
+                        .catch(error => {
+                            message.error(response, 500, 'No se pudo eliminar el contacto', error)
+                        })
+                } else {
+                    message.failure(response, 404, 'Contacto no es valido', null)
+                }
+            } else {
+                message.failure(response, 404, 'Persona no es valida', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 500, 'No se pudo eliminar el contacto', error)
+        })
+}
+
 module.exports = {
     getAllPersons,
     createPerson,
@@ -141,5 +169,6 @@ module.exports = {
     updatePerson,
     deletePerson,
     getAllContacts,
-    addContact
+    addContact,
+    removeContact
 }

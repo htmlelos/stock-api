@@ -24,4 +24,8 @@ router.route('/person/:personId/contacts')
 router.route('/person/:personId/contact')
     .post(person.addContact)
 
+// Delete /person/:personId/contact/:contactId
+router.route('/person/:personId/contact/:contactId')
+    .delete(person.removeContact)
+
 module.exports = router

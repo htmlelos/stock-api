@@ -182,7 +182,8 @@ function deleteUserRole(request, response) {
 				findRole(request.params.roleId)
 					.then(role => {
 						if (role) {
-							let index = user.roles.findIndex((element) => element = role._id)
+							let index = user.roles
+								.findIndex(element => element.toString() == role._id.toString())
 							if (index >= 0) {
 								user.roles.splice(index, 1)
 								//user.save()

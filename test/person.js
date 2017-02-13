@@ -759,7 +759,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // POST /person/:personId/contact
-    describe.only('POST /person/:personId/contact', () => {
+    describe('POST /person/:personId/contact', () => {
         it('deberia crear un contacto para un persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -859,7 +859,161 @@ describe('PERSON: test suite', () => {
         })
     })
     // DELETE /person/:personId/contact/
-    describe.skip('DELETE /person/:personId/contact/:contactId', () => {
-        
+    describe.only('DELETE /person/:personId/contact/:contactId', () => {
+        it('deberia eliminar un contacto de usuario por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'                        
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+                        
+                    chai.request(server)
+                        .delete('/person/'+person._id+'/contact/'+ person.contacts[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contacto eliminado con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })                        
+        })
+
+        it('no deberia eliminar un contacto de una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'                        
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+                        
+                    chai.request(server)
+                        .delete('/person/58dece08eb0548118ce31f11/contact/'+ person.contacts[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })             
+        })
+
+        it('no deberia eliminar un contacto con id invalido de una persona', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'                        
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+                        
+                    chai.request(server)
+                        .delete('/person/'+person._id+'/contact/58dece08eb0548118ce31f11')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contacto no es valido')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })             
+        })
     })
 })
