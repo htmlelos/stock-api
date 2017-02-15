@@ -4,7 +4,8 @@ const message = require('../services/response/message')
 
 //Obtener todos los proveedores
 function getAllPersons(request, response) {
-    Person.find({})
+    console.log('query:', request.query);
+    Person.find(request.query)
         .then(persons => {
             message.success(response, 200, '', persons)
         })
@@ -202,6 +203,7 @@ function removeAddress(request, response) {
         .then(person => {
             if (person) {
                 let index = person.addresses.findIndex(element => {
+                    console.log('compare--', element._id.toString(),' === ', request.params.addressId.toString())
                     return (element._id.toString() === request.params.addressId.toString())
                 })
                 if (index >= 0) {
