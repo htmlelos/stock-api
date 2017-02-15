@@ -71,7 +71,7 @@ function updatePerson(request, response) {
                 message.failure(response, 404, 'La persona, no es una persona valida', null)
             }
         })
-        .catch(error => { 
+        .catch(error => {
             message.error(response, 422, 'No se pudo actualizar la persona', error)
         })
 }
@@ -80,7 +80,7 @@ function deletePerson(request, response) {
     findPerson(request.params.personId)
         .then(person => {
             if (person) {
-                Person.remove({_id: person.id})
+                Person.remove({ _id: person.id })
                     .then(person => {
                         message.success(response, 200, 'Persona eliminada con exito', null)
                     })
@@ -99,8 +99,8 @@ function deletePerson(request, response) {
 function getAllContacts(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            if(person) {
-            message.success(response, 200, 'Contactos obtenidos con exito', person.contacts)
+            if (person) {
+                message.success(response, 200, 'Contactos obtenidos con exito', person.contacts)
             } else {
                 message.failure(response, 404, 'La Persona no es valida', null)
             }
@@ -117,7 +117,7 @@ function addContact(request, response) {
             if (person) {
                 let contact = request.body;
                 // console.log('BODY--', contact);
-                Person.update({_id: person._id}, { $addToSet: {contacts: contact}})
+                Person.update({ _id: person._id }, { $addToSet: { contacts: contact } })
                     .then(result => {
                         message.success(response, 200, 'Contacto añadido con exito', 1)
                     })
@@ -143,7 +143,7 @@ function removeContact(request, response) {
                 })
                 if (index >= 0) {
                     person.contacts.splice(index, 1)
-                    Person.update({_id: person._id}, {$set: {contacts: person.contacts}})
+                    Person.update({ _id: person._id }, { $set: { contacts: person.contacts } })
                         .then(result => {
                             message.success(response, 200, 'Contacto eliminado con exito', null)
                         })
@@ -162,6 +162,69 @@ function removeContact(request, response) {
         })
 }
 
+function getAllAdresses(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                message.success(response, 200, 'Direcciones obtenidas con exito', person.addresses)
+            } else {
+                message.failure(response, 404, 'Persona no es valida', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 500, 'No se pudo obtener la direccion', error)
+        })
+}
+
+function addAddress(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                let address = request.body
+                Person.update({ _id: person.id }, { $addToSet: { addresses: address } })
+                    .then(result => {
+                        message.success(response, 200, 'Direccion agregada con exito', null)
+                    })
+                    .catch(error => {
+                        message.error(422, 'No se pudo agregar la Direccion de la Persona', error)
+                    })
+            } else {
+                message.failure(response, 404, 'Persona no es valida', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 500, 'No se pudo agregar la direccion', error)
+        })
+}
+
+function removeAddress(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            if (person) {
+                let index = person.addresses.findIndex(element => {
+                    return (element._id.toString() === request.params.addressId.toString())
+                })
+                if (index >= 0) {
+                    person.addresses.splice(index, 1)
+                    Person.update({ _id: person._id }, { $set: { addresses: person.addresses } })
+                        .then(result => {
+                            message.success(response, 200, 'Dirección eliminada con exito', null)
+                        })
+                        .catch(error => {
+                            message.error(response, 500, 'No se pudo agregar la Dirección', error)
+                        })
+                } else {
+                    message.failure(response, 404, 'Dirección no valida', null)
+                }
+            } else {
+                message.failure(response, 404, 'Persona no valida', null)
+            }
+        })
+        .catch(error => {
+            message.error(response, 500, 'No se pudo eliminar la Dirección', error)
+        })
+}
+
 module.exports = {
     getAllPersons,
     createPerson,
@@ -170,5 +233,8 @@ module.exports = {
     deletePerson,
     getAllContacts,
     addContact,
-    removeContact
+    removeContact,
+    getAllAdresses,
+    addAddress,
+    removeAddress
 }
