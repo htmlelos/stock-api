@@ -228,6 +228,44 @@ function removeAddress(request, response) {
         })
 }
 
+function removeMultipleAddresses(request, response) {
+    
+    findPerson(request.params.personId)
+        .then(person => {
+            console.log('--PERSONA--', person);
+            if (person) {
+                return new Promise((resolve, reject) => {
+                    if (person) {
+                        console.log('[ADDRESSES]',request.body);
+                        resolve(request.body)
+                    } else {
+                        let error = {
+                            code: 404, 
+                            message: 'No se pudieron eliminar las direcciones',
+                            data: null
+                        }
+                        reject(error)
+                    }
+                })
+            }
+        })
+        .then(addresses => {
+            // console.log('--ADDRESSES--', addresses);
+            return Promise.all(addresses.map(address => {
+                console.log('ADDRESS--', address);
+                return Person.update({_id: request.params.personId},
+                 {$pull: {'addresses':{id:address}}})
+            }))
+        })
+        .then(address => {
+            console.log('*ADDRESS**',address);
+            message.success(response, 200, 'Direcciones eliminadas con exito', null)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
 module.exports = {
     getAllPersons,
     createPerson,
@@ -239,5 +277,6 @@ module.exports = {
     removeContact,
     getAllAdresses,
     addAddress,
-    removeAddress
+    removeAddress,
+    removeMultipleAddresses
 }

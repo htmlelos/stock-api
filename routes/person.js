@@ -32,5 +32,8 @@ router.route('/person/:personId/address')
     .post(person.addAddress)
 // DELETE /person/:personId/address/:addressId
 router.route('/person/:personId/address/:addressId')    
-    .delete(person.removeAddress)    
+    .delete(person.removeAddress)
+// DELETE /person/:personId/addresses    
+router.route('/person/:personId/addresses')
+    .delete(person.removeMultipleAddresses)
 module.exports = router

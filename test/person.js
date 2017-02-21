@@ -374,7 +374,7 @@ describe('PERSON: test suite', () => {
         it.skip('si la persona es tipo PROVEEDOR debe proporcionar el cuit', done => { })
     })
     // GET /person/:personId
-    describe('GET /person/:personId', () => {
+    describe('GET /person/{personId}', () => {
         it('deberia obtener una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -482,7 +482,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // PUT /person/:personId
-    describe('PUT /person/:personId', () => {
+    describe('PUT /person/{personId}', () => {
         it('deberia actualizar una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -577,7 +577,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // DELETE /person/:personId
-    describe('DELETE /person/:personId', () => {
+    describe('DELETE /person/{personId}', () => {
         it('deberia eliminar una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -667,7 +667,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // GET /person/:personId/contacts
-    describe('GET /person/:personId/contact', () => {
+    describe('GET /person/{personId}/contact', () => {
         it('deberia obtener todos los contactos de una persona', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -758,7 +758,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // POST /person/:personId/contact
-    describe('POST /person/:personId/contact', () => {
+    describe('POST /person/{personId}/contact', () => {
         it('deberia crear un contacto para un persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -858,7 +858,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // DELETE /person/:personId/contact/
-    describe('DELETE /person/:personId/contact/:contactId', () => {
+    describe('DELETE /person/{personId}/contact/{contactId}', () => {
         it('deberia eliminar un contacto de usuario por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -1017,7 +1017,7 @@ describe('PERSON: test suite', () => {
     })
 
     // GET /person/:personId/addresses
-    describe('GET /person/:personId/addresses', () => {
+    describe('GET /person/{personId}/addresses', () => {
         it('deberia obtener todas las direcciones de una persona', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -1106,7 +1106,7 @@ describe('PERSON: test suite', () => {
         })
     })
     // POST /person/:personId/address
-    describe('POST /person/:personId/address', () => {
+    describe('POST /person/{personId}/address', () => {
         it('deberia agregar una direccion a una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -1204,7 +1204,7 @@ describe('PERSON: test suite', () => {
         })
     })
 
-    describe('DELETE /person/:personId/address', () => {
+    describe('DELETE /person/{personId}/address', () => {
         it('deberia eliminar una direccion de una persona por su id', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -1225,8 +1225,8 @@ describe('PERSON: test suite', () => {
                         firstName: 'Jon',
                         lastName: 'Stark',
                         tributaryCode: '20232021692',
-                        taxtStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '12202202231962',
                         status: 'ACTIVO'
                     })
 
@@ -1242,7 +1242,7 @@ describe('PERSON: test suite', () => {
                     // console.log('::PERSONA::', person.addresses[0]._id);
 
                     chai.request(server)
-                        .delete('/person/'+person._id+'/address/'+person.addresses[0]._id)
+                        .delete('/person/' + person._id + '/address/' + person.addresses[0]._id)
                         .set('x-access-token', token)
                         .end((error, response) => {
                             response.should.be.status(200)
@@ -1292,7 +1292,7 @@ describe('PERSON: test suite', () => {
                     // console.log('::PERSONA::', person.addresses[0]._id);
 
                     chai.request(server)
-                        .delete('/person/58dece08eb0548118ce31f11/address/'+person.addresses[0]._id)
+                        .delete('/person/58dece08eb0548118ce31f11/address/' + person.addresses[0]._id)
                         .set('x-access-token', token)
                         .end((error, response) => {
                             response.should.be.status(404)
@@ -1342,7 +1342,7 @@ describe('PERSON: test suite', () => {
                     // console.log('::PERSONA::', person.addresses[0]._id);
 
                     chai.request(server)
-                        .delete('/person/'+person._id+'/address/58dece08eb0548118ce31f11')
+                        .delete('/person/' + person._id + '/address/58dece08eb0548118ce31f11')
                         .set('x-access-token', token)
                         .end((error, response) => {
                             response.should.be.status(404)
@@ -1352,7 +1352,68 @@ describe('PERSON: test suite', () => {
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
-                })            
+                })
+        })
+    })
+
+    describe.only('DELETE /person/{personId}/addresses', () => {
+        it('deberia eliminar todas las direcciones indicadas', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jon',
+                        lastName: 'Snow',
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+                    let addresses = []
+
+                    let address = { address: 'Colon 1020' }
+                    person.addresses.push(address)
+
+                    let addressId = person.addresses[0]._id
+                    addresses.push(addressId)
+
+                    address = { address: 'Mitre 758' }
+                    person.addresses.push(address)
+
+                    addressId = person.addresses[1]._id
+                    addresses.push(addressId)                    
+
+                    person.save()
+                        .catch(error => {
+                            console.error('ERROR: ', error);
+                        })
+
+                    chai.request(server)
+                        .delete('/person/' + person._id + '/addresses')
+                        .set('x-access-token', token)
+                        .send(addresses)
+                        .end((error, response) => {
+                            console.log('RESPONSE::', response.body)
+                            response.should.be.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Direcciones eliminadas con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
         })
     })
 })
