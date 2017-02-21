@@ -66,7 +66,7 @@ function updateProfile(request, response) {
 				let newProfile = request.body
 				newProfile.updateBy = require.decoded.username
 				newProfile.updatedAt = Date.now()
-				Profile.update({ _id: request.params.userId }, { $set: newProfile })
+				Profile.update({ _id: request.params.userId }, { $set: newProfile }, { runValidators: true })
 					.then(profile => {
 						response.json({ message: 'Perfil actualizado con exito', profile })
 					})

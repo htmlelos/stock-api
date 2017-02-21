@@ -67,7 +67,7 @@ function updateProduct(request, response) {
                 let newProduct = request.body
                 newProduct.updatedBy = request.decoded.username
                 newProduct.updatedAt = Date.now()
-                Product.update({ _id: request.params.productId }, { $set: newProduct })
+                Product.update({ _id: request.params.productId }, { $set: newProduct }, { runValidators: true })
                     .then(user => {
                         message.success(response, 200, 'Producto actualizado con exito', null)
                     })

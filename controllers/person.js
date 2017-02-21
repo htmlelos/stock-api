@@ -17,6 +17,8 @@ function getAllPersons(request, response) {
 function createPerson(request, response) {
     // Crea una nueva instancia de una persona con los parametros recibidos
     let newPerson = new Person(request.body)
+    // request.checkBody('type', 'debe indicar el tipo de persona').notEmpty()
+    //request.checkBody('type', 'el tipo de persona es incorrecto')-
     newPerson.save()
         .then(person => {
             message.success(response, 200, `${person.type} creado con exito`, { id: person._id })
@@ -57,7 +59,7 @@ function updatePerson(request, response) {
                 let newPerson = request.body;
                 newPerson.updatedBy = request.decoded.username
                 newPerson.updatedAt = Date.now()
-                Person.update({ _id: request.params.userId }, { $set: newPerson })
+                Person.update({ _id: request.params.userId }, { $set: newPerson }, { runValidators: true })
                     .then(person => {
                         message.success(response, 200, 'Persona actualizada con exito', null)
                     })
@@ -144,7 +146,7 @@ function removeContact(request, response) {
                 })
                 if (index >= 0) {
                     person.contacts.splice(index, 1)
-                    Person.update({ _id: person._id }, { $set: { contacts: person.contacts } })
+                    Person.update({ _id: person._id }, { $set: { contacts: person.contacts } }, { runValidators: true })
                         .then(result => {
                             message.success(response, 200, 'Contacto eliminado con exito', null)
                         })
@@ -203,12 +205,11 @@ function removeAddress(request, response) {
         .then(person => {
             if (person) {
                 let index = person.addresses.findIndex(element => {
-                    console.log('compare--', element._id.toString(),' === ', request.params.addressId.toString())
                     return (element._id.toString() === request.params.addressId.toString())
                 })
                 if (index >= 0) {
                     person.addresses.splice(index, 1)
-                    Person.update({ _id: person._id }, { $set: { addresses: person.addresses } })
+                    Person.update({ _id: person._id }, { $set: { addresses: person.addresses } }, { runValidators: true })
                         .then(result => {
                             message.success(response, 200, 'Dirección eliminada con exito', null)
                         })

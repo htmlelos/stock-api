@@ -61,7 +61,7 @@ function updateUser(request, response) {
 				let newUser = request.body
 				newUser.updatedBy = request.decoded.username
 				newUser.updatedAt = Date.now()
-				User.update({ _id: request.params.userId }, { $set: newUser }, { runValidators: true })
+				User.update({ _id: request.params.userId }, { $set: newUser })
 					.then(result => {
 						message.success(response, 200, 'Usuario actualizado con exito', null)
 					})

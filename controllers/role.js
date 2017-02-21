@@ -56,7 +56,7 @@ function updateRole(request, response) {
 				let newRole = request.body
 				newRole.updatedBy = request.decoded.username
 				newRole.updatedAt = Date()
-				Role.update({ _id: request.params.roleId }, { $set: newRole })
+				Role.update({ _id: request.params.roleId }, { $set: newRole }, { runValidators: true })
 					.then(role => {
 						message.success(response, 200, 'Rol actualizado con exito', null)
 					})
