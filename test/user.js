@@ -239,7 +239,6 @@ describe('USERS: test suite', () => {
 
 			let newUser = new User(user)
 			newUser.save()
-				.then(user => console.log())
 				.catch(error => console.error('TEST:', error))
 
 			chai.request(server)
@@ -280,7 +279,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -322,7 +320,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -363,7 +360,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -406,7 +402,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -450,7 +446,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					user = new User({
@@ -460,7 +456,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -506,7 +502,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -545,7 +541,7 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(user => console.log(''))
+
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -586,7 +582,7 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(user => console.log())
+
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -596,13 +592,14 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
+
+					let newRole = { roleId: role._id.toString() }
 
 					chai.request(server)
 						.post('/user/' + user._id + '/role')
 						.set('x-access-token', token)
-						.send({ roleId: role._id.toString() })
+						.send(newRole)
 						.end((error, response) => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
@@ -637,7 +634,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -647,7 +643,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -658,7 +653,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El usuario, no es un usuario valido')
+								.eql('El usuario no es valido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -686,7 +681,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -696,7 +690,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -707,7 +700,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol, no es un rol valido')
+								.eql('El rol no es valido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -736,7 +729,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -746,7 +738,6 @@ describe('USERS: test suite', () => {
 					})
 
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -757,7 +748,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(422)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol, no es un rol valido')
+								.eql('El rol no es valido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -786,7 +777,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -797,7 +787,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -838,7 +827,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -878,7 +866,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -889,7 +876,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -900,7 +886,7 @@ describe('USERS: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('Rol revocado con exito')
-							response.body.should.have.property('data').eql(null)
+							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
@@ -927,7 +913,6 @@ describe('USERS: test suite', () => {
 						status: 'ACTIVO'
 					})
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -938,7 +923,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -978,7 +962,6 @@ describe('USERS: test suite', () => {
 					})
 
 					role.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					let user = new User({
@@ -989,7 +972,6 @@ describe('USERS: test suite', () => {
 
 					user.roles.push(role._id)
 					user.save()
-						.then(role => console.log(''))
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)

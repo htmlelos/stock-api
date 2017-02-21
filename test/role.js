@@ -260,7 +260,6 @@ describe('ROLE: test suite', () => {
 
 					let newRole = new Role(role)
 					newRole.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -272,7 +271,7 @@ describe('ROLE: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('El rol ya existe')
-							response.body.should.have.property('data').eql(null)
+							response.body.should.have.property('data').to.be.null
 							done();
 						})
 				})
@@ -302,7 +301,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -347,7 +345,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -388,7 +385,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -432,7 +428,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -447,13 +442,14 @@ describe('ROLE: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol, no es un rol valido')
+								.eql('El rol no es valido')
+							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
 
-		it('should not update a role to a duplicate name', done => {
+		it('No deberiaactualizar un rol con nombre duplicado', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -475,7 +471,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					role = new Role({
@@ -485,7 +480,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -501,6 +495,7 @@ describe('ROLE: test suite', () => {
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('El rol ya existe')
+							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
@@ -530,7 +525,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -569,7 +563,6 @@ describe('ROLE: test suite', () => {
 					})
 
 					role.save()
-						.then(user => console.log())
 						.catch(error => console.error('TEST:', error))
 
 					chai.request(server)
@@ -579,7 +572,7 @@ describe('ROLE: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol, no es un rol valido')
+								.eql('El rol no es valido')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})

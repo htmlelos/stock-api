@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: test suite', () => {
+describe('PERSON: test suite', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -93,7 +93,7 @@ describe.only('PERSON: test suite', () => {
                         address: [],
                         tributaryCode: '202202231962',
                         taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
+                        grossIncomeCode: '12202202231962',
                         contacts: [],
                         status: 'ACTIVO'
                     }
@@ -145,7 +145,7 @@ describe.only('PERSON: test suite', () => {
                         .send(person)
                         .end((error, response) => {
 
-                            response.body.should.be.status(422)
+                            response.should.be.status(422)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('Debe proporcionar un tipo de persona')
@@ -155,7 +155,7 @@ describe.only('PERSON: test suite', () => {
                 })
         })
 
-        it('no deberia crear una nueva persona sin nombre', done => {
+        it.skip('no deberia crear una nueva persona sin nombre', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -176,7 +176,7 @@ describe.only('PERSON: test suite', () => {
                         address: [],
                         tributaryCode: '202202231962',
                         taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
+                        grossIncomeCode: '12202202231962',
                         contacts: [],
                         status: 'ACTIVO'
                     }
@@ -197,7 +197,7 @@ describe.only('PERSON: test suite', () => {
                 })
         })
 
-        it('no deberia crear una nueva persona sin apellido', done => {
+        it.skip('no deberia crear una nueva persona sin apellido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -238,6 +238,8 @@ describe.only('PERSON: test suite', () => {
                         })
                 })
         })
+
+        it.skip('si el tipo de persona es PROVEEDOR no debe crear uno sin razon social', done => { })
 
         it('El tipo de iva debe ser un valor valido', done => {
             let superUser = {
@@ -356,8 +358,7 @@ describe.only('PERSON: test suite', () => {
                         .set('x-access-token', token)
                         .send(person)
                         .end((error, response) => {
-
-                            response.body.should.be.status(422)
+                            response.should.be.status(422)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('El estado de la persona solo puede ser ACTIVO o INACTIVO')
@@ -402,7 +403,6 @@ describe.only('PERSON: test suite', () => {
                     });
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST:', error))
 
                     chai.request(server)
@@ -419,8 +419,8 @@ describe.only('PERSON: test suite', () => {
                                 .eql('Juan')
                             response.body.data.should.have.property('lastName')
                                 .eql('Perez')
-                            response.body.data.should.have.property('address')
-                            response.body.data.address.length.should.be.eql(0)
+                            response.body.data.should.have.property('addresses')
+                            response.body.data.addresses.length.should.be.eql(0)
                             response.body.data.should.have.property('tributaryCode')
                                 .eql('202202231962')
                             response.body.data.should.have.property('taxStatus')
@@ -464,7 +464,6 @@ describe.only('PERSON: test suite', () => {
                     });
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST:', error))
 
 
@@ -512,10 +511,8 @@ describe.only('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(user => console.log())
                         .catch(error => console.error('TEST', error))
 
-                    // console.log('::PERSONA_ID:: ', person._id);
 
                     chai.request(server)
                         .put('/person/' + person._id)
@@ -561,10 +558,7 @@ describe.only('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(user => console.log())
                         .catch(error => console.error('TEST', error))
-
-                    // console.log('::PERSONA_ID:: ', person._id);
 
                     chai.request(server)
                         .put('/person/58dece08eb0548118ce31f11')
@@ -612,7 +606,6 @@ describe.only('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST: ', error))
 
                     chai.request(server)
@@ -657,7 +650,6 @@ describe.only('PERSON: test suite', () => {
                     })
 
                     person.save()
-                        .then(person => console.log())
                         .catch(error => console.error('TEST: ', error))
 
                     chai.request(server)
@@ -668,6 +660,695 @@ describe.only('PERSON: test suite', () => {
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('La persona no es una persona valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+    // GET /person/:personId/contacts
+    describe('GET /person/:personId/contact', () => {
+        it('deberia obtener todos los contactos de una persona', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jane',
+                        lastName: 'Jetson',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE NO INSCRIPTO',
+                        grossIncomeCode: '12232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST:', error))
+
+                    chai.request(server)
+                        .get('/person/' + person._id + '/contacts')
+                        .set('x-access-token', token)
+                        //.send(person)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contactos obtenidos con exito')
+                            response.body.should.have.property('data')
+                            response.body.data.length.should.be.eql(0)
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia obtener los contactos de una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jane',
+                        lastName: 'Jetson',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE NO INSCRIPTO',
+                        grossIncomeCode: '120232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST:', error))
+
+                    chai.request(server)
+                        .get('/person/58dece08eb0548118ce31f11/contacts')
+                        .set('x-access-token', token)
+                        // .send(person)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('La Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+    // POST /person/:personId/contact
+    describe('POST /person/:personId/contact', () => {
+        it('deberia crear un contacto para un persona por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST: ', error))
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    chai.request(server)
+                        .post('/person/' + person._id + '/contact')
+                        .set('x-access-token', token)
+                        .send(contact)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contacto añadido con exito')
+                            response.body.should.have.property('data').to.be.not.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia agregar un contacto para una person con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST: ', error))
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    chai.request(server)
+                        .post('/person/58dece08eb0548118ce31f11/contact')
+                        .set('x-access-token', token)
+                        .send(contact)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('La Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+    // DELETE /person/:personId/contact/
+    describe('DELETE /person/:personId/contact/:contactId', () => {
+        it('deberia eliminar un contacto de usuario por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/' + person._id + '/contact/' + person.contacts[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contacto eliminado con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia eliminar un contacto de una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/58dece08eb0548118ce31f11/contact/' + person.contacts[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia eliminar un contacto con id invalido de una persona', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Tirion',
+                        lastName: 'Lannister',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    let contact = {
+                        name: 'Cersei Lannister',
+                        phone: '555-777888'
+                    }
+
+                    person.contacts.push(contact)
+
+                    person.save()
+                        .catch(error => console.log('TEST: ', error))
+
+                    // console.log('::PERSONA::', person.contacts[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/' + person._id + '/contact/58dece08eb0548118ce31f11')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Contacto no es valido')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+
+    // GET /person/:personId/addresses
+    describe('GET /person/:personId/addresses', () => {
+        it('deberia obtener todas las direcciones de una persona', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Eddard',
+                        lastName: 'Stark',
+                        address: [],
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE NO INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST: ', error))
+
+                    chai.request(server)
+                        .get('/person/' + person._id + '/addresses')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Direcciones obtenidas con exito')
+                            response.body.should.have.property('data')
+                            response.body.data.length.should.be.eql(0)
+                            done()
+                        })
+
+                })
+        })
+
+        it('no deberia obtener la direccion de una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Juan',
+                        lastName: 'Tronco',
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '12232021692',
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.error('TEST: ', error))
+
+                    chai.request(server)
+                        .get('/person/58dece08eb0548118ce31f11/addresses')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.have.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+    // POST /person/:personId/address
+    describe('POST /person/:personId/address', () => {
+        it('deberia agregar una direccion a una persona por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Aria',
+                        lastName: 'Stark',
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        contacts: [],
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.log('ERROR:', error))
+
+                    let address = {
+                        address: 'Colon 1020'
+                    }
+
+                    chai.request(server)
+                        .post('/person/' + person._id + '/address')
+                        .set('x-access-token', token)
+                        .send(address)
+                        .end((error, response) => {
+                            response.should.be.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Direccion agregada con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia agregar una direccion a una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Aria',
+                        lastName: 'Stark',
+                        tributaryCode: '20232021692',
+                        taxStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '1220232021692',
+                        contacts: [],
+                        status: 'ACTIVO'
+                    })
+
+                    person.save()
+                        .catch(error => console.log('ERROR:', error))
+
+                    let address = {
+                        address: 'Colon 1020'
+                    }
+
+                    chai.request(server)
+                        .post('/person/58dece08eb0548118ce31f11/address')
+                        .set('x-access-token', token)
+                        .send(address)
+                        .end((error, response) => {
+                            response.should.be.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona no es valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+    })
+
+    describe('DELETE /person/:personId/address', () => {
+        it('deberia eliminar una direccion de una persona por su id', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jon',
+                        lastName: 'Stark',
+                        tributaryCode: '20232021692',
+                        taxtStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        status: 'ACTIVO'
+                    })
+
+                    let address = {
+                        address: 'Mitre 741'
+                    }
+
+                    person.addresses.push(address)
+
+                    person.save()
+                        .catch(error => console.log('ERROR: ', error))
+
+                    // console.log('::PERSONA::', person.addresses[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/'+person._id+'/address/'+person.addresses[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.be.status(200)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Dirección eliminada con exito')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia eliminar una direccion de una persona con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jon',
+                        lastName: 'Stark',
+                        tributaryCode: '20232021692',
+                        taxtStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        status: 'ACTIVO'
+                    })
+
+                    let address = {
+                        address: 'Mitre 741'
+                    }
+
+                    person.addresses.push(address)
+
+                    person.save()
+                        .catch(error => console.log('ERROR: ', error))
+
+                    // console.log('::PERSONA::', person.addresses[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/58dece08eb0548118ce31f11/address/'+person.addresses[0]._id)
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.be.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Persona no valida')
+                            response.body.should.have.property('data').to.be.null
+                            done()
+                        })
+                })
+        })
+
+        it('no deberia eliminar una direccion con id invalido', done => {
+            let superUser = {
+                username: 'super@mail.com',
+                password: 'super'
+            }
+
+            chai.request(server)
+                .post('/login')
+                .send(superUser)
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('token')
+                    token = response.body.data.token
+                    // Test from here
+                    let person = new Person({
+                        type: 'PROVEEDOR',
+                        firstName: 'Jon',
+                        lastName: 'Stark',
+                        tributaryCode: '20232021692',
+                        taxtStatus: 'RESPONSABLE INSCRIPTO',
+                        grossIncomeCode: '122022022319623',
+                        status: 'ACTIVO'
+                    })
+
+                    let address = {
+                        address: 'Mitre 741'
+                    }
+
+                    person.addresses.push(address)
+
+                    person.save()
+                        .catch(error => console.log('ERROR: ', error))
+
+                    // console.log('::PERSONA::', person.addresses[0]._id);
+
+                    chai.request(server)
+                        .delete('/person/'+person._id+'/address/58dece08eb0548118ce31f11')
+                        .set('x-access-token', token)
+                        .end((error, response) => {
+                            response.should.be.status(404)
+                            response.body.should.be.a('object')
+                            response.body.should.have.property('message')
+                                .eql('Dirección no valida')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })

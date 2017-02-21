@@ -61,7 +61,7 @@ function updateUser(request, response) {
 				let newUser = request.body
 				newUser.updatedBy = request.decoded.username
 				newUser.updatedAt = Date.now()
-				User.update({ _id: request.params.userId }, { $set: newUser }, { runValidators: true })
+				User.update({ _id: request.params.userId }, { $set: newUser })
 					.then(result => {
 						message.success(response, 200, 'Usuario actualizado con exito', null)
 					})
@@ -117,7 +117,9 @@ function addUserRole(request, response) {
 					findRole(roleId)
 						.then(role => {
 							if (role) {
-								let isIncluded = user.roles.map(current => current.toString()).includes(role._id.toString())
+								let isIncluded = user.roles
+									.map(current => current.toString())
+									.includes(role._id.toString())
 
 								if (isIncluded) {
 									message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
@@ -132,18 +134,17 @@ function addUserRole(request, response) {
 								}
 
 							} else {
-								message.failure(response, 404, 'El rol, no es un rol valido', null)
+								message.failure(response, 404, 'El rol no es valido', null)
 							}
 						})
 						.catch(error => {
 							message.error(response, { status: 422, message: '', data: error })
-							message.error(response, 500, 'No se pudo encontrar el rol indicado', error)
 						})
 				} else {
-					message.failure(response, 422, 'El rol, no es un rol valido', null)
+					message.failure(response, 422, 'El rol no es valido', null)
 				}
 			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario valido', null)
+				message.failure(response, 404, 'El usuario no es valido', null)
 			}
 		})
 		.catch(error => {
@@ -174,7 +175,6 @@ function getUserRoles(request, response) {
 }
 // Eliminar un rol de un usuario
 function deleteUserRole(request, response) {
-
 	findUser(request.params.userId)
 		.select('-password')
 		.then(user => {
@@ -182,11 +182,18 @@ function deleteUserRole(request, response) {
 				findRole(request.params.roleId)
 					.then(role => {
 						if (role) {
-							let index = user.roles.findIndex((element) => element = role._id)
+							let index = user.roles
+								.findIndex(element => element.toString() == role._id.toString())
 							if (index >= 0) {
 								user.roles.splice(index, 1)
-								user.save()
-								message.success(response, 200, 'Rol revocado con exito', null)
+								//user.save()
+								User.update({ _id: user._id }, { $set: { roles: user.roles } })
+									.then(result => {
+										message.success(response, 200, 'Rol revocado con exito', null)
+									})
+									.catch(error => {
+										message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
+									})
 							} else {
 								message.failure(response, 404, 'El rol, no es un rol valido', null)
 							}

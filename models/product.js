@@ -5,13 +5,36 @@ const Schema = mongoose.Schema
 // Establece las promesas nativas como libreria de promesas para mongoose
 mongoose.Promise = global.Promise
 
-const PriceList = new Schema({
+const PriceSchema = new Schema({
+    priceList: {
+        type: Schema.Types.ObjectId,
+        ref: 'PriceList'
+    },
     cost: {
         type: Number
+    },
+    profit: {
+        type: Number
+    },
+    status: {
+        type: String,
+        enum: {
+            values: ['ACTIVO', 'INACTIVO'],
+            message: 'El estado del precio de un producto solo puede ser ACTIVO o INACTIVO'
+        },
+        required: 'Debe definir el estado del producto'        
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedBy: {
+        type: String,
+        default: 'anonimo'
     }
-},{
-    versionKey: false
-})
+}, {
+        versionKey: false
+    })
 
 const ProductSchema = new Schema({
     name: {
@@ -21,18 +44,14 @@ const ProductSchema = new Schema({
     },
     brand: {
         type: Schema.Types.ObjectId,
-        ref: 'Brand'        
+        ref: 'Brand'
     },
     code: String,
-    price: Number,
     components: [{
         type: Schema.Types.ObjectId,
         ref: 'Product'
     }],
-    priceList: {
-        type: Schema.Types.Object,
-        ref: 'PriceList'
-    },
+    priceList: [PriceSchema],
     status: {
         type: String,
         enum: {
@@ -41,24 +60,24 @@ const ProductSchema = new Schema({
         },
         required: 'Debe definir el estado del producto'
     },
-	createdAt: {
-		type: Date,
-		required: true,
-		default: Date.now
-	},
-	createdBy: {
-		type: String,
-		required: true,
-		default: 'anonimo'
-	},
-	modifiedAt: {
-		type: Date
-	},
-	modifiedBy: {
-		type: String
-	}
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    createdBy: {
+        type: String,
+        required: true,
+        default: 'anonimo'
+    },
+    modifiedAt: {
+        type: Date
+    },
+    modifiedBy: {
+        type: String
+    }
 }, {
-	versionKey: false
-})
+        versionKey: false
+    })
 
 module.exports = mongoose.model('product', ProductSchema)

@@ -14,8 +14,13 @@ router.route('/product/:productId')
     .put(product.updateProduct)
     .delete(product.deleteProduct)
 
-// GET /user/:userId/brand
+// GET /product/:productId/brand
 router.route('/product/:productId/brand')
     .get(product.getBrand)
-
+// GET /product/:productId/pricelists
+router.route('/product/:productId/pricelists')
+    .get(product.getAllPriceLists)
+// Product /product/:productId/price
+router.route('/product/:productId/pricelist')
+    .post(product.addPriceList)
 module.exports = router
