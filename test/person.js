@@ -19,7 +19,23 @@ describe.only('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
-        done()
+        let superUser = {
+            username: 'super@mail.com',
+            password: 'super'
+        }
+
+        chai.request(server)
+            .post('/login')
+            .send(superUser)
+            .end((error, response) => {
+                // console.log('::RESPONSE::', response);
+                response.should.be.status(200)
+                response.body.should.have.property('data')
+                response.body.data.should.have.property('token')
+                token = response.body.data.token
+                // Test from here
+                done()
+            })
     })
     // Se ejecuta despues de cada test
     afterEach(done => {
@@ -70,172 +86,142 @@ describe.only('PERSON: ', () => {
         })
     })
     // POST /person - Crea una persona
-    describe('POST /person', () => {
-        it('deberia crear una nueva persona', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+    describe.only('POST /person', () => {
+        it('deberia crear una nueva persona (CLIENTE)', done => {
+            // Test from here
+            let person = {
+                type: 'CLIENTE',
+                firstName: 'Juan',
+                lastName: 'Perez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '12202202231962',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
+                    response.body.should.be.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
                     response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'CLIENTE',
-                        firstName: 'Juan',
-                        lastName: 'Perez',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '12202202231962',
-                        contacts: [],
-                        status: 'ACTIVO'
-                    }
-
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-                            response.body.should.be.status(200)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
-                            response.body.should.have.property('data')
-                            response.body.data.should.have.property('id').to.be.not.null
-                            done()
-                        })
+                    response.body.data.should.have.property('id').to.be.not.null
+                    done()
                 })
         })
 
         it('no deberia crear una nueva persona sin tipo de persona', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+            let person = {
+                firstName: 'Juan',
+                lastName: 'Perez',
+                address: [],
+                tributaryCode: '20232021962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '122022022319623',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        firstName: 'Juan',
-                        lastName: 'Perez',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        contacts: [],
-                        status: 'ACTIVO'
-                    }
-
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-
-                            response.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Debe proporcionar un tipo de persona')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+                    console.log('RESPONSE::', response.body)
+                    response.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.equal(['Tipo de persona no definido', 'Tipo de persona no es valido'])
+                    // .eql('Debe proporcionar un tipo de persona')
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
         })
 
-        it.skip('no deberia crear una nueva persona sin nombre', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+        it('no deberia crear una person con tipo invalido', done => {
+            // console.log('TOKEN', token);
+            let person = {
+                type: 'COBRADOR',
+                firstName: 'Pedro',
+                lastName: 'Perez',
+                address: [],
+                tributaryCode: '20232021692',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '1220232021692',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'CLIENTE',
-                        lastName: 'Perez',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '12202202231962',
-                        contacts: [],
-                        status: 'ACTIVO'
-                    }
-
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-
-                            response.body.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Debe proporcionar el nombre de la persona')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+                    response.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.equal(['Tipo de persona no es valido'])
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
         })
 
-        it.skip('no deberia crear una nueva persona sin apellido', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+        it('no deberia crear una nueva persona sin nombre (CLIENTE)', done => {
+            let person = {
+                type: 'CLIENTE',
+                lastName: 'Perez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '12202202231962',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'CLIENTE',
-                        firstName: 'Juan',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        contacts: [],
-                        status: 'ACTIVO'
-                    }
+                    console.log('RESPONSE::', response.body);
+                    response.body.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.equal([`El nombre del ${person.type.toLowerCase()} esta ausente`])
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
 
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
+        it.only('no deberia crear una nueva persona sin apellido (CLIENTE)', done => {
+            let person = {
+                type: 'CLIENTE',
+                firstName: 'Juan',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '122022022319623',
+                contacts: [],
+                status: 'ACTIVO'
+            }
 
-                            response.body.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Debe proporcionar el apellido de la persona')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+            chai.request(server)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
+                .end((error, response) => {
+
+                    response.body.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.equal([`El apellido del ${person.type.toLowerCase()} esta ausente`])
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
         })
 

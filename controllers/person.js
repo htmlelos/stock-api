@@ -16,38 +16,73 @@ function getAllPersons(request, response) {
 // Verifica los datos del comprador
 
 function checkCustomer(request, response) {
+    console.log('--CHECK');
     // Valida si los datos son validos para crear un cliente
-    request.checkBody('type', 'debe indicar el tipo de persona').notEmpty()
+    request.checkBody('type', 'Debe indicar el tipo de persona').notEmpty()    
     //request.checkBody('type', 'el tipo de persona es incorrecto')-
     console.log('TIPO PERSONA', request.body.type)
-}
-
-function executeValidators(request, response) {
     request.getValidationResult()
         .then(result => {
             if (!result.isEmpty()) {
-                response.status(400).send('Hubo errores')
+                console.log('DEBERIA TERMINAR');
+                message.failure(response, 400, 'Hubo errores', null)
             }
-        })
+        })    
 }
 
 // Crea una nueva persona en la base de datos
 function createPerson(request, response) {
-    // Crea una nueva instancia de una persona con los parametros recibidos
-    checkCustomer(request, response)
+    // Validamos los parametros para la creacion de personas
+    // checkCustomer(request, response)
+    let type = request.body.type
+    console.log('TIPO--', type);
+    // Verificar Persona
+    request.checkBody('type', 'Tipo de persona no definido').notEmpty()    
+    request.checkBody('type', 'Tipo de persona no es valido').isIn(['CLIENTE'])
+    // Verificar Cliente
+    if (type === 'CLIENTE') {
+        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta ausente`).notEmpty()
+        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta ausente`).notEmpty()
+    }
+    // Verificar Proveedor
+    // Verificar Vendedor
+    request.getValidationResult()
+        .then(result => {
+            if (!result.isEmpty()) {
+                let messages = result.array().map(x => x.msg)
+                // console.log('MESSAGE--', messages);
 
-    let newPerson = new Person(request.body)
-    newPerson.save()
+                return Promise.reject({code: 422, messages, data: null})
+            }
+            return Promise.resolve('ok')            
+        })
+        .then(result => {
+            let newPerson = new Person(request.body)
+            // console.log('NEW PERSON', newPerson);
+            return newPerson.save()
+        })
         .then(person => {
-            message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
+            // console.log('RESULTADO', person);
+            message.success(response, 200, `${person.type} creado con éxito`, {id: person._id})
         })
         .catch(error => {
-            if (error.code === 11000) {
-                message.error(response, 422, 'Persona ya existe', error)
-            } else {
-                message.error(response, 422, '', error)
-            }
+            console.error('ERROR--', error);
+            message.failure(response, error.code, error.messages, error.data)
         })
+
+    // Crea una nueva instancia de una persona con los parametros recibidos
+    // let newPerson = new Person(request.body)
+    // newPerson.save()
+    //     .then(person => {
+    //         message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
+    //     })
+    //     .catch(error => {
+    //         if (error.code === 11000) {
+    //             message.error(response, 422, 'Persona ya existe', error)
+    //         } else {
+    //             message.error(response, 422, '', error)
+    //         }
+    //     })
 }
 // Obtener una persona
 function findPerson(personId) {
