@@ -97,7 +97,7 @@ describe('PRODUCTS test suite', () => {
                         .end((error, response) => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
-                            response.body.should.have.property('message').eql('Producto creado con exito')
+                            response.body.should.have.property('message').eql('Producto creado con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -247,7 +247,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Producto obtenido con exito')
+                                .eql('Producto obtenido con éxito')
                             response.body.should.have.property('data')
                             response.body.data.should.have.property('name')
                                 .eql('Gaseosa 2L')
@@ -353,7 +353,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Producto actualizado con exito')
+                                .eql('Producto actualizado con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -501,7 +501,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Producto eliminado con exito')
+                                .eql('Producto eliminado con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -594,7 +594,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Marca obtenida con exito')
+                                .eql('Marca obtenida con éxito')
                             response.body.should.have.property('data')
                             response.body.data.should.be.a('object')
                             response.body.data.should.have.property('name')
@@ -656,7 +656,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Listas de Precios obtenidas con exito')
+                                .eql('Listas de Precios obtenidas con éxito')
                             response.body.should.have.property('data')
                             response.body.data.should.be.a('array')
                             response.body.data.length.should.be.eql(0)
@@ -784,7 +784,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Precio añadido con exito')
+                                .eql('Precio añadido con éxito')
                             response.body.should.have.property('data').to.be.not.null
                             done()
                         })

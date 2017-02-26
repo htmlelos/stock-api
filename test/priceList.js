@@ -88,7 +88,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(200)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('Lista de Precios creada con exito')
+                .eql('Lista de Precios creada con éxito')
               response.body.should.have.property('data')
               response.body.data.should.have.property('id').to.be.not.null;
               done()
@@ -310,7 +310,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(200)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('Lista de Precios obtenida con exito')
+                .eql('Lista de Precios obtenida con éxito')
               response.body.should.have.property('data')
               response.body.data.should.have.property('name')
                 .eql('Precios con IVA')
@@ -396,7 +396,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(200)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('Lista de Precios actualizada con exito')
+                .eql('Lista de Precios actualizada con éxito')
               response.body.should.have.property('data').to.be.null
               done()
             })
@@ -524,7 +524,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(200)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('Lista de Precios eliminada con exito')
+                .eql('Lista de Precios eliminada con éxito')
               response.body.should.have.property('data').to.be.null
               done()
             })

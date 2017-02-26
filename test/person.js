@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PERSON: test suite', () => {
+describe.only('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -105,7 +105,7 @@ describe('PERSON: test suite', () => {
                         .end((error, response) => {
                             response.body.should.be.status(200)
                             response.body.should.be.a('object')
-                            response.body.should.have.property('message').eql(`${person.type} creado con exito`)
+                            response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
                             response.body.should.have.property('data')
                             response.body.data.should.have.property('id').to.be.not.null
                             done()
@@ -412,7 +412,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona obtenida con exito')
+                                .eql('Persona obtenida con éxito')
                             response.body.data.should.have.property('type')
                                 .eql('CLIENTE')
                             response.body.data.should.have.property('firstName')
@@ -474,14 +474,14 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('No se encontro la persona')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null;
                             done();
                         })
                 })
         })
     })
-    // PUT /person/:personId
+    // PUT /person/:personId - Actualiza una persona
     describe('PUT /person/{personId}', () => {
         it('deberia actualizar una persona por su id', done => {
             let superUser = {
@@ -524,7 +524,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona actualizada con exito')
+                                .eql('Persona actualizada con éxito')
                             done()
                         })
                 })
@@ -570,7 +570,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('La persona, no es una persona valida')
+                                .eql('No se encontró la persona')
                             done()
                         })
                 })
@@ -615,7 +615,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona eliminada con exito')
+                                .eql('Persona eliminada con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -659,7 +659,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('La persona no es una persona valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -705,7 +705,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Contactos obtenidos con exito')
+                                .eql('Contactos obtenidos con éxito')
                             response.body.should.have.property('data')
                             response.body.data.length.should.be.eql(0)
                             done()
@@ -750,7 +750,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('La Persona no es valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -801,8 +801,8 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Contacto añadido con exito')
-                            response.body.should.have.property('data').to.be.not.null
+                                .eql('Contacto añadido con éxito')
+                            response.body.should.have.property('data').to.be.null
                             done()
                         })
                 })
@@ -850,7 +850,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('La Persona no es valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -904,7 +904,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Contacto eliminado con exito')
+                                .eql('Contacto eliminado con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -956,59 +956,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona no es valida')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
-                })
-        })
-
-        it('no deberia eliminar un contacto con id invalido de una persona', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
-            }
-
-            chai.request(server)
-                .post('/login')
-                .send(superUser)
-                .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = new Person({
-                        type: 'PROVEEDOR',
-                        firstName: 'Tirion',
-                        lastName: 'Lannister',
-                        address: [],
-                        tributaryCode: '20232021692',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '1220232021692',
-                        status: 'ACTIVO'
-                    })
-
-                    let contact = {
-                        name: 'Cersei Lannister',
-                        phone: '555-777888'
-                    }
-
-                    person.contacts.push(contact)
-
-                    person.save()
-                        .catch(error => console.log('TEST: ', error))
-
-                    // console.log('::PERSONA::', person.contacts[0]._id);
-
-                    chai.request(server)
-                        .delete('/person/' + person._id + '/contact/58dece08eb0548118ce31f11')
-                        .set('x-access-token', token)
-                        .end((error, response) => {
-                            response.should.have.status(404)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Contacto no es valido')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1054,7 +1002,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Direcciones obtenidas con exito')
+                                .eql('Direcciones obtenidas con éxito')
                             response.body.should.have.property('data')
                             response.body.data.length.should.be.eql(0)
                             done()
@@ -1098,7 +1046,7 @@ describe('PERSON: test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona no es valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1148,7 +1096,7 @@ describe('PERSON: test suite', () => {
                             response.should.be.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Direccion agregada con exito')
+                                .eql('Direccion añadida con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1196,7 +1144,7 @@ describe('PERSON: test suite', () => {
                             response.should.be.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona no es valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1248,7 +1196,7 @@ describe('PERSON: test suite', () => {
                             response.should.be.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Dirección eliminada con exito')
+                                .eql('Dirección eliminada con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1298,57 +1246,7 @@ describe('PERSON: test suite', () => {
                             response.should.be.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Persona no valida')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
-                })
-        })
-
-        it('no deberia eliminar una direccion con id invalido', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
-            }
-
-            chai.request(server)
-                .post('/login')
-                .send(superUser)
-                .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = new Person({
-                        type: 'PROVEEDOR',
-                        firstName: 'Jon',
-                        lastName: 'Stark',
-                        tributaryCode: '20232021692',
-                        taxtStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        status: 'ACTIVO'
-                    })
-
-                    let address = {
-                        address: 'Mitre 741'
-                    }
-
-                    person.addresses.push(address)
-
-                    person.save()
-                        .catch(error => console.log('ERROR: ', error))
-
-                    // console.log('::PERSONA::', person.addresses[0]._id);
-
-                    chai.request(server)
-                        .delete('/person/' + person._id + '/address/58dece08eb0548118ce31f11')
-                        .set('x-access-token', token)
-                        .end((error, response) => {
-                            response.should.be.status(404)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Dirección no valida')
+                                .eql('No se encontró la persona')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -1356,7 +1254,7 @@ describe('PERSON: test suite', () => {
         })
     })
 
-    describe.only('DELETE /person/{personId}/addresses', () => {
+    describe('DELETE /person/{personId}/addresses', () => {
         it('deberia eliminar todas las direcciones indicadas', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -1393,7 +1291,7 @@ describe('PERSON: test suite', () => {
                     person.addresses.push(address)
 
                     addressId = person.addresses[1]._id
-                    addresses.push(addressId)                    
+                    addresses.push(addressId)
 
                     person.save()
                         .catch(error => {
@@ -1405,11 +1303,10 @@ describe('PERSON: test suite', () => {
                         .set('x-access-token', token)
                         .send(addresses)
                         .end((error, response) => {
-                            console.log('RESPONSE::', response.body)
                             response.should.be.status(200)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('Direcciones eliminadas con exito')
+                                .eql('Direcciones eliminadas con éxito')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })

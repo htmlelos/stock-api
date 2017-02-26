@@ -20,7 +20,7 @@ function createPriceList(request, response) {
   newPriceList.createdBy = request.decoded.username
   newPriceList.save()
     .then(priceList => {
-      message.success(response, 200, 'Lista de Precios creada con exito', { id: priceList._id })
+      message.success(response, 200, 'Lista de Precios creada con éxito', { id: priceList._id })
     })
     .catch(error => {
       if (error.code === 11000) {
@@ -39,7 +39,7 @@ function getPriceList(request, response) {
   findPriceList(request.params.pricelistId)
     .then(priceList => {
       if (priceList) {
-        message.success(response, 200, 'Lista de Precios obtenida con exito', priceList)
+        message.success(response, 200, 'Lista de Precios obtenida con éxito', priceList)
       } else {
         message.failure(response, 404, 'No se encontro la Lista de Precios', null)
       }
@@ -58,7 +58,7 @@ function updatePriceList(request, response) {
         newPriceList.updatedAt = Date()
         PriceList.update({ _id: request.params.pricelistId }, { $set: newPriceList }, { runValidators: true })
           .then(result => {
-            message.success(response, 200, 'Lista de Precios actualizada con exito', null)
+            message.success(response, 200, 'Lista de Precios actualizada con éxito', null)
           })
           .catch(error => {
             if (error.code === 11000) {
@@ -83,7 +83,7 @@ function deletePriceList(request, response) {
     if (priceList) {
     PriceList.remove({_id: priceList._id})
       .then(result => {
-        message.success(response, 200, 'Lista de Precios eliminada con exito', null)
+        message.success(response, 200, 'Lista de Precios eliminada con éxito', null)
       })
       .catch(error => {
         message.error(response, 422, '', error)

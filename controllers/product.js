@@ -23,7 +23,7 @@ function createProduct(request, response) {
 
     newProduct.save()
         .then(product => {
-            message.success(response, 200, 'Producto creado con exito', null)
+            message.success(response, 200, 'Producto creado con éxito', null)
         })
         .catch(error => {
             if (error.code === 11000) {
@@ -44,7 +44,7 @@ function getProduct(request, response) {
             if (product) {
                 Brand.populate(product, { path: 'brand' })
                     .then(product => {
-                        message.success(response, 200, 'Producto obtenido con exito', product)
+                        message.success(response, 200, 'Producto obtenido con éxito', product)
                     })
                     .catch(error => {
                         message.error(response, 422, '', error)
@@ -69,7 +69,7 @@ function updateProduct(request, response) {
                 newProduct.updatedAt = Date.now()
                 Product.update({ _id: request.params.productId }, { $set: newProduct }, { runValidators: true })
                     .then(user => {
-                        message.success(response, 200, 'Producto actualizado con exito', null)
+                        message.success(response, 200, 'Producto actualizado con éxito', null)
                     })
                     .catch(error => {
                         if (error.code === 11000) {
@@ -93,7 +93,7 @@ function deleteProduct(request, response) {
             if (product) {
                 Product.remove({ _id: product.id })
                     .then(product => {
-                        message.success(response, 200, 'Producto eliminado con exito', null)
+                        message.success(response, 200, 'Producto eliminado con éxito', null)
                     })
                     .catch(error => {
                         message.error(response, 422, '', error)
@@ -113,7 +113,7 @@ function getBrand(request, response) {
             if (product) {
                 Brand.populate(product, { path: 'brand' })
                     .then(result => {
-                        message.success(response, 200, 'Marca obtenida con exito', result.brand)
+                        message.success(response, 200, 'Marca obtenida con éxito', result.brand)
                     })
                     .catch(error => {
                         message.error(response, 422, '', error)
@@ -133,7 +133,7 @@ function getAllPriceLists(request, response) {
             if (product) {
                 PriceList.populate(product, { path: 'priceList' })
                     .then(result => {
-                        message.success(response, 200, 'Listas de Precios obtenidas con exito', result.priceList)
+                        message.success(response, 200, 'Listas de Precios obtenidas con éxito', result.priceList)
                     })
                     .catch(error => {
                         message.error(response, 422, '', error)
@@ -169,7 +169,7 @@ function addPriceList(request, response) {
                             } else {
                                 Product.update({ _id: product._id }, { $addToSet: { priceList: price } })
                                     .then(result => {
-                                        message.success(response, 200, 'Precio añadido con exito', product)
+                                        message.success(response, 200, 'Precio añadido con éxito', product)
                                     })
                                     .catch(error => {
                                         message.error(response, 500, 'No se pudo añadir la Lista de Precios al producto', error)

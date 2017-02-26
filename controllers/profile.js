@@ -21,7 +21,7 @@ function createProfile(request, response) {
 
 	newProfile.save()
 		.then(profile => {
-			response.json({ message: 'Perfil creado con exito' })
+			response.json({ message: 'Perfil creado con éxito' })
 			response.end()
 		})
 		.catch(error => {
@@ -48,7 +48,7 @@ function getProfile(request, response) {
 	findProfile(request.params.profileId)
 		.then(profile => {
 			if (profile) {
-				response.json({ message: 'Perfil obtenido con exito', profile })
+				response.json({ message: 'Perfil obtenido con éxito', profile })
 			} else {
 				response.status(404).json({ message: 'No se encontro el perfil', profile })
 			}
@@ -68,7 +68,7 @@ function updateProfile(request, response) {
 				newProfile.updatedAt = Date.now()
 				Profile.update({ _id: request.params.userId }, { $set: newProfile }, { runValidators: true })
 					.then(profile => {
-						response.json({ message: 'Perfil actualizado con exito', profile })
+						response.json({ message: 'Perfil actualizado con éxito', profile })
 					})
 					.catch(error => {
 						if (error.code === 11000) {
@@ -95,7 +95,7 @@ function deleteProfile(request, response) {
 			if (profile) {
 				Profile.remove({ _id: profile.id })
 					.then(profile => {
-						response.json({ message: 'Perfil eliminado con exito' })
+						response.json({ message: 'Perfil eliminado con éxito' })
 					})
 					.catch(error => {
 						response.send(error)

@@ -94,7 +94,7 @@ describe('USERS: test suite', () => {
 						.end((error, response) => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
-							response.body.should.have.property('message').eql('Usuario creado con exito')
+							response.body.should.have.property('message').eql('Usuario creado con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('id').to.be.not.null
 							done()
@@ -288,7 +288,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario obtenido con exito')
+								.eql('Usuario obtenido con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('username')
 								.eql('admin@mail.com')
@@ -374,7 +374,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario actualizado con exito')
+								.eql('Usuario actualizado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
@@ -512,7 +512,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario eliminado con exito')
+								.eql('Usuario eliminado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
@@ -604,7 +604,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol se añadio con exito')
+								.eql('El rol se añadio con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('id').to.be.not.null
 							done()
@@ -885,7 +885,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Rol revocado con exito')
+								.eql('Rol revocado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})

@@ -20,7 +20,7 @@ function createRole(request, response) {
 	newRole.createdBy = request.decoded.username
 	newRole.save()
 		.then(role => {
-			message.success(response, 200, 'Rol creado con exito', {id: role._id})
+			message.success(response, 200, 'Rol creado con éxito', {id: role._id})
 		})
 		.catch(error => {
 			if (error.code === 11000) {
@@ -39,7 +39,7 @@ function getRole(request, response) {
 	findRole(request.params.roleId)
 		.then(role => {
 			if (role) {
-				message.success(response, 200, 'Rol obtenido con exito', role)
+				message.success(response, 200, 'Rol obtenido con éxito', role)
 			} else {
 				message.failure(response, 404, 'No se encontro el rol', null)
 			}
@@ -58,7 +58,7 @@ function updateRole(request, response) {
 				newRole.updatedAt = Date()
 				Role.update({ _id: request.params.roleId }, { $set: newRole }, { runValidators: true })
 					.then(role => {
-						message.success(response, 200, 'Rol actualizado con exito', null)
+						message.success(response, 200, 'Rol actualizado con éxito', null)
 					})
 					.catch(error => {
 						if (error.code === 11000) {
@@ -82,7 +82,7 @@ function deleteRole(request, response) {
 			if (role) {
 				Role.remove({ _id: role.id })
 					.then(role => {
-						message.success(response, 200, 'Rol eliminado con exito', null)
+						message.success(response, 200, 'Rol eliminado con éxito', null)
 					})
 					.catch(error => {
 						message.error(response, 422, '', error)
