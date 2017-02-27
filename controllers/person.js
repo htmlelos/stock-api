@@ -37,14 +37,22 @@ function createPerson(request, response) {
     let type = request.body.type
     console.log('TIPO--', type);
     // Verificar Persona
-    request.checkBody('type', 'Tipo de persona no definido').notEmpty()    
-    request.checkBody('type', 'Tipo de persona no es valido').isIn(['CLIENTE'])
+    request.checkBody('type', 'Tipo de persona no definido')
+        .notEmpty()
+        .isIn(['CLIENTE','PROVEEDOR','VENDEDOR','CAJERO'])
+    request.checkBody('status', 'El estado no es valido')
+        .isIn(['ACTIVO', 'INACTIVO'])
+    // request.checkBody('type', 'Tipo de persona no es valido').isIn(['CLIENTE','PROVEEDOR','VENDEDOR','CAJERO'])
     // Verificar Cliente
-    if (type === 'CLIENTE') {
-        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta ausente`).notEmpty()
-        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta ausente`).notEmpty()
+    if (type === 'CLIENTE' || type === 'VENDEDOR') {
+        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`).notEmpty()
+        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`).notEmpty()
+        request.checkBody('taxStatus', 'El estado impositivo no es valido').isIn(['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'])
     }
     // Verificar Proveedor
+    if (type === 'PROVEEDOR') {
+        request.checkBody('bussinesName', `La razón social del ${type.toLowerCase()} esta vacio`).notEmpty()
+    }
     // Verificar Vendedor
     request.getValidationResult()
         .then(result => {

@@ -88,7 +88,6 @@ describe.only('PERSON: ', () => {
     // POST /person - Crea una persona
     describe.only('POST /person', () => {
         it('deberia crear una nueva persona (CLIENTE)', done => {
-            // Test from here
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -132,19 +131,17 @@ describe.only('PERSON: ', () => {
                 .set('x-access-token', token)
                 .send(person)
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body)
+                    // console.log('RESPONSE::', response.body)
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['Tipo de persona no definido', 'Tipo de persona no es valido'])
-                    // .eql('Debe proporcionar un tipo de persona')
+                        .deep.equal(['Tipo de persona no definido', 'Tipo de persona no definido'])
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
         })
 
         it('no deberia crear una person con tipo invalido', done => {
-            // console.log('TOKEN', token);
             let person = {
                 type: 'COBRADOR',
                 firstName: 'Pedro',
@@ -162,16 +159,17 @@ describe.only('PERSON: ', () => {
                 .set('x-access-token', token)
                 .send(person)
                 .end((error, response) => {
+                    // console.log('RESPONSE::', response.body)
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['Tipo de persona no es valido'])
+                        .deep.equal(['Tipo de persona no definido'])
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
         })
 
-        it('no deberia crear una nueva persona sin nombre (CLIENTE)', done => {
+        it('no deberia crear cliente persona sin nombre', done => {
             let person = {
                 type: 'CLIENTE',
                 lastName: 'Perez',
@@ -192,13 +190,13 @@ describe.only('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal([`El nombre del ${person.type.toLowerCase()} esta ausente`])
+                        .deep.equal([`El nombre del ${person.type.toLowerCase()} esta vacio`])
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
         })
 
-        it.only('no deberia crear una nueva persona sin apellido (CLIENTE)', done => {
+        it('no deberia crear cliente persona sin apellido', done => {
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -215,143 +213,98 @@ describe.only('PERSON: ', () => {
                 .set('x-access-token', token)
                 .send(person)
                 .end((error, response) => {
-
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal([`El apellido del ${person.type.toLowerCase()} esta ausente`])
+                        .deep.equal([`El apellido del ${person.type.toLowerCase()} esta vacio`])
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
         })
 
-        it.skip('si el tipo de persona es PROVEEDOR no debe crear uno sin razon social', done => { })
-
-        it('El tipo de iva debe ser un valor valido', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+        it('no deberia crear un proveedor sin razon social', done => {
+            let person = {
+                type: 'PROVEEDOR',
+                // firstName: 'Juan',
+                // lastName: 'Perez',
+                address: [],
+                tributaryCode: '20232021692',
+                taxStatus: 'RESPONSABLE NO INSCRIPTO',
+                grossIncomeCode: '1220232021692',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'CLIENTE',
-                        firstName: 'Juan',
-                        lastName: 'Perez',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'IRRESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        contacts: [],
-                        status: 'ACTIVO'
-                    }
-
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-
-                            response.body.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('El estado de la persona solo puede ser RESPONSABLE INSCRIPTO, RESPONSABLE NO INSCRIPTO, MONOTRIBUTO o EXENTO')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+                    console.log('RESPONSE::', response.body)
+                    response.body.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.eql([`La razón social del ${person.type.toLowerCase()} esta vacio`])
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
         })
 
-        it('el tipo de persona debe ser un tipo valido', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+        it('El tipo de iva debe ser un valor valido', done => {
+            let person = {
+                type: 'CLIENTE',
+                firstName: 'Juan',
+                lastName: 'Perez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'IRRESPONSABLE INSCRIPTO',
+                grossIncomeCode: '122022022319623',
+                contacts: [],
+                status: 'ACTIVO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'DESARROLLADOR',
-                        firstName: 'Juan',
-                        lastName: 'Perez',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        contacts: [],
-                        status: 'HABILITADO'
-                    }
 
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-
-                            response.body.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('El tipo de persona solo puede ser o CLIENTE, PROVEEDOR, VENDEDOR o CAJERO')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+                    response.body.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql(['El estado impositivo no es valido'])
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
         })
 
         it('el estado de la persona solo puede ser ACTIVO o INACTIVO', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+            let person = {
+                type: 'CLIENTE',
+                firstName: 'Juan',
+                lastName: 'Lopez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '122022022319623',
+                contacts: [],
+                status: 'HABILITADO'
             }
 
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
                 .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = {
-                        type: 'CLIENTE',
-                        firstName: 'Juan',
-                        address: [],
-                        tributaryCode: '202202231962',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '122022022319623',
-                        contacts: [],
-                        status: 'HABILITADO'
-                    }
-
-                    chai.request(server)
-                        .post('/person')
-                        .set('x-access-token', token)
-                        .send(person)
-                        .end((error, response) => {
-                            response.should.be.status(422)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('El estado de la persona solo puede ser ACTIVO o INACTIVO')
-                            response.body.should.have.property('data').to.be.null
-                            done()
-                        })
+                    console.log('RESPONSE::', response.body)
+                    response.should.be.status(422)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .deep.equal([ 'El estado no es valido' ])
+                    response.body.should.have.property('data').to.be.null
+                    done()
                 })
+
         })
 
         it.skip('el codigo tributario debe ser valido', done => { })
