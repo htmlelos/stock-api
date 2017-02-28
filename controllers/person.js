@@ -14,10 +14,9 @@ function getAllPersons(request, response) {
         })
 }
 // Verifica los datos del comprador
-
 function checkCustomer(request, response) {
     console.log('--CHECK');
-    // Valida si los datos son validos para crear un cliente
+    // Comprueba si los datos son válidos para crear un cliente
     request.checkBody('type', 'Debe indicar el tipo de persona').notEmpty()    
     //request.checkBody('type', 'el tipo de persona es incorrecto')-
     console.log('TIPO PERSONA', request.body.type)
@@ -29,40 +28,39 @@ function checkCustomer(request, response) {
             }
         })    
 }
-
 // Crea una nueva persona en la base de datos
 function createPerson(request, response) {
     // Validamos los parametros para la creacion de personas
     // checkCustomer(request, response)
     let type = request.body.type
-    console.log('TIPO--', type);
+    // console.log('TIPO--', type);
     // Verificar Persona
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
         .isIn(['CLIENTE','PROVEEDOR','VENDEDOR','CAJERO'])
-    request.checkBody('status', 'El estado no es valido')
+    request.checkBody('status', 'El estado no es válido')
         .isIn(['ACTIVO', 'INACTIVO'])
-    // request.checkBody('type', 'Tipo de persona no es valido').isIn(['CLIENTE','PROVEEDOR','VENDEDOR','CAJERO'])
     // Verificar Cliente
     if (type === 'CLIENTE' || type === 'VENDEDOR') {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`).notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`).notEmpty()
-        request.checkBody('taxStatus', 'El estado impositivo no es valido').isIn(['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'])
+        request.checkBody('taxStatus', 'El estado impositivo no es válido').isIn(['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'])
     }
     // Verificar Proveedor
     if (type === 'PROVEEDOR') {
         request.checkBody('bussinesName', `La razón social del ${type.toLowerCase()} esta vacio`).notEmpty()
+        request.checkBody('tributaryCode','El CUIT no es válido').notEmpty().isLength({min:11,max:11}).isCUIT()
+        request.checkBody('grossIncomeCode','El código de IIBB no es válido').notEmpty().isLength({min:13,max:13})
     }
     // Verificar Vendedor
     request.getValidationResult()
         .then(result => {
+            // console.log('RESULT--', result);
             if (!result.isEmpty()) {
-                let messages = result.array().map(x => x.msg)
-                // console.log('MESSAGE--', messages);
-
+                let messages = result.useFirstErrorOnly().array().map(x => x.msg)
                 return Promise.reject({code: 422, messages, data: null})
             }
-            return Promise.resolve('ok')            
+            return Promise.resolve()            
         })
         .then(result => {
             let newPerson = new Person(request.body)
@@ -74,23 +72,9 @@ function createPerson(request, response) {
             message.success(response, 200, `${person.type} creado con éxito`, {id: person._id})
         })
         .catch(error => {
-            console.error('ERROR--', error);
+            // console.error('ERROR--', error);
             message.failure(response, error.code, error.messages, error.data)
         })
-
-    // Crea una nueva instancia de una persona con los parametros recibidos
-    // let newPerson = new Person(request.body)
-    // newPerson.save()
-    //     .then(person => {
-    //         message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
-    //     })
-    //     .catch(error => {
-    //         if (error.code === 11000) {
-    //             message.error(response, 422, 'Persona ya existe', error)
-    //         } else {
-    //             message.error(response, 422, '', error)
-    //         }
-    //     })
 }
 // Obtener una persona
 function findPerson(personId) {

@@ -221,7 +221,7 @@ describe('PRODUCTS test suite', () => {
 
                     let supplier = new Person({
                         type: 'PROVEEDOR',
-                        firstName: 'Distribuidora Herrero S.A.',
+                        bussinesName: 'La Estrella',
                         addresses: [],
                         contacts: [],
                         status: 'ACTIVO'
@@ -269,8 +269,8 @@ describe('PRODUCTS test suite', () => {
                         })
                 })
         })
-        // No deberia obtener un producto con id invalido
-        it('no deberia obtener un producto con id invalido', done => {
+        // No deberia obtener un producto con id inválido
+        it('no deberia obtener un producto con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -359,8 +359,8 @@ describe('PRODUCTS test suite', () => {
                         })
                 })
         })
-        // No deberia actualizar un producto con id invalido
-        it('no deberia actualizar un producto con id invalido', done => {
+        // No deberia actualizar un producto con id inválido
+        it('no deberia actualizar un producto con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -400,7 +400,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('El producto, no es un producto valido')
+                                .eql('El producto, no es un producto válido')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -507,8 +507,8 @@ describe('PRODUCTS test suite', () => {
                         })
                 })
         })
-        // No deberia eliminar un producto con id invalido
-        it('no deberia eliminar un product con id invalido', done => {
+        // No deberia eliminar un producto con id inválido
+        it('no deberia eliminar un product con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -541,7 +541,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('El producto, no es un producto valido')
+                                .eql('El producto, no es un producto válido')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -665,7 +665,7 @@ describe('PRODUCTS test suite', () => {
                 })
         })
 
-        it('no deberia obtener listas de precios de productos con id invalido', done => {
+        it('no deberia obtener listas de precios de productos con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -710,7 +710,7 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('El producto no es valido')
+                                .eql('El producto no es válido')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
@@ -791,7 +791,7 @@ describe('PRODUCTS test suite', () => {
                 })
         })
 
-        it('no deberia agregar un precio si el id de producto no es valido', done => {
+        it('no deberia agregar un precio si el id de producto no es válido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'
@@ -854,14 +854,14 @@ describe('PRODUCTS test suite', () => {
                             response.should.have.status(404)
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
-                                .eql('El producto no es valido')
+                                .eql('El producto no es válido')
                             response.body.should.have.property('data').to.be.null
                             done()
                         })
                 })
         })
 
-        it('No deberia agregar una lista de precio con id invalido', done => {
+        it('No deberia agregar una lista de precio con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
                 password: 'super'

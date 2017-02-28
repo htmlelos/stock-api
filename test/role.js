@@ -323,7 +323,7 @@ describe('ROLE: test suite', () => {
 				})
 		})
 
-		it('no deberia obtener un rol de usuario con un id de rol invalido', done => {
+		it('no deberia obtener un rol de usuario con un id de rol inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -406,7 +406,7 @@ describe('ROLE: test suite', () => {
 				})
 		})
 
-		it('no deberia actualizar un rol con un id de rol invalido', done => {
+		it('no deberia actualizar un rol con un id de rol inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -442,7 +442,7 @@ describe('ROLE: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol no es valido')
+								.eql('El rol no es válido')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
@@ -541,7 +541,7 @@ describe('ROLE: test suite', () => {
 				})
 		})
 
-		it('no deberia eliminar un rol con un id de rol invalido', done => {
+		it('no deberia eliminar un rol con un id de rol inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -572,7 +572,7 @@ describe('ROLE: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol no es valido')
+								.eql('El rol no es válido')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})

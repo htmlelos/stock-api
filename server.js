@@ -25,22 +25,25 @@ server.use(bodyParser.json())
 server.use(expressValidator({
 	customValidators: {
 		isCUIT: function (cuit) {
-			let aMult = '6789456789';
-			let aMult = aMult.split('');
-			let sCUIT = String(sCUIT);
-			let iResult = 0;
-			let aCUIT = sCUIT.split('');
+			if (cuit) {
+				let aMult = '6789456789';
+				// let cuit = cuit;
+				let iResult = 0;
+				let aCUIT = cuit.split('');
 
-			if (aCUIT.length == 11) {
-				// La suma de los productos 
-				for (let i = 0; i <= 9; i++) {
-					iResult += aCUIT[i] * aMult[i];
+				aMult = aMult.split('');
+
+				if (aCUIT.length == 11) {
+					// La suma de los productos 
+					for (let i = 0; i <= 9; i++) {
+						iResult += aCUIT[i] * aMult[i];
+					}
+					// El módulo de 11 
+					iResult = (iResult % 11);
+
+					// Se compara el resultado con el dígito verificador 
+					return (iResult == aCUIT[10]);
 				}
-				// El módulo de 11 
-				iResult = (iResult % 11);
-
-				// Se compara el resultado con el dígito verificador 
-				return (iResult == aCUIT[10]);
 			}
 			return false;
 		}

@@ -219,7 +219,7 @@ describe('BRAND: test suite', () => {
 				})
 		})
 
-		it('no deberia obtener una marca con id de marca invalido', done => {
+		it('no deberia obtener una marca con id de marca inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -302,7 +302,7 @@ describe('BRAND: test suite', () => {
 				})
 		})
 
-		it('no deberia actualizar una marca con id invalido', done => {
+		it('no deberia actualizar una marca con id inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -437,7 +437,7 @@ describe('BRAND: test suite', () => {
 				})
 		})
 
-		it('no deberia eliminar una marca con id invalido', done => {
+		it('no deberia eliminar una marca con id inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'

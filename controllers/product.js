@@ -79,7 +79,7 @@ function updateProduct(request, response) {
                         }
                     })
             } else {
-                message.failure(response, 404, 'El producto, no es un producto valido', null)
+                message.failure(response, 404, 'El producto, no es un producto válido', null)
             }
         })
         .catch(error => {
@@ -99,7 +99,7 @@ function deleteProduct(request, response) {
                         message.error(response, 422, '', error)
                     })
             } else {
-                message.failure(response, 404, 'El producto, no es un producto valido', null)
+                message.failure(response, 404, 'El producto, no es un producto válido', null)
             }
         })
         .catch(error => {
@@ -139,7 +139,7 @@ function getAllPriceLists(request, response) {
                         message.error(response, 422, '', error)
                     })
             } else {
-                message.failure(response, 404, 'El producto no es valido', null)
+                message.failure(response, 404, 'El producto no es válido', null)
             }
         })
         .catch(error => {
@@ -183,11 +183,11 @@ function addPriceList(request, response) {
                         message.error(response, 422, 'La Lista de Precios no es valida', error)
                     })
             } else {
-                message.failure(response, 404, 'El producto no es valido', null)
+                message.failure(response, 404, 'El producto no es válido', null)
             }
         })
         .catch(error => {
-            message.error(response, 500, 'El producto no es valido', error)
+            message.error(response, 500, 'El producto no es válido', error)
         })
 }
 

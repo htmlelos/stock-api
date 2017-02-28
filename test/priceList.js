@@ -323,7 +323,7 @@ describe('PRICE LIST: test suite', () => {
         })
     })
 
-    it('no deberia obtener una Lista de Precios con un id invalido', done => {
+    it('no deberia obtener una Lista de Precios con un id inválido', done => {
       let superUser = {
         username: 'super@mail.com',
         password: 'super'
@@ -403,7 +403,7 @@ describe('PRICE LIST: test suite', () => {
         })
     })
 
-    it('no deberia actualizar una Lista de Precios con id invalido', done => {
+    it('no deberia actualizar una Lista de Precios con id inválido', done => {
       let superUser = {
         username: 'super@mail.com',
         password: 'super'
@@ -531,7 +531,7 @@ describe('PRICE LIST: test suite', () => {
         })
     })
 
-    it('no deberia eliminar una Lista de precios con un id invalido', done => {
+    it('no deberia eliminar una Lista de precios con un id inválido', done => {
       let superUser = {
         username: 'super@mail.com',
         password: 'super'

@@ -80,7 +80,7 @@ function updateProfile(request, response) {
 					})
 			} else {
 				response.status(404)
-					.send({ message: 'El perfil, no es un perfil valido' })
+					.send({ message: 'El perfil, no es un perfil válido' })
 			}
 		})
 		.catch(error => {
@@ -102,7 +102,7 @@ function deleteProfile(request, response) {
 						response.end()
 					})
 			} else {
-				response.status(404).json({ message: 'El perfil, no es un perfil valido' })
+				response.status(404).json({ message: 'El perfil, no es un perfil válido' })
 			}
 		})
 		.catch(error => {

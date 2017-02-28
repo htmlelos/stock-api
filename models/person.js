@@ -33,12 +33,10 @@ const PersonSchema = new Schema({
         required: 'Debe proporcionar un tipo de persona'
     },
     firstName: {
-        type: String,
-        required: 'Debe proporcionar el nombre de la persona'
+        type: String
     },
     lastName: {
-        type: String,
-        required: 'Debe proporcionar el apellido de la persona'
+        type: String
     },
     bussinesName: {
         type: String
