@@ -20,7 +20,7 @@ const verifyCredentials = (request, response, user) => {
             roles: []
           }
          } 
-        message.success(response, 200, 'Usuario autenticado con exito', { token, username: user.username, roles: user.roles })
+        message.success(response, 200, 'Usuario autenticado con éxito', { token, username: user.username, roles: user.roles })
       } else {
         if (user.status === 'INACTIVO') {
           message.notAuthorized(response, 401, 'El usuario no esta ACTIVO, verifique sus credenciales', null)

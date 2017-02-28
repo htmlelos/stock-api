@@ -94,7 +94,7 @@ describe('USERS: test suite', () => {
 						.end((error, response) => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
-							response.body.should.have.property('message').eql('Usuario creado con exito')
+							response.body.should.have.property('message').eql('Usuario creado con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('id').to.be.not.null
 							done()
@@ -288,7 +288,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario obtenido con exito')
+								.eql('Usuario obtenido con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('username')
 								.eql('admin@mail.com')
@@ -298,7 +298,7 @@ describe('USERS: test suite', () => {
 						})
 				})
 		})
-		it('no deberia obtener un usuario con id de usuario invalido', done => {
+		it('no deberia obtener un usuario con id de usuario inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -374,13 +374,13 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario actualizado con exito')
+								.eql('Usuario actualizado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
-		it('no deberia actualizar un usuario con un id de usuario invalido', done => {
+		it('no deberia actualizar un usuario con un id de usuario inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -417,7 +417,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El usuario, no es un usuario valido')
+								.eql('El usuario, no es un usuario válido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -512,14 +512,14 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Usuario eliminado con exito')
+								.eql('Usuario eliminado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
 		//
-		it('no deberia eliminar un usuario con id de usuario invalido', done => {
+		it('no deberia eliminar un usuario con id de usuario inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -551,7 +551,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El usuario, no es un usuario valido')
+								.eql('El usuario, no es un usuario válido')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
@@ -604,7 +604,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol se añadio con exito')
+								.eql('El rol se añadio con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('id').to.be.not.null
 							done()
@@ -653,14 +653,14 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El usuario no es valido')
+								.eql('El usuario no es válido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
 				})
 		})
 		//
-		it('no deberia agregar un rol si el rol es invalido', done => {
+		it('no deberia agregar un rol si el rol es inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -700,7 +700,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol no es valido')
+								.eql('El rol no es válido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -748,7 +748,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(422)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El rol no es valido')
+								.eql('El rol no es válido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})
@@ -885,14 +885,14 @@ describe('USERS: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Rol revocado con exito')
+								.eql('Rol revocado con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
 		//
-		it('no deberia eliminar un rol de un usuario invalido', done => {
+		it('no deberia eliminar un rol de un usuario inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -932,7 +932,7 @@ describe('USERS: test suite', () => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('El usuario, no es un usuario valido')
+								.eql('El usuario, no es un usuario válido')
 							response.body.should.have.property('data')
 								.eql(null)
 							done()
@@ -980,7 +980,7 @@ describe('USERS: test suite', () => {
 						.end((error, response) => {
 							response.should.have.status(404)
 							response.body.should.be.a('object')
-							response.body.should.have.property('message').eql('El rol, no es un rol valido')
+							response.body.should.have.property('message').eql('El rol, no es un rol válido')
 							response.body.should.have.property('data').eql(null)
 							done()
 						})

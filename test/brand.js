@@ -88,7 +88,7 @@ describe('BRAND: test suite', () => {
 						.end((error, response) => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
-							response.body.should.have.property('message').eql('Marca creada con exito')
+							response.body.should.have.property('message').eql('Marca creada con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
@@ -205,7 +205,7 @@ describe('BRAND: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Marca obtenida con exito')
+								.eql('Marca obtenida con éxito')
 							response.body.should.have.property('data')
 							response.body.data.should.have.property('name')
 								.eql('Loca cola')
@@ -219,7 +219,7 @@ describe('BRAND: test suite', () => {
 				})
 		})
 
-		it('no deberia obtener una marca con id de marca invalido', done => {
+		it('no deberia obtener una marca con id de marca inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -295,14 +295,14 @@ describe('BRAND: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Marca actualizada con exito')
+								.eql('Marca actualizada con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
 
-		it('no deberia actualizar una marca con id invalido', done => {
+		it('no deberia actualizar una marca con id inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'
@@ -430,14 +430,14 @@ describe('BRAND: test suite', () => {
 							response.should.have.status(200)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
-								.eql('Marca eliminada con exito')
+								.eql('Marca eliminada con éxito')
 							response.body.should.have.property('data').to.be.null
 							done()
 						})
 				})
 		})
 
-		it('no deberia eliminar una marca con id invalido', done => {
+		it('no deberia eliminar una marca con id inválido', done => {
 			let superUser = {
 				username: 'super@mail.com',
 				password: 'super'

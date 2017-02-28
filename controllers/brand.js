@@ -29,7 +29,7 @@ function createBrand(request, response) {
   newBrand.createdBy = request.decoded.username
   newBrand.save()
     .then(brand => {
-      message.success(response, 200, 'Marca creada con exito', null)
+      message.success(response, 200, 'Marca creada con éxito', null)
     })
     .catch(error => {
       if (error.code === 11000) {
@@ -50,7 +50,7 @@ function getBrand(request, response) {
       if (brand) {
         Person.populate(brand, { path: 'suppliers' })
           .then(user => {
-            message.success(response, 200, 'Marca obtenida con exito', brand)
+            message.success(response, 200, 'Marca obtenida con éxito', brand)
           })
           .catch(error => {
             message.error(response, 422, 'No se pudo recuperar ', error)
@@ -77,7 +77,7 @@ function updateBrand(request, response) {
             if (!result) {
               Brand.update({ _id: request.params.productId }, { $set: newBrand }, { runValidators: true })
                 .then(result => {
-                  message.success(response, 200, 'Marca actualizada con exito', null)
+                  message.success(response, 200, 'Marca actualizada con éxito', null)
                 })
                 .catch(error => {
                   if (error.code === 11000) {
@@ -108,7 +108,7 @@ function deleteBrand(request, response) {
       if (brand) {
         Brand.remove({ _id: brand.id })
           .then(brand => {
-            message.success(response, 200, 'Marca eliminada con exito', null)
+            message.success(response, 200, 'Marca eliminada con éxito', null)
           })
           .catch(error => {
             message.error(response, 422, '', error)
