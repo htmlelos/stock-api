@@ -24,9 +24,12 @@ router.route('/person/:personId/contact')
 // DELETE /person/:personId/contact/:contactId
 router.route('/person/:personId/contact/:contactId')
     .delete(person.removeContact)
+// DELETE /person/:personId/contacts
+router.route('/person/:personId/contacts')
+    .delete(person.removeContacts)
 // GET /person/:personId/addresses
 router.route('/person/:personId/addresses')
-    .get(person.getAllAdresses)
+    .get(person.getAllAddresses)
 // POST /person/:personId/address
 router.route('/person/:personId/address')
     .post(person.addAddress)
@@ -35,5 +38,5 @@ router.route('/person/:personId/address/:addressId')
     .delete(person.removeAddress)
 // DELETE /person/:personId/addresses    
 router.route('/person/:personId/addresses')
-    .delete(person.removeMultipleAddresses)
+    .delete(person.removeAddresses)
 module.exports = router
