@@ -10,69 +10,93 @@ function getAllPersons(request, response) {
             message.success(response, 200, '', persons)
         })
         .catch(error => {
-            message.error(response, 422, '', error)
+            message.error(response, 500, 'No se pudo recuperar las personas', error)
         })
 }
-// Verifica los datos del comprador
-function checkCustomer(request, response) {
-    console.log('--CHECK');
-    // Comprueba si los datos son válidos para crear un cliente
-    request.checkBody('type', 'Debe indicar el tipo de persona').notEmpty()    
-    //request.checkBody('type', 'el tipo de persona es incorrecto')-
-    console.log('TIPO PERSONA', request.body.type)
-    request.getValidationResult()
-        .then(result => {
-            if (!result.isEmpty()) {
-                console.log('DEBERIA TERMINAR');
-                message.failure(response, 400, 'Hubo errores', null)
-            }
-        })    
-}
-// Crea una nueva persona en la base de datos
-function createPerson(request, response) {
-    // Validamos los parametros para la creacion de personas
-    // checkCustomer(request, response)
-    let type = request.body.type
-    // console.log('TIPO--', type);
+// Verifica los datos obligatorios de la persona
+function checkPerson(request, type=null) {
     // Verificar Persona
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
-        .isIn(['CLIENTE','PROVEEDOR','VENDEDOR','CAJERO'])
+        .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'])
     request.checkBody('status', 'El estado no es válido')
         .isIn(['ACTIVO', 'INACTIVO'])
+}
+// Verifica los datos del comprador
+function checkCustomer(request, type) {
     // Verificar Cliente
-    if (type === 'CLIENTE' || type === 'VENDEDOR') {
-        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`).notEmpty()
-        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`).notEmpty()
-        request.checkBody('taxStatus', 'El estado impositivo no es válido').isIn(['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'])
+    if (type === 'CLIENTE') {
+        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkBody('taxStatus', 'El estado impositivo no es válido')
+            .isIn(['RESPONSABLE INSCRIPTO', 'RESPONSABLE NO INSCRIPTO', 'MONOTRIBUTO', 'EXENTO'])
     }
+}
+// Verifica los datos del proveedor
+function checkSupplier(request, type) {
     // Verificar Proveedor
     if (type === 'PROVEEDOR') {
-        request.checkBody('bussinesName', `La razón social del ${type.toLowerCase()} esta vacio`).notEmpty()
-        request.checkBody('tributaryCode','El CUIT no es válido').notEmpty().isLength({min:11,max:11}).isCUIT()
-        request.checkBody('grossIncomeCode','El código de IIBB no es válido').notEmpty().isLength({min:13,max:13})
+        request.checkBody('bussinesName', `La razón social del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkBody('tributaryCode', 'El CUIT no es válido')
+            .notEmpty()
+            .isLength({ min: 11, max: 11 })
+            .isCUIT()
+        request.checkBody('grossIncomeCode', 'El código de IIBB no es válido')
+            .notEmpty()
+            .isLength({ min: 13, max: 13 })
     }
-    // Verificar Vendedor
+}
+// Verifica los datos del vendedor
+function checkSeller(request, type) {
+    // Verificar VENDEDOR
+    if (type === 'VENDEDOR') {
+        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+    }
+}
+// Verifica los datos del cajero
+function checkCashier(request, type) {
+    // Verificar CAJERO
+    if (type === 'CAJERO') {
+        request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+    }
+}
+// Crea una nueva persona en la base de datos
+function createPerson(request, response) {
+    // Validamos los parametros para la creacion de tipos de personas
+    let type = request.body.type
+    checkPerson(request)
+    checkCustomer(request, type)
+    checkSupplier(request, type)
+    checkSeller(request, type)
+    checkCashier(request, type)
+
     request.getValidationResult()
         .then(result => {
             // console.log('RESULT--', result);
             if (!result.isEmpty()) {
-                let messages = result.useFirstErrorOnly().array().map(x => x.msg)
-                return Promise.reject({code: 422, messages, data: null})
+                let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+                return Promise.reject({ code: 422, messages, data: null })
             }
-            return Promise.resolve()            
+            return Promise.resolve()
         })
         .then(result => {
             let newPerson = new Person(request.body)
-            // console.log('NEW PERSON', newPerson);
+            newPerson.createdBy = request.decoded.username
             return newPerson.save()
         })
         .then(person => {
-            // console.log('RESULTADO', person);
-            message.success(response, 200, `${person.type} creado con éxito`, {id: person._id})
+            message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
         })
         .catch(error => {
-            // console.error('ERROR--', error);
             message.failure(response, error.code, error.messages, error.data)
         })
 }
@@ -84,7 +108,7 @@ function findPerson(personId) {
                 // console.log('FOUND PERSON--', person);
                 if (person) {
                     resolve(person)
-                } else {                    
+                } else {
                     reject({ code: 404, message: 'No se encontró la persona', data: null })
                 }
             })
@@ -174,8 +198,26 @@ function removeContact(request, response) {
             message.failure(response, error.code, error.message, error.data)
         })
 }
+// Elimina los contactos indicados de una persona
+function removeContacts(request, response) {
+    findPerson(request.params.personId)
+        .then(person => {
+            let contactsIds = request.body.contacts
+            let personId = request.params.personId
+            return Promise.all(contactsIds.map(id => {
+                let contactId = mongoose.Types.ObjectId(id)
+                return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
+            }))
+        })
+        .then(result => {
+            message.success(response, 200, 'Contactos eliminados con éxito', null)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
 // Obtiene todas las direcciones de una persona
-function getAllAdresses(request, response) {
+function getAllAddresses(request, response) {
     findPerson(request.params.personId)
         .then(person => {
             let addresses = person.addresses
@@ -199,7 +241,7 @@ function addAddress(request, response) {
             message.failure(response, error.code, error.message, error.data)
         })
 }
-
+// Elimina una direccion de una persona
 function removeAddress(request, response) {
     findPerson(request.params.personId)
         .then(person => {
@@ -213,14 +255,15 @@ function removeAddress(request, response) {
             message.failure(response, error.code, error.message, error.data)
         })
 }
-
-function removeMultipleAddresses(request, response) {
+// Elimina las direcciones indicadas de una persona
+function removeAddresses(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            return Promise.all(person.addresses.map(address => {
-                let addressId = mongoose.Types.ObjectId(address._id)
-                let personId = request.params.personId
-                return Person.update({ _id: personId }, { $pull: { 'addresses': { _id: addressId } } })
+            let addressesIds = request.body.addresses
+            let personId = request.params.personId
+            return Promise.all(addressesIds.map(id => {
+                let addressId = mongoose.Types.ObjectId(id)
+                return Person.update({ _id: personId }, { $pull: { addresses: { _id: addressId } } })
             }))
         })
         .then(address => {
@@ -241,8 +284,9 @@ module.exports = {
     getAllContacts,
     addContact,
     removeContact,
-    getAllAdresses,
+    removeContacts,
+    getAllAddresses,
     addAddress,
     removeAddress,
-    removeMultipleAddresses
+    removeAddresses
 }

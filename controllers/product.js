@@ -12,25 +12,46 @@ function getAllProducts(request, response) {
             message.success(response, 200, '', products)
         })
         .catch(error => {
-            message.failure(response, 404, 'No se pudieron recuperar los productos', error)
+            message.failure(response, 500, 'No se pudo recuperar los productos', error)
         })
 }
 
+function saveProduct(product) {
+    console.log('SAVE_PRODUCT', product);
+    return
+}
+// Verifica los datos del producto
+function checkProduct(request) {
+    request.checkBody('name', 'El nombre del producto esta vacio')
+        .notEmpty()
+}
 // Crea un nuevo producto
 function createProduct(request, response) {
-    // Crea una nueva instancia de producto con los parametros recibidos
-    let newProduct = new Product(request.body)
-
-    newProduct.save()
+    checkProduct(request)        
+    request.getValidationResult()
+        .then(result => {
+            if (!result.isEmpty()) {
+                let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+                return Promise.reject({ code: 422, messages, data: null })
+            }
+            return Promise.resolve()
+        })
+        .then(() => {
+            // Crea una nueva instancia de producto con los parametros recibidos
+            let product = new Product(request.body)
+            product.createdBy = request.decoded.username
+            return product.save()
+        })    
         .then(product => {
-            message.success(response, 200, 'Producto creado con éxito', null)
+            // console.log('PRODUCT--', product);
+            message.success(response, 200, 'Producto creado con éxito', { id: product.id })
         })
         .catch(error => {
-            if (error.code === 11000) {
-                message.duplicate(response, 422, 'El producto ya existe', null)
-            } else {
-                message.error(response, 422, 'No se pudo crear el usuario', error)
-            }
+            // console.error('ERROR--', error);
+            if (error.code === 11000)
+                message.failure(response, 422, 'El producto ya existe', null)
+            else                
+                message.failure(response, error.code, error.messages, error.data)
         })
 }
 // Obtener un producto

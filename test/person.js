@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: ', () => {
+describe('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -422,7 +422,6 @@ describe.only('PERSON: ', () => {
                     done();
                 })
         })
-
         it('no deberia obtener una persona con id inválido', done => {
             let person = new Person({
                 type: 'CLIENTE',
@@ -486,7 +485,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('No deberia actualizar una persona con id inválido', done => {
             let person = new Person({
                 type: 'CLIENTE',
@@ -548,7 +546,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia eliminar una persona con un id de persona inválido', done => {
             let person = new Person({
                 type: 'CLIENTE',
@@ -608,7 +605,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia obtener los contactos de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
@@ -671,7 +667,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia agregar un contacto para una person con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
@@ -705,7 +700,7 @@ describe.only('PERSON: ', () => {
                 })
         })
     })
-    // DELETE /person/:personId/contact/
+    // DELETE /person/:personId/contact
     describe('DELETE /person/{personId}/contact/{contactId}', () => {
         it('deberia eliminar un contacto de usuario por su id', done => {
             let superUser = {
@@ -757,7 +752,6 @@ describe.only('PERSON: ', () => {
                         })
                 })
         })
-
         it('no deberia eliminar un contacto de una persona con id inválido', done => {
             let superUser = {
                 username: 'super@mail.com',
@@ -809,7 +803,53 @@ describe.only('PERSON: ', () => {
                 })
         })
     })
+    // DELETE /person/:personId/contacts
+    describe('DELETE /person/{personId}/contacts', () => {
+        it('deberia eliminar todos los contactos indicadas', done => {
+            let person = new Person({
+                type: 'PROVEEDOR',
+                bussinesName: 'La Estrella',
+                tributaryCode: '20232021692',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '1220232021692',
+                status: 'ACTIVO'
+            })
+            let contacts = []
 
+            let contact = { name: 'Cersei Lannister', phone: '555-777888' }
+            person.contacts.push(contact)
+
+            let contactId = person.contacts[0]._id
+            contacts.push(contactId)
+
+            contact = { name: 'Tirion Lannister', phone: '666-777889' }
+            person.contacts.push(contact)
+
+            contact = { name: 'Eddard Stark', phone: '666-777819' }
+            person.contacts.push(contact)
+
+            contactId = person.contacts[1]._id
+            contacts.push(contactId)
+
+            person.save()
+                .catch(error => {
+                    console.error('ERROR: ', error);
+                })
+
+            chai.request(server)
+                .delete('/person/' + person._id + '/contacts')
+                .set('x-access-token', token)
+                .send({contacts})
+                .end((error, response) => {
+                    response.should.be.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Contactos eliminados con éxito')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+    })
     // GET /person/:personId/addresses
     describe('GET /person/{personId}/addresses', () => {
         it('deberia obtener todas las direcciones de una persona', done => {
@@ -839,7 +879,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia obtener la direccion de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
@@ -899,7 +938,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia agregar una direccion a una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
@@ -932,7 +970,6 @@ describe.only('PERSON: ', () => {
                 })
         })
     })
-
     describe('DELETE /person/{personId}/address', () => {
         it('deberia eliminar una direccion de una persona por su id', done => {
             let person = new Person({
@@ -967,7 +1004,6 @@ describe.only('PERSON: ', () => {
                     done()
                 })
         })
-
         it('no deberia eliminar una direccion de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
@@ -1002,7 +1038,6 @@ describe.only('PERSON: ', () => {
                 })
         })
     })
-
     describe('DELETE /person/{personId}/addresses', () => {
         it('deberia eliminar todas las direcciones indicadas', done => {
             let person = new Person({
@@ -1035,7 +1070,7 @@ describe.only('PERSON: ', () => {
             chai.request(server)
                 .delete('/person/' + person._id + '/addresses')
                 .set('x-access-token', token)
-                .send(addresses)
+                .send({addresses})
                 .end((error, response) => {
                     response.should.be.status(200)
                     response.body.should.be.a('object')
