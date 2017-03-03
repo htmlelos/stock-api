@@ -181,7 +181,6 @@ function addContact(request, response) {
             return findPerson(request.params.personId)
         })
         .then(person => {
-            // console.log('RESULT--', persona)
             message.success(response, 200, 'Contacto añadido con éxito', person.contacts)
         })
         .catch(error => {
@@ -216,8 +215,11 @@ function removeContacts(request, response) {
                 return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
             }))
         })
-        .then(result => {
-            message.success(response, 200, 'Contactos eliminados con éxito', null)
+        .then(() => {
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Contactos eliminados con éxito', person.contacts)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -262,7 +264,7 @@ function removeAddress(request, response) {
         .then(() => {
             return findPerson(request.params.personId)
         })
-        .then((person) => {
+        .then(person => {
             message.success(response, 200, 'Dirección eliminada con éxito', person.addresses)
         })
         .catch(error => {
@@ -280,9 +282,11 @@ function removeAddresses(request, response) {
                 return Person.update({ _id: personId }, { $pull: { addresses: { _id: addressId } } })
             }))
         })
-        .then(address => {
-            console.log('RESULTADO--', address)
-            message.success(response, 200, 'Direcciones eliminadas con éxito', null)
+        .then(() => {
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Direcciones eliminadas con éxito', person.addresses)
         })
         .catch(error => {
             console.log(error);

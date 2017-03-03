@@ -117,7 +117,7 @@ describe.only('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal('Tipo de persona no definido')
+                        .eql('Tipo de persona no definido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -143,7 +143,7 @@ describe.only('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal('Tipo de persona no definido')
+                        .eql('Tipo de persona no definido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -168,7 +168,7 @@ describe.only('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(`El nombre del ${person.type.toLowerCase()} esta vacio`)
+                      .eql(`El nombre del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -193,7 +193,7 @@ describe.only('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(`El apellido del ${person.type.toLowerCase()} esta vacio`)
+                      .eql(`El apellido del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -270,7 +270,7 @@ describe.only('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal('El estado no es válido')
+                      .eql('El estado no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -320,7 +320,7 @@ describe.only('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal('El CUIT no es válido')
+                      .equal('El CUIT no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -705,54 +705,39 @@ describe.only('PERSON: ', () => {
     // DELETE /person/:personId/contact
     describe('DELETE /person/{personId}/contact/{contactId}', () => {
         it('deberia eliminar un contacto de usuario por su id', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+            let person = new Person({
+                type: 'PROVEEDOR',
+                bussinesName: 'La Estrella',
+                address: [],
+                tributaryCode: '20232021692',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '1220232021692',
+                status: 'ACTIVO'
+            })
+
+            let contact = {
+                name: 'Cersei Lannister',
+                phone: '555-777888'
             }
 
+            person.contacts.push(contact)
+
+            person.save()
+                .catch(error => console.log('TEST: ', error))
+
+            // console.log('::PERSONA::', person.contacts[0]._id);
+
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .delete('/person/' + person._id + '/contact/' + person.contacts[0]._id)
+                .set('x-access-token', token)
                 .end((error, response) => {
-                    response.should.be.status(200)
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Contacto eliminado con éxito')
                     response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = new Person({
-                        type: 'PROVEEDOR',
-                        bussinesName: 'La Estrella',
-                        address: [],
-                        tributaryCode: '20232021692',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '1220232021692',
-                        status: 'ACTIVO'
-                    })
-
-                    let contact = {
-                        name: 'Cersei Lannister',
-                        phone: '555-777888'
-                    }
-
-                    person.contacts.push(contact)
-
-                    person.save()
-                        .catch(error => console.log('TEST: ', error))
-
-                    // console.log('::PERSONA::', person.contacts[0]._id);
-
-                    chai.request(server)
-                        .delete('/person/' + person._id + '/contact/' + person.contacts[0]._id)
-                        .set('x-access-token', token)
-                        .end((error, response) => {
-                            response.should.have.status(200)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('Contacto eliminado con éxito')
-                            response.body.should.have.property('data')
-                            response.body.data.should.be.a('array')
-                            done()
-                        })
+                    response.body.data.should.be.a('array')
+                    done()
                 })
         })
         it('no deberia eliminar un contacto de una persona con id inválido', done => {
@@ -808,7 +793,7 @@ describe.only('PERSON: ', () => {
     })
     // DELETE /person/:personId/contacts
     describe('DELETE /person/{personId}/contacts', () => {
-        it('deberia eliminar todos los contactos indicadas', done => {
+        it('deberia eliminar todos los contactos indicados', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
                 bussinesName: 'La Estrella',
@@ -848,7 +833,8 @@ describe.only('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Contactos eliminados con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
                     done()
                 })
         })
@@ -994,8 +980,6 @@ describe.only('PERSON: ', () => {
             person.save()
                 .catch(error => console.log('ERROR: ', error))
 
-            // console.log('::PERSONA::', person.addresses[0]._id);
-
             chai.request(server)
                 .delete('/person/' + person._id + '/address/' + person.addresses[0]._id)
                 .set('x-access-token', token)
@@ -1081,7 +1065,8 @@ describe.only('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Direcciones eliminadas con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
                     done()
                 })
         })
