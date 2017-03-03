@@ -14,7 +14,7 @@ function getAllPersons(request, response) {
         })
 }
 // Verifica los datos obligatorios de la persona
-function checkPerson(request, type=null) {
+function checkPerson(request, type = null) {
     // Verificar Persona
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
@@ -178,7 +178,11 @@ function addContact(request, response) {
             return Person.update({ _id: person._id }, { $push: { contacts: contact } })
         })
         .then(() => {
-            message.success(response, 200, 'Contacto añadido con éxito', null)
+            return findPerson(request.params.personId)
+
+        })
+        .then(person => {
+            message.success(response, 200, 'Contacto añadido con éxito', person.contacts)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -192,7 +196,10 @@ function removeContact(request, response) {
             return Person.update({ _id: person._id }, { $pull: { contacts: { _id: contactId } } })
         })
         .then(() => {
-            message.success(response, 200, 'Contacto eliminado con éxito', null)
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Contacto eliminado con éxito', person.contacts)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -202,15 +209,18 @@ function removeContact(request, response) {
 function removeContacts(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let contactsIds = request.body.contacts
+            let contactsIds = JSON.parse(request.body.contacts)
             let personId = request.params.personId
             return Promise.all(contactsIds.map(id => {
                 let contactId = mongoose.Types.ObjectId(id)
                 return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
             }))
         })
-        .then(result => {
-            message.success(response, 200, 'Contactos eliminados con éxito', null)
+        .then(() => {
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Contactos eliminados con éxito', person.contacts)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -235,7 +245,10 @@ function addAddress(request, response) {
             return Person.update({ _id: person._id }, { $push: { addresses: address } })
         })
         .then(() => {
-            message.success(response, 200, 'Direccion añadida con éxito', null)
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Direccion añadida con éxito', person.addresses)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -248,8 +261,11 @@ function removeAddress(request, response) {
             let addressId = request.params.addressId
             return Person.update({ _id: person._id }, { $pull: { addresses: { _id: addressId } } })
         })
-        .then((result) => {
-            message.success(response, 200, 'Dirección eliminada con éxito', null)
+        .then(() => {
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Dirección eliminada con éxito', person.addresses)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -259,15 +275,18 @@ function removeAddress(request, response) {
 function removeAddresses(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let addressesIds = request.body.addresses
+            let addressesIds = JSON.parse(request.body.addresses)
             let personId = request.params.personId
             return Promise.all(addressesIds.map(id => {
                 let addressId = mongoose.Types.ObjectId(id)
                 return Person.update({ _id: personId }, { $pull: { addresses: { _id: addressId } } })
             }))
         })
-        .then(address => {
-            message.success(response, 200, 'Direcciones eliminadas con éxito', null)
+        .then(() => {
+            return findPerson(request.params.personId)
+        })
+        .then(person => {
+            message.success(response, 200, 'Direcciones eliminadas con éxito', person.addresses)
         })
         .catch(error => {
             console.log(error);

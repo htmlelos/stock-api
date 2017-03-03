@@ -18,7 +18,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PRODUCTS test suite', () => {
+describe('PRODUCTS test suite', () => {
     let token = ''
 
     beforeEach(done => {
