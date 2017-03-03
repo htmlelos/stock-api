@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PERSON: ', () => {
+describe.only('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -168,7 +168,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql(`El nombre del ${person.type.toLowerCase()} esta vacio`)
+                      .eql(`El nombre del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -193,7 +193,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql(`El apellido del ${person.type.toLowerCase()} esta vacio`)
+                      .eql(`El apellido del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -270,7 +270,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('El estado no es válido')
+                      .eql('El estado no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -320,7 +320,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .equal('El CUIT no es válido')
+                      .equal('El CUIT no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })

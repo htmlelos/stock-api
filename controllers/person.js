@@ -179,7 +179,6 @@ function addContact(request, response) {
         })
         .then(() => {
             return findPerson(request.params.personId)
-
         })
         .then(person => {
             message.success(response, 200, 'Contacto añadido con éxito', person.contacts)
@@ -251,6 +250,7 @@ function addAddress(request, response) {
             message.success(response, 200, 'Direccion añadida con éxito', person.addresses)
         })
         .catch(error => {
+            console.log('ERROR--', error)
             message.failure(response, error.code, error.message, error.data)
         })
 }
