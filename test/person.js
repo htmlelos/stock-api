@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PERSON: ', () => {
+describe.only('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -117,7 +117,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['Tipo de persona no definido'])
+                        .deep.equal('Tipo de persona no definido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -143,7 +143,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['Tipo de persona no definido'])
+                        .deep.equal('Tipo de persona no definido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -168,7 +168,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal([`El nombre del ${person.type.toLowerCase()} esta vacio`])
+                        .deep.equal(`El nombre del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -193,7 +193,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal([`El apellido del ${person.type.toLowerCase()} esta vacio`])
+                        .deep.equal(`El apellido del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -217,7 +217,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.eql([`La razón social del ${person.type.toLowerCase()} esta vacio`])
+                        .eql(`La razón social del ${person.type.toLowerCase()} esta vacio`)
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -244,7 +244,7 @@ describe('PERSON: ', () => {
                     response.body.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql(['El estado impositivo no es válido'])
+                        .eql('El estado impositivo no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -270,7 +270,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['El estado no es válido'])
+                        .deep.equal('El estado no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -295,7 +295,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql(['El CUIT no es válido'])
+                        .eql('El CUIT no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -320,7 +320,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .deep.equal(['El CUIT no es válido'])
+                        .deep.equal('El CUIT no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -344,7 +344,8 @@ describe('PERSON: ', () => {
                 .end((error, response) => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
-                    response.body.should.have.property('message').eql(['El CUIT no es válido'])
+                    response.body.should.have.property('message')
+                        .eql('El CUIT no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -369,7 +370,7 @@ describe('PERSON: ', () => {
                     response.should.be.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql(['El código de IIBB no es válido'])
+                        .eql('El código de IIBB no es válido')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -663,7 +664,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Contacto añadido con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
                     done()
                 })
         })
@@ -747,7 +749,8 @@ describe('PERSON: ', () => {
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('Contacto eliminado con éxito')
-                            response.body.should.have.property('data').to.be.null
+                            response.body.should.have.property('data')
+                            response.body.data.should.be.a('array')
                             done()
                         })
                 })
@@ -839,7 +842,7 @@ describe('PERSON: ', () => {
             chai.request(server)
                 .delete('/person/' + person._id + '/contacts')
                 .set('x-access-token', token)
-                .send({contacts})
+                .send({ contacts: JSON.stringify(contacts) })
                 .end((error, response) => {
                     response.should.be.status(200)
                     response.body.should.be.a('object')
@@ -934,7 +937,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Direccion añadida con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
                     done()
                 })
         })
@@ -1000,7 +1004,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Dirección eliminada con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
                     done()
                 })
         })
@@ -1070,7 +1075,7 @@ describe('PERSON: ', () => {
             chai.request(server)
                 .delete('/person/' + person._id + '/addresses')
                 .set('x-access-token', token)
-                .send({addresses})
+                .send({ addresses: JSON.stringify(addresses) })
                 .end((error, response) => {
                     response.should.be.status(200)
                     response.body.should.be.a('object')
