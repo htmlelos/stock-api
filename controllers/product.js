@@ -27,7 +27,7 @@ function checkProduct(request) {
 }
 // Crea un nuevo producto
 function createProduct(request, response) {
-    checkProduct(request)        
+    checkProduct(request)
     request.getValidationResult()
         .then(result => {
             if (!result.isEmpty()) {
@@ -41,16 +41,14 @@ function createProduct(request, response) {
             let product = new Product(request.body)
             product.createdBy = request.decoded.username
             return product.save()
-        })    
+        })
         .then(product => {
-            // console.log('PRODUCT--', product);
             message.success(response, 200, 'Producto creado con éxito', { id: product.id })
         })
         .catch(error => {
-            // console.error('ERROR--', error);
             if (error.code === 11000)
                 message.failure(response, 422, 'El producto ya existe', null)
-            else                
+            else
                 message.failure(response, error.code, error.messages, error.data)
         })
 }
@@ -63,19 +61,16 @@ function getProduct(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                Brand.populate(product, { path: 'brand' })
-                    .then(product => {
-                        message.success(response, 200, 'Producto obtenido con éxito', product)
-                    })
-                    .catch(error => {
-                        message.error(response, 422, '', error)
-                    })
+                return Brand.populate(product, { path: 'brand' })
             } else {
-                message.failure(response, 404, 'No se encontró el producto', null)
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
+        .then(product => {
+            message.success(response, 200, 'Producto obtenido con éxito', product)
+        })
         .catch(error => {
-            message.error(response, 422, '', error)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 // Actualiza un producto por su id
@@ -83,28 +78,24 @@ function updateProduct(request, response) {
     // Encuentra el usuario a actualizar
     findProduct(request.params.productId)
         .then(product => {
-            // Si el producto existe se actualiza con los datos proporcionados
             if (product) {
                 let newProduct = request.body
                 newProduct.updatedBy = request.decoded.username
                 newProduct.updatedAt = Date.now()
-                Product.update({ _id: request.params.productId }, { $set: newProduct }, { runValidators: true })
-                    .then(user => {
-                        message.success(response, 200, 'Producto actualizado con éxito', null)
-                    })
-                    .catch(error => {
-                        if (error.code === 11000) {
-                            message.duplicate(response, 422, 'El producto ya existe', null)
-                        } else {
-                            message.error(response, 422, '', error)
-                        }
-                    })
+                return Product.update({ _id: request.params.productId }, { $set: newProduct }, { runValidators: true })
             } else {
-                message.failure(response, 404, 'El producto, no es un producto válido', null)
+                return Promise.reject({ code: '404', message: 'No se encontró el producto', data: null })
             }
         })
+        .then(() => {
+            message.success(response, 200, 'Producto actualizado con éxito', null)
+        })
         .catch(error => {
-            message.error(response, 422, '', error)
+            if (error.code && error.code === 11000) {
+                message.failure(response, 422, 'El producto ya existe', null)
+            } else {
+                message.failure(response, error.code, error.message, error.data)
+            }
         })
 }
 // Elimina un producto por su id
@@ -112,19 +103,16 @@ function deleteProduct(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                Product.remove({ _id: product.id })
-                    .then(product => {
-                        message.success(response, 200, 'Producto eliminado con éxito', null)
-                    })
-                    .catch(error => {
-                        message.error(response, 422, '', error)
-                    })
+                return Product.remove({ _id: product.id })
             } else {
-                message.failure(response, 404, 'El producto, no es un producto válido', null)
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
+        .then(() => {
+            message.success(response, 200, 'Producto eliminado con éxito', null)
+        })
         .catch(error => {
-            message.error(response, 422, '', error)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 
@@ -132,19 +120,16 @@ function getBrand(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                Brand.populate(product, { path: 'brand' })
-                    .then(result => {
-                        message.success(response, 200, 'Marca obtenida con éxito', result.brand)
-                    })
-                    .catch(error => {
-                        message.error(response, 422, '', error)
-                    })
+                return Brand.populate(product, { path: 'brand' })
             } else {
-                message.failure(response, 404, 'No se econtro el producto', null)
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
+        .then(product => {
+            message.success(response, 200, 'Marca obtenida con éxito', product.brand)
+        })
         .catch(error => {
-            message.error(response, 422, '', error)
+            message.error(response, erro.code, error.message, error.data)
         })
 }
 
@@ -152,19 +137,17 @@ function getAllPriceLists(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                PriceList.populate(product, { path: 'priceList' })
-                    .then(result => {
-                        message.success(response, 200, 'Listas de Precios obtenidas con éxito', result.priceList)
-                    })
-                    .catch(error => {
-                        message.error(response, 422, '', error)
-                    })
+                return PriceList.populate(product, { path: 'priceList' })
             } else {
-                message.failure(response, 404, 'El producto no es válido', null)
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
+        .then(product => {
+            // console.log('PRODUCT', product);
+            message.success(response, 200, 'Listas de Precios obtenidas con éxito', product.priceLists)
+        })
         .catch(error => {
-            message.error(response, 422, '', error)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 
@@ -174,41 +157,53 @@ function findPriceList(priceListId) {
 }
 
 function addPriceList(request, response) {
+    let promiseProduct = findProduct(request.params.productId)
+    let promisePriceList = findPriceList(request.body.priceListId)
+    Promise.all([promiseProduct, promisePriceList])
+        .then(values => {
+            let productId = null;
+            let priceList = null;
+            if (values[0]) {
+                productId = values[0]._id
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
+            }
+            if (values[1]) {
+                priceList = values[1]
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró la lista de precios', data: null })
+            }
+            return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
+        })
+        .then(() => {
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+function removePriceList(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             if (product) {
-                findPriceList(request.body.priceList)
-                    .then(priceList => {
-                        if (priceList) {
-                            let price = request.body
-                            let isIncluded = product.priceList
-                                .map(current => current.toString())
-                                .includes(priceList._id.toString())
-
-                            if (isIncluded) {
-                                message.failure(response, 422, 'La Lista de Precios ya se encuentra asociada al Producto', null)
-                            } else {
-                                Product.update({ _id: product._id }, { $addToSet: { priceList: price } })
-                                    .then(result => {
-                                        message.success(response, 200, 'Precio añadido con éxito', product)
-                                    })
-                                    .catch(error => {
-                                        message.error(response, 500, 'No se pudo añadir la Lista de Precios al producto', error)
-                                    })
-                            }
-                        } else {
-                            message.failure(response, 404, 'La Lista de Precios no es valida', null)
-                        }
-                    })
-                    .catch(error => {
-                        message.error(response, 422, 'La Lista de Precios no es valida', error)
-                    })
+                let priceList = request.body
+                return Product.update({ _id: product._id }, { $pull: { priceLists: priceList } })
             } else {
-                message.failure(response, 404, 'El producto no es válido', null)
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
+        .then(() => {
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            message.success(response, 200, 'Producto añadido con éxito', producto.priceLists)
+        })
         .catch(error => {
-            message.error(response, 500, 'El producto no es válido', error)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 

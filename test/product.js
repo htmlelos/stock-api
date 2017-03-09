@@ -299,7 +299,7 @@ describe('PRODUCTS test suite', () => {
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('El producto, no es un producto válido')
+                        .eql('No se encontró el producto')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -395,7 +395,7 @@ describe('PRODUCTS test suite', () => {
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('El producto, no es un producto válido')
+                        .eql('No se encontró el producto')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -476,7 +476,7 @@ describe('PRODUCTS test suite', () => {
                 .get('/product/' + product._id + '/pricelists')
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // El test inicia aqui
+                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -519,7 +519,7 @@ describe('PRODUCTS test suite', () => {
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('El producto no es válido')
+                        .eql('No se encontró el producto')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -542,7 +542,6 @@ describe('PRODUCTS test suite', () => {
                 supplier: []
             })
 
-
             brand.save()
                 .catch(error => { console.log('TEST1: ', error) })
 
@@ -559,7 +558,7 @@ describe('PRODUCTS test suite', () => {
 
 
             let price = {
-                priceList: priceList._id,
+                priceListId: priceList._id,
                 cost: 30,
                 profit: 0.3,
                 status: 'ACTIVO'
@@ -614,7 +613,7 @@ describe('PRODUCTS test suite', () => {
                 .catch(error => { console.log('TEST2: ', error) })
 
             let price = {
-                priceList: priceList._id,
+                priceListId: priceList._id,
                 cost: 30,
                 profit: 0.3,
                 status: 'ACTIVO'
@@ -628,11 +627,10 @@ describe('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send(price)
                 .end((error, response) => {
-                    // El test inicia aqui
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('El producto no es válido')
+                        .eql('No se encontró el producto')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
@@ -670,7 +668,7 @@ describe('PRODUCTS test suite', () => {
 
 
             let price = {
-                priceList: '58dece08eb0548118ce31f11',
+                priceListId: '58dece08eb0548118ce31f11',
                 cost: 30,
                 profit: 0.3,
                 status: 'ACTIVO'
@@ -688,7 +686,7 @@ describe('PRODUCTS test suite', () => {
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('La Lista de Precios no es valida')
+                        .eql('No se encontró la lista de precios')
                     response.body.should.have.property('data').to.be.null
                     done()
                 })

@@ -113,7 +113,6 @@ function findPerson(personId) {
                 }
             })
             .catch(error => {
-                console.error('ERROR--', error);
                 reject({ code: 500, message: 'No se pudo obtener la persona', data: null })
             })
     })
@@ -174,8 +173,12 @@ function getAllContacts(request, response) {
 function addContact(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let contact = request.body
-            return Person.update({ _id: person._id }, { $push: { contacts: contact } })
+            if (person) {
+                let contact = request.body
+                return Person.update({ _id: person._id }, { $push: { contacts: contact } })
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró la persona', data: null })
+            }
         })
         .then(() => {
             return findPerson(request.params.personId)
@@ -191,8 +194,12 @@ function addContact(request, response) {
 function removeContact(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let contactId = request.params.contactId
-            return Person.update({ _id: person._id }, { $pull: { contacts: { _id: contactId } } })
+            if (person) {
+                let contactId = request.params.contactId
+                return Person.update({ _id: person._id }, { $pull: { contacts: { _id: contactId } } })
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró la persona', data: null })
+            }
         })
         .then(() => {
             return findPerson(request.params.personId)
@@ -208,12 +215,16 @@ function removeContact(request, response) {
 function removeContacts(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let contactsIds = JSON.parse(request.body.contacts)
-            let personId = request.params.personId
-            return Promise.all(contactsIds.map(id => {
-                let contactId = mongoose.Types.ObjectId(id)
-                return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
-            }))
+            if (person) {
+                let contactsIds = JSON.parse(request.body.contacts)
+                let personId = request.params.personId
+                return Promise.all(contactsIds.map(id => {
+                    let contactId = mongoose.Types.ObjectId(id)
+                    return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
+                }))
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró la persona', data: null })
+            }
         })
         .then(() => {
             return findPerson(request.params.personId)
@@ -240,8 +251,12 @@ function getAllAddresses(request, response) {
 function addAddress(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let address = request.body
-            return Person.update({ _id: person._id }, { $push: { addresses: address } })
+            if (person) {
+                let address = request.body
+                return Person.update({ _id: person._id }, { $push: { addresses: address } })
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró' })
+            }
         })
         .then(() => {
             return findPerson(request.params.personId)
@@ -250,7 +265,6 @@ function addAddress(request, response) {
             message.success(response, 200, 'Direccion añadida con éxito', person.addresses)
         })
         .catch(error => {
-            console.log('ERROR--', error)
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -258,8 +272,12 @@ function addAddress(request, response) {
 function removeAddress(request, response) {
     findPerson(request.params.personId)
         .then(person => {
-            let addressId = request.params.addressId
-            return Person.update({ _id: person._id }, { $pull: { addresses: { _id: addressId } } })
+            if (person) {
+                let addressId = request.params.addressId
+                return Person.update({ _id: person._id }, { $pull: { addresses: { _id: addressId } } })
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró la persona', data: null })
+            }
         })
         .then(() => {
             return findPerson(request.params.personId)

@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: ', () => {
+describe('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {

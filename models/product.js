@@ -6,7 +6,7 @@ const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
 
 const PriceSchema = new Schema({
-    priceList: {
+    priceListId: {
         type: Schema.Types.ObjectId,
         ref: 'PriceList'
     },
@@ -51,7 +51,7 @@ const ProductSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product'
     }],
-    priceList: [PriceSchema],
+    priceLists: [PriceSchema],
     status: {
         type: String,
         enum: {

@@ -72,7 +72,6 @@ function updatePriceList(request, response) {
       }
     })
     .catch(error => {
-      console.log('--ERROR--', error);
       message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
     })
 }
