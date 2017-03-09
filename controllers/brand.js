@@ -29,7 +29,7 @@ function createBrand(request, response) {
   newBrand.createdBy = request.decoded.username
   newBrand.save()
     .then(brand => {
-      message.success(response, 200, 'Marca creada con éxito', null)
+      message.success(response, 200, 'Marca creada con éxito', {id: brand._id})
     })
     .catch(error => {
       if (error.code === 11000) {
@@ -122,10 +122,69 @@ function deleteBrand(request, response) {
     })
 }
 
+// Obtener una marca
+function findSupplier(brandId) {
+  return Person.findById({ _id: brandId })
+}
+
+function getAllSuppliers(request, response) {
+  console.log('GET SUPPLIER--', request.params.brandId);
+  findBrand(request.params.brandId)
+    .then(brand => {
+      if (brand) {
+        console.log('MARCA--', brand);
+        return Promise.resolve(brand)
+      } else {
+        return Promise.reject({ code: 404, message: 'No se encontró la marca', data: null })
+      }
+    })
+    .then(brand => {
+      message.success(response, 200, 'Proveedores obtenidas con éxito', { suppliers: brand.suppliers })
+    })
+    .catch(error => {
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
+function addSupplier(request, response) {
+  let promiseBrand = findBrand(request.params.brandId)
+  let promiseSupplier = findSupplier(request.body.supplierId)
+  Promise.all([promiseBrand, promiseSupplier])
+    .then(values => {
+      let brandId = null
+      let supplierId = null
+      if (values[0]) {
+        brandId = values[0]._id
+      } else {
+        return Promise.reject({ code: 404, message: 'No se encontró la marca', data: null })
+      }
+      if (values[1]) {
+        supplierId = values[1]._id
+      } else {
+        return Promise.reject({ code: 404, message: 'No se encontró el proveedor', data: null })
+      }
+      return Brand.update({ _id: brandId }, { $push: { suppliers: supplierId } })
+    })
+    .then(() => {
+      return findBrand(request.params.brandId)
+    })
+    .then(brand => {
+      return Person.populate(brand, { path: 'suppliers' })
+    })
+    .then(brand => {
+      message.success(response, 200, 'Proveedor agregado con éxito', brand.suppliers)
+    })
+    .catch(error => {
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
 module.exports = {
   getAllBrands,
   createBrand,
   getBrand,
   updateBrand,
-  deleteBrand
+  deleteBrand,
+  getAllSuppliers,
+  addSupplier
 }
