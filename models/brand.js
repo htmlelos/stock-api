@@ -17,6 +17,14 @@ const BrandSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Person'
   }],
+	status: {
+		type: String,
+		enum: {
+			values: ['ACTIVO', 'INACTIVO'],
+			message: 'El estado de la marca solo puede ser ACTIVO o INACTIVO'
+		},
+		required: 'Debe definir el estado de la marca'
+	},
   createdAt: {
 		type: Date,
 		required: true,

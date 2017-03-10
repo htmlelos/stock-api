@@ -16,10 +16,6 @@ function getAllProducts(request, response) {
         })
 }
 
-function saveProduct(product) {
-    console.log('SAVE_PRODUCT', product);
-    return
-}
 // Verifica los datos del producto
 function checkProduct(request) {
     request.checkBody('name', 'El nombre del producto esta vacio')
@@ -143,7 +139,6 @@ function getAllPriceLists(request, response) {
             }
         })
         .then(product => {
-            // console.log('PRODUCT', product);
             message.success(response, 200, 'Listas de Precios obtenidas con éxito', product.priceLists)
         })
         .catch(error => {

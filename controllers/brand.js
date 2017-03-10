@@ -2,6 +2,7 @@
 const Person = require('../models/person')
 const Brand = require('../models/brand')
 const message = require('../services/response/message')
+const mongoose = require('mongoose')
 
 // Obtiene todas las marcas
 function getAllBrands(request, response) {
@@ -29,7 +30,7 @@ function createBrand(request, response) {
   newBrand.createdBy = request.decoded.username
   newBrand.save()
     .then(brand => {
-      message.success(response, 200, 'Marca creada con éxito', {id: brand._id})
+      message.success(response, 200, 'Marca creada con éxito', { id: brand._id })
     })
     .catch(error => {
       if (error.code === 11000) {
@@ -128,11 +129,9 @@ function findSupplier(brandId) {
 }
 
 function getAllSuppliers(request, response) {
-  console.log('GET SUPPLIER--', request.params.brandId);
   findBrand(request.params.brandId)
     .then(brand => {
       if (brand) {
-        console.log('MARCA--', brand);
         return Promise.resolve(brand)
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la marca', data: null })
@@ -179,6 +178,27 @@ function addSupplier(request, response) {
     })
 }
 
+function deleteSuppliers(request, response) {
+  findBrand(request.params.brandId)
+    .then(brand => {
+      let suppliersIds = JSON.parse(request.body.suppliers)
+      let brandId = mongoose.Types.ObjectId(request.params.brandId)
+      return Promise.all(suppliersIds.map(id => {        
+        let supplierId = mongoose.Types.ObjectId(id)
+        return Brand.update({ _id: brandId }, { $pull: { suppliers:  supplierId  } })
+      }))
+    })
+    .then(values=> {
+      return findBrand(request.params.brandId)
+    })
+    .then(brand => {
+      message.success(response, 200, 'Proveedores eliminados con éxito', brand.suppliers)
+    })
+    .catch(error => {
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
 module.exports = {
   getAllBrands,
   createBrand,
@@ -186,5 +206,6 @@ module.exports = {
   updateBrand,
   deleteBrand,
   getAllSuppliers,
-  addSupplier
+  addSupplier,
+  deleteSuppliers
 }

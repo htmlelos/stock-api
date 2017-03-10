@@ -103,7 +103,6 @@ describe('PRODUCTS test suite', () => {
                 .send(product)
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    console.log('response', response.body);
                     response.should.have.status(422)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -160,7 +159,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
             let supplier = new Person({
@@ -415,7 +415,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
             brand.save()
@@ -461,7 +462,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
             brand.save()
@@ -476,7 +478,6 @@ describe('PRODUCTS test suite', () => {
                 .get('/product/' + product._id + '/pricelists')
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -500,7 +501,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
             brand.save()
@@ -539,7 +541,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
             brand.save()
@@ -594,7 +597,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
 
@@ -648,7 +652,8 @@ describe('PRODUCTS test suite', () => {
             let brand = new Brand({
                 name: 'Loca Cola',
                 description: 'Bebidas Gaseosas',
-                supplier: []
+                supplier: [],
+                status: 'ACTIVO'
             })
 
 

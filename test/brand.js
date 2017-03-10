@@ -64,7 +64,8 @@ describe('BRAND: test suite', () => {
 			let brand = {
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			}
 
 			chai.request(server)
@@ -84,7 +85,8 @@ describe('BRAND: test suite', () => {
 		it('no deberia crear una marca sin nombre', done => {
 			let brand = {
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			}
 
 			chai.request(server)
@@ -105,7 +107,8 @@ describe('BRAND: test suite', () => {
 			let brand = {
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			}
 
 			let newBrand = new Brand(brand)
@@ -134,7 +137,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -164,7 +168,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -189,7 +194,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -217,7 +223,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -245,7 +252,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -254,7 +262,8 @@ describe('BRAND: test suite', () => {
 			brand = new Brand({
 				name: 'Exit cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -284,7 +293,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -307,7 +317,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				suppliers: []
+				suppliers: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -333,7 +344,8 @@ describe('BRAND: test suite', () => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
-				supplier: []
+				supplier: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -343,7 +355,6 @@ describe('BRAND: test suite', () => {
 				.get('/brand/' + brand._id + '/suppliers')
 				.set('x-access-token', token)
 				.end((request, response) => {
-					// console.log('RESPONSE::', response.body);
 					response.body.should.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
@@ -356,14 +367,14 @@ describe('BRAND: test suite', () => {
 
 		})
 	})
-
 	// POST /brand/:userId/supplier
 	describe('POST /brand/:userId/suppliers', () => {
 		it('deberia agregar un proveedor a una marca', done => {
 			let brand = new Brand({
 				name: 'Loca Cola',
 				description: 'Bebida Gaseosa',
-				supplier: []
+				supplier: [],
+				status: 'ACTIVO'
 			})
 
 			brand.save()
@@ -379,8 +390,6 @@ describe('BRAND: test suite', () => {
 				status: 'ACTIVO'
 			})
 
-			console.log(supplier);
-
 			supplier.save()
 				.catch(error => console.log('TEST:', error))
 
@@ -388,17 +397,93 @@ describe('BRAND: test suite', () => {
 			chai.request(server)
 				.post('/brand/' + brand._id + '/suppliers')
 				.set('x-access-token', token)
-				.send({supplierId: supplier._id})
+				.send({ supplierId: supplier._id })
 				.end((request, response) => {
-					console.log('RESPONSE::', response.body);
-						response.body.should.status(200)
-						response.body.should.be.a('object')
-						response.body.should.have.property('message')
-							.eql('Proveedor agregado con éxito')
-						response.body.should.have.property('data')
-						// response.body.data.should.have.property('suppliers')
-						response.body.data.length.should.be.eql(1)
-						done()
+					response.body.should.status(200)
+					response.body.should.be.a('object')
+					response.body.should.have.property('message')
+						.eql('Proveedor agregado con éxito')
+					response.body.should.have.property('data')
+					response.body.data.length.should.be.eql(1)
+					done()
+				})
+		})
+	})
+	// DELETE /brand/:brandID/supplier
+	describe('DELETE /brand/:brandId/suppliers', () => {
+		it('deberia eliminar todos los proveedores indicados', done => {
+			let brand = new Brand({
+				name: 'Loca cola',
+				description: 'Bebida Gaseosa',
+				supplier: [],
+				status: 'ACTIVO'
+			})
+
+			let suppliersIds = [];
+
+			let supplier = new Person({
+				type: 'PROVEEDOR',
+				businessName: 'La Estrella',
+				addresses: [],
+				taxStatus: 'RESPONSABLE INSCRIPTO',
+				grossIncomeCode: '1220232021692',
+				contacts: [],
+				status: 'ACTIVO'
+			})
+
+			supplier.save()
+				.catch(error => console.log('TEST:', error))
+
+			suppliersIds.push(supplier._id)
+			brand.suppliers.push(supplier._id)
+
+			supplier = new Person({
+				type: 'PROVEEDOR',
+				businessName: 'The Star',
+				addresses: [],
+				taxStatus: 'RESPONSABLE INSCRIPTO',
+				grossIncomeCode: '1220232021692',
+				contacts: [],
+				status: 'ACTIVO'
+			})
+
+			supplier.save()
+				.catch(error => console.log('TEST:', error))
+
+			suppliersIds.push(supplier._id)
+			brand.suppliers.push(supplier._id)
+
+			supplier = new Person({
+				type: 'PROVEEDOR',
+				businessName: 'The Morning Star',
+				addresses: [],
+				taxStatus: 'RESPONSABLE INSCRIPTO',
+				grossIncomeCode: '1220232021692',
+				contacts: [],
+				status: 'ACTIVO'
+			})
+
+			supplier.save()
+				.catch(error => console.log('TEST:', error))
+
+			// suppliersIds.push(supplier._id)
+			brand.suppliers.push(supplier._id)
+
+			brand.save()
+				.catch(error => console.log('TEST:', error))
+
+			chai.request(server)
+				.delete('/brand/' + brand._id + '/suppliers')
+				.set('x-access-token', token)
+				.send({ suppliers: JSON.stringify(suppliersIds) })
+				.end((error, response) => {
+					response.should.have.status(200)
+					response.body.should.be.a('object')
+					response.body.should.have.property('message')
+						.eql('Proveedores eliminados con éxito')
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('array')
+					done()
 				})
 		})
 	})

@@ -725,8 +725,6 @@ describe('PERSON: ', () => {
             person.save()
                 .catch(error => console.log('TEST: ', error))
 
-            // console.log('::PERSONA::', person.contacts[0]._id);
-
             chai.request(server)
                 .delete('/person/' + person._id + '/contact/' + person.contacts[0]._id)
                 .set('x-access-token', token)
@@ -774,8 +772,6 @@ describe('PERSON: ', () => {
 
                     person.save()
                         .catch(error => console.log('TEST: ', error))
-
-                    // console.log('::PERSONA::', person.contacts[0]._id);
 
                     chai.request(server)
                         .delete('/person/58dece08eb0548118ce31f11/contact/' + person.contacts[0]._id)
@@ -1011,8 +1007,6 @@ describe('PERSON: ', () => {
 
             person.save()
                 .catch(error => console.log('ERROR: ', error))
-
-            // console.log('::PERSONA::', person.addresses[0]._id);
 
             chai.request(server)
                 .delete('/person/58dece08eb0548118ce31f11/address/' + person.addresses[0]._id)

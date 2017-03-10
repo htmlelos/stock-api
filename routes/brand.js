@@ -21,6 +21,7 @@ router.route('/brand/:brandId')
 router.route('/brand/:brandId/suppliers')
   .get(brand.getAllSuppliers)
   .post(brand.addSupplier)
+  .delete(brand.deleteSuppliers)
 
 
 module.exports = router

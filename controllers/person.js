@@ -81,7 +81,6 @@ function createPerson(request, response) {
 
     request.getValidationResult()
         .then(result => {
-            // console.log('RESULT--', result);
             if (!result.isEmpty()) {
                 let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
                 return Promise.reject({ code: 422, messages, data: null })
@@ -105,7 +104,6 @@ function findPerson(personId) {
     return new Promise((resolve, reject) => {
         Person.findById({ _id: personId })
             .then(person => {
-                // console.log('FOUND PERSON--', person);
                 if (person) {
                     resolve(person)
                 } else {
@@ -307,7 +305,6 @@ function removeAddresses(request, response) {
             message.success(response, 200, 'Direcciones eliminadas con éxito', person.addresses)
         })
         .catch(error => {
-            console.log(error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
