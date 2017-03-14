@@ -22,7 +22,7 @@ const PriceSchema = new Schema({
             values: ['ACTIVO', 'INACTIVO'],
             message: 'El estado del precio de un producto solo puede ser ACTIVO o INACTIVO'
         },
-        required: 'Debe definir el estado del producto'        
+        required: 'Debe definir el estado del producto'
     },
     createdAt: {
         type: Date,
@@ -32,6 +32,14 @@ const PriceSchema = new Schema({
         type: String,
         default: 'anonimo'
     }
+}, {
+        versionKey: false
+    })
+
+const ComponentSchema = new Schema({
+    quantity: Number,
+    unit: String,
+    componentId: { type: Schema.Types.ObjectId, ref: 'Product' }
 }, {
         versionKey: false
     })
@@ -47,10 +55,7 @@ const ProductSchema = new Schema({
         ref: 'Brand'
     },
     code: String,
-    components: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Product'
-    }],
+    components: [ComponentSchema],
     priceLists: [PriceSchema],
     status: {
         type: String,

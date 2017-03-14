@@ -18,7 +18,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PRODUCTS test suite', () => {
+describe.only('PRODUCTS test suite', () => {
     let token = ''
 
     beforeEach(done => {
@@ -43,7 +43,7 @@ describe('PRODUCTS test suite', () => {
         Brand.remove({}, error => { })
         Person.remove({}, error => { })
         Product.remove({}, error => { })
-        PriceList.remove({}, error => { })
+        PriceList.remove({}, error => { })        
         done()
     })
     // Obtener /products - Obtener todos los products
@@ -695,6 +695,147 @@ describe('PRODUCTS test suite', () => {
                     response.body.should.have.property('data').to.be.null
                     done()
                 })
+        })
+    })
+    // POST /product/:productId/component
+    describe.only('POST /product/{productId}/component', () => {
+        it('deberia agregar un componente a un producto', done => {
+            let productComponent = new Product({
+                name: 'Maple Huevos Marrones',
+                brand: null,
+                price: 50.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productComponent.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let productBase = new Product({
+                name: 'Huevo Marron',
+                brand: null,
+                price: 2.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productBase.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let component = {
+                quantity: 30,
+                unit: 'Unidad',
+                componentId: productComponent._id
+            }
+
+            chai.request(server)
+                .post('/product/' + productBase._id + '/component')
+                .set('x-access-token', token)
+                .send(component)
+                .end((error, response) => {
+                    console.log('RESPONSE::', response.body);
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Componente agregado con éxito')
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
+                    done()
+                })
+        })
+
+        it('no deberia agregar un componente a un producto invalido', () => {
+            let productComponent = new Product({
+                name: 'Maple Huevos Marrones',
+                brand: null,
+                price: 50.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productComponent.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let productBase = new Product({
+                name: 'Huevo Marron',
+                brand: null,
+                price: 2.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productBase.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let component = {
+                quantity: 30,
+                unit: 'Unidad',
+                componentId: productComponent._id
+            }
+
+            chai.request(server)
+                .post('/product/58dece08eb0548118ce31f11/component')
+                .set('x-access-token', token)
+                .send(component)
+                .end((error, response) => {
+                    console.log('RESPONSE::', response.body);
+                    response.should.have.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('No se encontró el producto')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+
+        it.only('no deberia agregar un componente que no existe a un producto', () => {
+            let productComponent = new Product({
+                name: 'Maple Huevos Marrones',
+                brand: null,
+                price: 50.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productComponent.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let productBase = new Product({
+                name: 'Huevo Marron',
+                brand: null,
+                price: 2.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productBase.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let component = {
+                quantity: 30,
+                unit: 'Unidad',
+                componentId: mongoose.Types.ObjectId('58dece08eb0548118ce31f11')
+            }
+
+            chai.request(server)
+                .post('/product/'+productBase._id+'/component')
+                .set('x-access-token', token)
+                .send(component)
+                .end((error, response) => {
+                    // console.log('RESPONSE::', response);
+                    response.should.have.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('No se encontró el componente')
+                    response.body.should.have.property('data').to.be.null
+                    done()
+                })
+        })
+    })
+    // DELETE /product/:productId/components
+    describe('DELETE /product/{productId}/components', () => {
+        it.skip('deberia eliminar los compoentente indicados de un producto ', done => {
+            done()
         })
     })
 })
