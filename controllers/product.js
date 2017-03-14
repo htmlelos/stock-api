@@ -205,27 +205,21 @@ function removePriceList(request, response) {
 }
 
 function addComponent(request, response) {
-    // console.log('ADD_COMPONENT');
     let promiseProduct = findProduct(request.params.productId);
-    // console.log('1--', promiseProduct);
     let promiseComponent = findProduct(request.body.componentId)
-    // console.log('2--', promiseComponent);
-    // console.log('PROMISES');
     Promise.all([promiseProduct, promiseComponent])
         .then(values => {
             let productId = null;
             let componentId = null;
-            // console.log('VALORES-0-', values[0]);
-            // console.log('VALORES-1-', values[1]);
             if (values[0]) {
                 productId = values[0]._id;
             } else {
-                Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
             if (values[1]) {
                 componentId = values[1]._id
             } else {
-                Promise.reject({ code: 404, message: 'No se encontró el componentes', data: null })
+                return Promise.reject({ code: 404, message: 'No se encontró el componente', data: null })
             }
             return Product.update({ _id: productId }, { $push: { components: request.body } })
         })
@@ -233,12 +227,12 @@ function addComponent(request, response) {
             return findProduct(request.params.productId)
         })
         .then(product => {
-            console.log('PRODUCT--', product);
+            // console.log('PRODUCT--', product);
             message.success(response, 200, 'Componente agregado con éxito', product.components)
         })
         .catch(error => {
             console.log(error);
-            message.failure(response, error.code, message.code, message.data)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 

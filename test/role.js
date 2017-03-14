@@ -14,11 +14,25 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
-describe('ROLE: test suite', () => {
+describe.only('ROLE: test suite', () => {
 	let token = ''
 	// Se ejecuta antes de cada test
 	beforeEach(done => {
-		// Role.remove({}, error => { })
+		let superUser = {
+			username: 'super@mail.com',
+			password: 'super'
+		}
+
+		chai.request(server)
+			.post('/login')
+			.send(superUser)
+			.end((error, response) => {
+				response.should.be.status(200)
+				response.body.should.have.property('data')
+				response.body.data.should.have.property('token')
+				token = response.body.data.token
+				// Test from here
+			})
 		done()
 	})
 	// Se ejecuta despues de cada test
@@ -29,31 +43,17 @@ describe('ROLE: test suite', () => {
 	// GET /roles - Obtener todos los roles
 	describe('GET /roles', () => {
 		it('deberia obtener todos los roles', done => {
-			let superUser = {
-				username: 'super@mail.com',
-				password: 'super'
-			}
 
 			chai.request(server)
-				.post('/login')
-				.send(superUser)
+				.get('/roles')
+				.set('x-access-token', token)
 				.end((error, response) => {
-					response.should.be.status(200)
+					response.should.have.status(200)
+					response.body.should.be.a('object')
+					response.body.should.have.property('message').eql('')
 					response.body.should.have.property('data')
-					response.body.data.should.have.property('token')
-					token = response.body.data.token
-					// Test from here
-					chai.request(server)
-						.get('/roles')
-						.set('x-access-token', token)
-						.end((error, response) => {
-							response.should.have.status(200)
-							response.body.should.be.a('object')
-							response.body.should.have.property('message').eql('')
-							response.body.should.have.property('data')
-							response.body.data.length.should.be.eql(0)
-							done()
-						})
+					response.body.data.length.should.be.eql(0)
+					done()
 				})
 		})
 	})
@@ -491,7 +491,7 @@ describe('ROLE: test suite', () => {
 							status: 'INACTIVO'
 						})
 						.end((error, response) => {
-							response.should.have.status(422)
+							response.should.have.status(404)
 							response.body.should.be.a('object')
 							response.body.should.have.property('message')
 								.eql('El rol ya existe')

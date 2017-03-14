@@ -18,7 +18,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PRODUCTS test suite', () => {
+describe('PRODUCTS test suite', () => {
     let token = ''
 
     beforeEach(done => {
@@ -188,6 +188,7 @@ describe.only('PRODUCTS test suite', () => {
                 .get('/product/' + product._id)
                 .set('x-access-token', token)
                 .end((error, response) => {
+                    console.log('RESPONSE::', response.body)
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -698,7 +699,7 @@ describe.only('PRODUCTS test suite', () => {
         })
     })
     // POST /product/:productId/component
-    describe.only('POST /product/{productId}/component', () => {
+    describe('POST /product/{productId}/component', () => {
         it('deberia agregar un componente a un producto', done => {
             let productComponent = new Product({
                 name: 'Maple Huevos Marrones',
@@ -733,7 +734,7 @@ describe.only('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
+                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -744,7 +745,7 @@ describe.only('PRODUCTS test suite', () => {
                 })
         })
 
-        it('no deberia agregar un componente a un producto invalido', () => {
+        it('no deberia agregar un componente a un producto invalido', done => {
             let productComponent = new Product({
                 name: 'Maple Huevos Marrones',
                 brand: null,
@@ -778,7 +779,7 @@ describe.only('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
+                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -788,7 +789,7 @@ describe.only('PRODUCTS test suite', () => {
                 })
         })
 
-        it.only('no deberia agregar un componente que no existe a un producto', () => {
+        it('no deberia agregar un componente que no existe a un producto', () => {
             let productComponent = new Product({
                 name: 'Maple Huevos Marrones',
                 brand: null,
@@ -822,7 +823,6 @@ describe.only('PRODUCTS test suite', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
