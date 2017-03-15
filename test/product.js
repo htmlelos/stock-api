@@ -843,7 +843,7 @@ describe('PRODUCTS: ', () => {
     })
     // DELETE /product/:productId/components
     describe('DELETE /product/{productId}/components', () => {
-        it.only('deberia eliminar los compoentente indicados de un producto ', done => {
+        it('deberia eliminar los compoentente indicados de un producto ', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',
                 brand: null,
@@ -901,7 +901,7 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send({components:JSON.stringify(components)})
                 .end((error, response) =>{
-                    console.log('RESPONSE::', response.body);
+                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.be.property('message')
