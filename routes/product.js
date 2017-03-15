@@ -23,4 +23,11 @@ router.route('/product/:productId/pricelists')
 // Product /product/:productId/price
 router.route('/product/:productId/pricelist')
     .post(product.addPriceList)
+// Product /product/:productId/component
+router.route('/product/:productId/component')
+    .post(product.addComponent)
+
+router.route('/product/:productId/components')
+    .delete(product.deleteComponents)
+
 module.exports = router

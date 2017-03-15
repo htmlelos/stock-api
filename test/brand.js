@@ -15,7 +15,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 //Bloque principal de las pruebas de Marcas
-describe('BRAND: test suite', () => {
+describe('BRAND: ', () => {
 	let token = ''
 
 	beforeEach(done => {
@@ -129,7 +129,6 @@ describe('BRAND: test suite', () => {
 					done()
 				})
 		})
-
 	})
 	// GET /brand/:brandId - obtener una marca por su id
 	describe('GET /brand/:brandId', () => {
@@ -399,6 +398,7 @@ describe('BRAND: test suite', () => {
 				.set('x-access-token', token)
 				.send({ supplierId: supplier._id })
 				.end((request, response) => {
+					console.log('RESPONSE::', response.body);
 					response.body.should.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')

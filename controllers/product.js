@@ -1,4 +1,5 @@
 'use strict';
+const mongoose = require('mongoose')
 const Brand = require('../models/brand')
 const Person = require('../models/person')
 const Product = require('../models/product')
@@ -202,6 +203,66 @@ function removePriceList(request, response) {
         })
 }
 
+function addComponent(request, response) {
+    // console.log('A-Object');
+    let promiseProduct = findProduct(request.params.productId);
+    let promiseComponent = findProduct(request.body.componentId)
+    // console.log('B-Objet');
+    Promise.all([promiseProduct, promiseComponent])
+        .then(values => {
+            // console.log('C-Objet');
+            let productId = null;
+            let componentId = null;
+            // console.log('BASE--',values[0]);
+            if (values[0]) {
+                productId = values[0]._id;
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
+            }
+            // console.log('COMPONENTE--',values[1]);
+            if (values[1]) {
+                componentId = values[1]._id
+            } else {
+                return Promise.reject({ code: 404, message: 'No se encontró el componente', data: null })
+            }
+            return Product.update({ _id: productId }, { $push: { components: request.body } })
+        })
+        .then(() => {
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            // console.log('PRODUCT--', product);
+            message.success(response, 200, 'Componente agregado con éxito', product.components)
+        })
+        .catch(error => {
+            // console.log(error);
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+function deleteComponents(request, response) {
+    findProduct(request.params.productId)
+        .then(product => {
+            let componentIds = JSON.parse(request.body.components)
+            let productId = request.params.productId
+            return Promise.all(componentIds.map(id => {
+                let componentId = mongoose.Types.ObjectId(id)
+                return Product.update({ _id: productId }, { $pull: { components: { componentId: componentId } } })
+            }))
+        })
+        .then(() => {
+            // console.log('A--');
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            // console.log('RESULT--', product);
+            message.success(response, 200, 'Componentes eliminados con éxito', product.components)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
 module.exports = {
     getAllProducts,
     createProduct,
@@ -210,5 +271,8 @@ module.exports = {
     deleteProduct,
     getBrand,
     getAllPriceLists,
-    addPriceList
+    addPriceList,
+    removePriceList,
+    addComponent,
+    deleteComponents
 }

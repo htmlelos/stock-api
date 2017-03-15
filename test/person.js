@@ -32,7 +32,6 @@ describe('PERSON: ', () => {
                 response.body.should.have.property('data')
                 response.body.data.should.have.property('token')
                 token = response.body.data.token
-                // Test from here
                 done()
             })
     })

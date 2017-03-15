@@ -15,7 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('DOCUMENTS: test suite', () => {
+describe.skip('DOCUMENTS: test suite', () => {
     let  token = ''
 
     beforeEach(done => {
