@@ -852,7 +852,7 @@ describe('PRODUCTS: ', () => {
                 status: 'ACTIVO'
             })
 
-            let productsIds = []
+            let components = []
 
             let productComponent = new Product({
                 name: 'Huevo Marron',
@@ -870,7 +870,7 @@ describe('PRODUCTS: ', () => {
                 unit: 'Unidad',
                 componentId: productComponent._id
             }
-            productsIds.push(productComponent._id)
+            components.push(productComponent._id)
             productBase.components.push(component)
 
 
@@ -890,7 +890,7 @@ describe('PRODUCTS: ', () => {
                 unit: 'Unidad',
                 componentId: productComponent._id
             }
-            productsIds.push(productComponent._id)
+            // components.push(productComponent._id)
             productBase.components.push(component)
             
             productBase.save()
@@ -899,8 +899,7 @@ describe('PRODUCTS: ', () => {
             chai.request(server)
                 .delete('/product/'+productBase._id+'/components')
                 .set('x-access-token', token)
-                // .send({productsIds:JSON.stringify(productsIds)})
-                .send({productsIds:productsIds})
+                .send({components:JSON.stringify(components)})
                 .end((error, response) =>{
                     console.log('RESPONSE::', response.body);
                     response.should.have.status(200)

@@ -241,29 +241,21 @@ function addComponent(request, response) {
 }
 
 function deleteComponents(request, response) {
-    console.log('DELETE--');
     findProduct(request.params.productId)
         .then(product => {
-            console.log('PRODUCT--', product);
-            if (product) {
-                // let componentIds = JSON.parse(request.body.productsId)
-                console.log('BODY', request.body.productsIds);
-                let componentIds = request.body.productsIds
-                console.log('COMPONENTES_ID', componentIds);
-                let productId = mongoose.Types.ObjectId(request.params.productId)
-                return Promise.all(componentIds.map(id => {
-                    let componentId = mongoose.Types.ObjectId(id)
-                    return Product.update({_id: productId}, {$pull:{components: componentId}})
-                }))
-            } else {
-                return Promise.reject({code: 404, message: 'No se encontró el producto', data: null})
-            }
+            let componentIds = JSON.parse(request.body.components)
+            let productId = request.params.productId
+            return Promise.all(componentIds.map(id => {
+                let componentId = mongoose.Types.ObjectId(id)
+                return Product.update({ _id: productId }, { $pull: { components: { componentId: componentId } } })
+            }))
         })
         .then(() => {
+            // console.log('A--');
             return findProduct(request.params.productId)
         })
         .then(product => {
-            console.log('RESULT--', product);
+            // console.log('RESULT--', product);
             message.success(response, 200, 'Componentes eliminados con éxito', product.components)
         })
         .catch(error => {
