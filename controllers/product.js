@@ -51,6 +51,7 @@ function createProduct(request, response) {
 }
 // Obtener un producto
 function findProduct(productId) {
+    console.log('ID:', productId);
     return Product.findById({ _id: productId })
 }
 // Obtiene un producto por su Id
@@ -240,23 +241,35 @@ function addComponent(request, response) {
         })
 }
 
+// function getComponents(request, response) {
+
+//     console.log('1:', request.body);
+//     console.log('2:', request.params);
+//     //findProduct(request.params.productId)
+//     //{_id: request.params.productId}
+//     Product.find(request.body.filter)
+//        // .where(request.query.filter)
+//         .then(product => {
+//             console.log('PRODUCTO--', product);
+//             message.success(response, 200, 'Se obtuvieron los componentes con éxito', [])
+//         })
+//         .catch(error => {
+//             console.error('ERROR--', error)
+//         })
+// }
+
 function deleteComponents(request, response) {
-    console.log('DELETE--');
     findProduct(request.params.productId)
         .then(product => {
-            console.log('PRODUCT--', product);
             if (product) {
-                // let componentIds = JSON.parse(request.body.productsId)
-                console.log('BODY', request.body.productsIds);
                 let componentIds = request.body.productsIds
-                console.log('COMPONENTES_ID', componentIds);
                 let productId = mongoose.Types.ObjectId(request.params.productId)
                 return Promise.all(componentIds.map(id => {
                     let componentId = mongoose.Types.ObjectId(id)
-                    return Product.update({_id: productId}, {$pull:{components: componentId}})
+                    return Product.update({ _id: productId }, { $pull: { components: componentId } })
                 }))
             } else {
-                return Promise.reject({code: 404, message: 'No se encontró el producto', data: null})
+                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
         })
         .then(() => {
@@ -282,5 +295,6 @@ module.exports = {
     addPriceList,
     removePriceList,
     addComponent,
+    // getComponents,
     deleteComponents
 }

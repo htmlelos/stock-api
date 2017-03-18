@@ -752,7 +752,6 @@ describe('PRODUCTS: ', () => {
                     done()
                 })
         })
-
         it('no deberia agregar un componente a un producto invalido', done => {
             let productComponent = new Product({
                 name: 'Maple Huevos Marrones',
@@ -796,7 +795,6 @@ describe('PRODUCTS: ', () => {
                     done()
                 })
         })
-
         it('no deberia agregar un componente que no existe a un producto', done => {
             let productComponent = new Product({
                 name: 'Maple Huevos Marrones',
@@ -841,9 +839,85 @@ describe('PRODUCTS: ', () => {
                 })
         })
     })
+    // GET /product/:productId/components
+    describe.skip('GET /product/{productId}/components', done => {
+        it('deberia obtener todos los componentes de un producto', done => {
+            let productBase = new Product({
+                name: 'Maple Huevos Marrones',
+                brand: null,
+                price: 50.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            let productComponent = new Product({
+                name: 'Huevo Marron',
+                brand: null,
+                price: 2.00,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productComponent.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let productComponentId2 = productComponent._id
+            console.log('PRODUCT COMPONENTE ID2', productComponentId2);
+            
+            let component = {
+                quantity: 30,
+                unit: 'Unidad',
+                componentId: productComponent._id
+            }
+            productBase.components.push(component)
+
+
+            productComponent = new Product({
+                name: 'Huevo Blanco',
+                brand: null,
+                price: 2.50,
+                components: [],
+                status: 'ACTIVO'
+            })
+
+            productComponent.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            component = {
+                quantity: 30,
+                unit: 'Unidad',
+                componentId: productComponent._id
+            }
+            productBase.components.push(component)
+
+            productBase.save()
+                .catch(error => { console.error('ERROR', error) })
+
+            let filter = {components: [productComponentId2]}
+            console.log('FILTRO::', filter);
+
+            console.log('ProductID::', productBase._id);
+
+            chai.request(server)
+                .post('/product/'+productBase._id+'/components')
+                .set('x-access-token', token)
+                .send(filter)
+                .end((error, response) => {
+                    console.log('RESPONSE:: ', response.error);
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Se obtuvieron los componentes con éxito')
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
+                    response.body.data.length.should.be.eql(0)
+                    done()
+                })            
+        })
+    })
     // DELETE /product/:productId/components
     describe('DELETE /product/{productId}/components', () => {
-        it.only('deberia eliminar los compoentente indicados de un producto ', done => {
+        it('deberia eliminar los componentes indicados de un producto ', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',
                 brand: null,
@@ -892,16 +966,16 @@ describe('PRODUCTS: ', () => {
             }
             productsIds.push(productComponent._id)
             productBase.components.push(component)
-            
+
             productBase.save()
                 .catch(error => { console.error('ERROR', error) })
 
             chai.request(server)
-                .delete('/product/'+productBase._id+'/components')
+                .delete('/product/' + productBase._id + '/components')
                 .set('x-access-token', token)
                 // .send({productsIds:JSON.stringify(productsIds)})
-                .send({productsIds:productsIds})
-                .end((error, response) =>{
+                .send({ productsIds: productsIds })
+                .end((error, response) => {
                     console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
@@ -909,7 +983,7 @@ describe('PRODUCTS: ', () => {
                         .eql('Componentes eliminados con éxito')
                     response.body.should.be.property('data')
                     response.body.data.should.be.a('array')
-                    done()  
+                    done()
                 })
         })
     })
