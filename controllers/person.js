@@ -38,7 +38,7 @@ function checkCustomer(request, type) {
 function checkSupplier(request, type) {
     // Verificar Proveedor
     if (type === 'PROVEEDOR') {
-        request.checkBody('bussinesName', `La razón social del ${type.toLowerCase()} esta vacio`)
+        request.checkBody('businessName', `La razón social del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
         request.checkBody('tributaryCode', 'El CUIT no es válido')
             .notEmpty()

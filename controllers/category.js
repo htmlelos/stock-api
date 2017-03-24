@@ -16,12 +16,13 @@ function getAllCategories(request, response) {
 
 function createCategory(request, response) {
   // Crea una nueva instanscia de Category con los parametros recibidos
+  // console.log('CREATE--')
   let newCategory = new Category(request.body)
 
   newCategory.createdBy = request.decoded.username
   newCategory.save()
     .then(category => {
-      message.success(response, 200, 'Categoria creada con éxito', category)
+      message.success(response, 200, 'categoría creada con éxito', {id: category._id})
     })
     .catch(error => {
       if (error.code === 11000) {
@@ -40,13 +41,13 @@ function getCategory(request, response) {
   findCategory(request.params.categoryId)
     .then(category => {
       if (category) {
-        message.success(response, 200, 'Categoria obtenida con éxito', category)
+        message.success(response, 200, 'categoría obtenida con éxito', category)
       } else {
-        message.failure(response, 404, 'No se encontro la categoria', null)
+        message.failure(response, 404, 'No se encontro la categoría', null)
       }
     })
     .catch(error => {
-      message.failure(response, 500, 'El sistema tuvo un fallo al recuperar la categoria', null)
+      message.failure(response, 500, 'El sistema tuvo un fallo al recuperar la categoría', null)
     })
 }
 
@@ -57,14 +58,22 @@ function updateCategory(request, response) {
         let newCategory = request.body
         newCategory.updatedBy = request.decoded.username
         newCategory.updatedAt = Date()
-        return Category.update({_id: request.params.roleId},{$set: newCategory}, {runValidators: true})
+        // console.log('ACTUALIZADO--');
+        return Category.update({_id: request.params.categoryId},{$set: newCategory}, {runValidators: true})
       } else {
-        return Promise.reject({code: 404, message: 'No se encontro la categoria', data: null})
+        return Promise.reject({code: 404, message: 'No se encontró la categoría', data: null})
       }
+    })
+    .then(() => {
+      // console.log('RESPONSE--', response);
+      return findCategory(request.params.categoryId)
+    })
+    .then(category => {
+      message.success(response, 200, 'categoría actualizada con éxito', {id: category._id})
     })
     .catch(error => {
       if (error.code === 11000) {
-        message.duplicate(response, 422, 'El categoria ya existe', null)
+        message.duplicate(response, 422, 'La categoría ya existe', null)
       } else {
         message.failure(response, error.code, error.message, error.data)
       }
@@ -72,18 +81,18 @@ function updateCategory(request, response) {
 }
 
 function deleteCategory(request, response) {
-  findCategory(request.params.categoryId)
+    findCategory(request.params.categoryId)
     .then(category => {
       if (category) {
       Category.remove({_id: category.id})
         .then(category => {
-          message.error(response, 200, 'Categoria eliminada con éxito', null)
+          message.success(response, 200, 'categoría eliminada con éxito', null)
         })
         .catch(error => {
-          message.error(response, 422, '', error)
+          message.error(response, 422, 'No se pudo eliminar la categoría', error)
         })
       } else {
-        message.failure(response, 404, 'LA categoria no es válida', null)
+        message.failure(response, 404, 'La categoría no es válida', null)
       }
     })
     .catch(error => {
@@ -91,10 +100,32 @@ function deleteCategory(request, response) {
     })
   }
 
+function getCategories(request, response) {
+  findCategory(request.params.categoryId)
+    .then(category => {
+      console.log('categoría--', category)
+      if (category) {
+        message.success(response, 200, 'Subcategorías obtenidas con éxito', category.categories)
+      } else {
+        let error = {
+          code: 404,
+          message: 'No se encontró la categoría',
+          data: null
+        }
+        return Promise.reject(error)
+      }
+    })
+    .catch(error => {
+      console.error('ERROR--', error)
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
 module.exports = {
   getAllCategories,
   createCategory,
   getCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getCategories
 }

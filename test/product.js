@@ -164,7 +164,7 @@ describe('PRODUCTS: ', () => {
 
             let supplier = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 addresses: [],
                 contacts: [],
                 status: 'ACTIVO'

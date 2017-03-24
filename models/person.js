@@ -38,7 +38,7 @@ const PersonSchema = new Schema({
     lastName: {
         type: String
     },
-    bussinesName: {
+    businessName: {
         type: String
     },
     addresses: [AddressSchema],

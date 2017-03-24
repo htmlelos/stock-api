@@ -278,7 +278,7 @@ describe('PERSON: ', () => {
         it('el cuit del proveedor no puede ser vacio', done => {
             let person = {
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
@@ -302,7 +302,7 @@ describe('PERSON: ', () => {
         it('el cuit del proveedor debe ser válido', done => {
             let person = {
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021962',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -327,7 +327,7 @@ describe('PERSON: ', () => {
         it('el cuit del proveedor debe tener 11 caracteres', done => {
             let person = {
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '202320216921',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -352,7 +352,7 @@ describe('PERSON: ', () => {
         it('el codigo de ingresos brutos del proveedor debe tener 13 caracteres', done => {
             let person = {
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -580,7 +580,7 @@ describe('PERSON: ', () => {
         it('deberia obtener todos los contactos de una persona', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
@@ -608,7 +608,7 @@ describe('PERSON: ', () => {
         it('no deberia obtener los contactos de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
@@ -638,7 +638,7 @@ describe('PERSON: ', () => {
         it('deberia crear un contacto para un persona por su id', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -671,7 +671,7 @@ describe('PERSON: ', () => {
         it('no deberia agregar un contacto para una person con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -706,7 +706,7 @@ describe('PERSON: ', () => {
         it('deberia eliminar un contacto de usuario por su id', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -754,7 +754,7 @@ describe('PERSON: ', () => {
                     // Test from here
                     let person = new Person({
                         type: 'PROVEEDOR',
-                        bussinesName: 'La Estrella',
+                        businessName: 'La Estrella',
                         address: [],
                         tributaryCode: '20232021692',
                         taxStatus: 'RESPONSABLE INSCRIPTO',
@@ -791,7 +791,7 @@ describe('PERSON: ', () => {
         it('deberia eliminar todos los contactos indicados', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
@@ -839,7 +839,7 @@ describe('PERSON: ', () => {
         it('deberia obtener todas las direcciones de una persona', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 address: [],
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
@@ -866,7 +866,7 @@ describe('PERSON: ', () => {
         it('no deberia obtener la direccion de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
@@ -894,7 +894,7 @@ describe('PERSON: ', () => {
         it('deberia agregar una direccion a una persona por su id', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
@@ -926,7 +926,7 @@ describe('PERSON: ', () => {
         it('no deberia agregar una direccion a una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
@@ -959,7 +959,7 @@ describe('PERSON: ', () => {
         it('deberia eliminar una direccion de una persona por su id', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
@@ -991,7 +991,7 @@ describe('PERSON: ', () => {
         it('no deberia eliminar una direccion de una persona con id inválido', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxtStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
@@ -1024,7 +1024,7 @@ describe('PERSON: ', () => {
         it('deberia eliminar todas las direcciones indicadas', done => {
             let person = new Person({
                 type: 'PROVEEDOR',
-                bussinesName: 'La Estrella',
+                businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',

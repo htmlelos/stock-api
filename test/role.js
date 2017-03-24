@@ -50,7 +50,8 @@ describe('ROLE: ', () => {
 					// console.log('RESPONSE::', response.body);
 					response.should.have.status(200)
 					response.body.should.be.a('object')
-					response.body.should.have.property('message').eql('')
+					response.body.should.have.property('message')
+						.eql('')
 					response.body.should.have.property('data')
 					response.body.data.length.should.be.eql(0)
 					done()
@@ -76,7 +77,8 @@ describe('ROLE: ', () => {
 					response.body.should.have.property('message')
 						.eql('Rol creado con éxito')
 					response.body.should.have.property('data')
-					response.body.data.should.have.property('id').to.be.not.null;
+					response.body.data.should.have.property('id')
+						.to.be.not.null;
 					done()
 				})
 		})
