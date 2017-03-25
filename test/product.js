@@ -187,7 +187,6 @@ describe('PRODUCTS: ', () => {
                 .get('/product/' + product._id)
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body)
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -742,7 +741,6 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -786,7 +784,6 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -829,7 +826,6 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send(component)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -903,7 +899,6 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send(filter)
                 .end((error, response) => {
-                    console.log('RESPONSE:: ', response.error);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -975,7 +970,6 @@ describe('PRODUCTS: ', () => {
                 .set('x-access-token', token)
                 .send({components:JSON.stringify(components)})
                 .end((error, response) =>{
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.be.property('message')

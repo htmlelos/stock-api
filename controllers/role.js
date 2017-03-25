@@ -41,7 +41,7 @@ function getRole(request, response) {
 			if (role) {
 				message.success(response, 200, 'Rol obtenido con éxito', role)
 			} else {
-				message.failure(response, 404, 'No se encontro el rol', null)
+				message.failure(response, 404, 'No se encontró el rol', null)
 			}
 		})
 		.catch(error => {

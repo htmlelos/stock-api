@@ -17,4 +17,10 @@ router.route('/category/:categoryId')
 router.route('/category/:categoryId/categories')
   .get(category.getCategories)
 
+router.route('/category/:categoryId/category')  
+  .post(category.addCategory)
+
+router.route('/category/:categoryId/category/:subcategoryId')
+  .delete(category.removeCategory)
+
 module.exports = router

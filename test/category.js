@@ -55,7 +55,6 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-
   // POST /category - Crea una nueva categoría
   describe('POST /category', () => {
     it('deberia crear una nueva categoría', done => {
@@ -96,13 +95,13 @@ describe.only('CATEGORY', () => {
           response.should.have.status(422)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Debe proporcionar un nombre de categoría')
+            .eql('Debe proporcionar un nombre de Categoría')
           response.body.should.have.property('data').to.be.null
           done()
         })
     })
 
-    it('no deberia crear una categoría sin nombres', done => {
+    it('no deberia crear una categoría sin nombre', done => {
       let category = {
         name: 'Quesos',
         status: 'ACTIVO'
@@ -116,7 +115,7 @@ describe.only('CATEGORY', () => {
           response.should.have.status(422)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Debe proporcionar una description de la categoría')
+            .eql('Debe proporcionar una descripción de la Categoría')
           response.body.should.have.property('data').to.be.null
           done()
         })
@@ -144,8 +143,7 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-
-  describe('GET /category/:categoryId', () => {
+  describe('GET /category/{categoryId}', () => {
     it('deberia obtener una categoría por su id', done => {
       let category = new Category({
         name: 'Quesos',
@@ -160,7 +158,6 @@ describe.only('CATEGORY', () => {
         .get('/category/' + category._id)
         .set('x-access-token', token)
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -186,19 +183,17 @@ describe.only('CATEGORY', () => {
         .get('/category/58dece08eb0548118ce31f11')
         .set('x-access-token', token)
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(404)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('No se encontro la categoría')
+            .eql('No se encontró la categoría')
           response.body.should.have.property('data')
             .to.be.null
           done()
         })
     })
   })
-
-  describe('PUT /category/categoryId', () => {
+  describe('PUT /category/{categoryId}', () => {
     it('deberia actualizar un producto por su id', done => {
       let category = new Category({
         name: 'Quesos',
@@ -218,7 +213,6 @@ describe.only('CATEGORY', () => {
           status: 'ACTIVO'
         })
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -249,7 +243,6 @@ describe.only('CATEGORY', () => {
           status: 'ACTIVO'
         })
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(404)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -298,8 +291,7 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-
-  describe('DELETE /category/:categoryId', () => {
+  describe('DELETE /category/{categoryId}', () => {
     it('deberia eliminar una categoría por su id', done => {
       let category = new Category({
         name: 'Quesos',
@@ -314,7 +306,6 @@ describe.only('CATEGORY', () => {
         .delete('/category/' + category._id)
         .set('x-access-token', token)
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -339,7 +330,6 @@ describe.only('CATEGORY', () => {
         .delete('/category/58dece08eb0548118ce31f11')
         .set('x-access-token', token)
         .end((error, response) => {
-          // console.log('RESPONSE::', response.body)
           response.should.have.status(404)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -350,9 +340,8 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-
-  describe('GET /category/:categoryId/categories', () => {
-    it('Deberia obtener las subcategorías de una categoría por su id', done => {
+  describe('GET /category/{categoryId}/categories', () => {
+    it('Deberia obtener las Sub categorías de una categoría por su id', done => {
       let parentCategory = new Category({
         name: 'Bebidas',
         description: 'Liquidos que se pueden ingerir',
@@ -369,14 +358,14 @@ describe.only('CATEGORY', () => {
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Subcategorías obtenidas con éxito')
+            .eql('Sub categorías obtenidas con éxito')
           response.body.should.have.property('data')
           response.body.data.length.should.be.eql(0)
           done()
         })
     })
 
-    it('No deberia obtener las subcategorías de una categoría con id invalido', done => {
+    it('No deberia obtener las Sub categorías de una categoría con id invalido', done => {
       let parentCategory = new Category({
         name: 'Bebidas',
         description: 'Liquidos que se pueden ingerir',
@@ -400,9 +389,8 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-
-  describe.only('POST /category/:categoryId/category', () => {
-    it('deberia agregar una subcategoría a una categoría', done => {
+  describe('POST /category/{categoryId}/category', () => {
+    it('deberia agregar una Sub categoría a una categoría', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -412,8 +400,133 @@ describe.only('CATEGORY', () => {
       parentCategory.save()
         .catch(error => console.log('ERROR::', console.error(error)))
 
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivado de lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', console.error(error)))
+
       chai.request(server)
-        post('/category/')
+        .post('/category/' + parentCategory._id + '/category')
+        .set('x-access-token', token)
+        .send({ categoryId: childCategory._id })
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Sub categoria añadida con éxito')
+          response.body.should.have.property('data')
+          response.body.data.length.should.be.eql(1)
+          done()
+        })
+    })
+
+    it('no deberia agregar una sub categoria a una categoria con id invalido', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteos',
+        status: 'ACTIVO'
+      })
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR::', console.error(error)))
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivado de lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', console.error(error)))
+
+      chai.request(server)
+        .post('/category/58dece08eb0548118ce31f11/category')
+        .set('x-access-token', token)
+        .send({ categoryId: childCategory._id })
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontró la categoría')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+
+    it('no deberia agregar una sub categoria con id invalido a una categoria', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteos',
+        status: 'ACTIVO'
+      })
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR::', console.error(error)))
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivado de lacteos',
+        status: 'ACTIVO'
+      })
+
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', console.error(error)))
+
+      chai.request(server)
+        .post('/category/' + parentCategory._id + '/category')
+        .set('x-access-token', token)
+        .send({ categoryId: '58dece08eb0548118ce31f11' })
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontró la sub categoría')
+          response.body.should.have.property('data').to.be.null
+          done()
+        })
+    })
+  })
+  describe.only('DELETE /category/{categoryId}/category/{subcategoryId}', () => {
+    it('deberia agregar una Sub categoría a una categoría', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteos',
+        status: 'ACTIVO'
+      })
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivado de lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', console.error(error)))
+
+      parentCategory.categories.push(childCategory._id)
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR::', console.error(error)))
+
+      chai.request(server)
+        .delete('/category/' + parentCategory._id + '/category/' + childCategory._id)
+        .set('x-access-token', token)
+        .end((error, response) => {
+          console.log('RESPONSE::', response.body);
+          console.log('RESPONSE::', response.text);
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Sub categoría eliminada con éxito')
+          response.body.should.have.property('data')
+          response.body.data.length.should.be.eql(0)
+          done()
+        })
     })    
   })
 

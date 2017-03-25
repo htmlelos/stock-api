@@ -41,7 +41,7 @@ function getPriceList(request, response) {
       if (priceList) {
         message.success(response, 200, 'Lista de Precios obtenida con éxito', priceList)
       } else {
-        message.failure(response, 404, 'No se encontro la Lista de Precios', null)
+        message.failure(response, 404, 'No se encontró la Lista de Precios', null)
       }
     })
     .catch(error => {

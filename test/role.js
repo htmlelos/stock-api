@@ -47,7 +47,6 @@ describe('ROLE: ', () => {
 				.get('/roles')
 				.set('x-access-token', token)
 				.end((error, response) => {
-					// console.log('RESPONSE::', response.body);
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
@@ -237,7 +236,7 @@ describe('ROLE: ', () => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('No se encontro el rol')
+						.eql('No se encontró el rol')
 					response.body.should.have.property('data').eql(null)
 					done()
 				})
@@ -329,7 +328,6 @@ describe('ROLE: ', () => {
 					status: 'INACTIVO'
 				})
 				.end((error, response) => {
-					// console.log('RESPONSE::', response.body);
 					response.should.have.status(422)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')

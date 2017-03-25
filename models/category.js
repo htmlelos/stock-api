@@ -12,9 +12,8 @@ let CategorySchema = new Schema({
   },
   description: {
     type: String,
-    required: 'Debe proporcionar una description de la Categoría'
+    required: 'Debe proporcionar una descripción de la Categoría'
   },
-  categories: [{ type: Schema.Types.ObjectId, ref: 'CategorySchema' }],
   status: {
     type: String,
     enum: {
@@ -42,5 +41,7 @@ let CategorySchema = new Schema({
 }, {
     versionKey: false
   })
+
+CategorySchema.add({categories: [{ type: Schema.Types.ObjectId, ref: 'category' }]})  
 
 module.exports = mongoose.model('category', CategorySchema)

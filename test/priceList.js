@@ -354,7 +354,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(404)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('No se encontro la Lista de Precios')
+                .eql('No se encontró la Lista de Precios')
               response.body.should.have.property('data').to.be.null
               done()
             })
