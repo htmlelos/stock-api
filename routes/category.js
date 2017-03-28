@@ -23,4 +23,7 @@ router.route('/category/:categoryId/category')
 router.route('/category/:categoryId/category/:subcategoryId')
   .delete(category.removeCategory)
 
+router.route('/category/:categoryId/categories')
+  .delete(category.removeCategories)
+
 module.exports = router

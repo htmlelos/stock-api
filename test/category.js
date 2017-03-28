@@ -14,7 +14,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Blque principal de pruebas de categorías
-describe.only('CATEGORY', () => {
+describe('CATEGORY', () => {
   let token = ''
   // Se ejecuta antes de cada test
   beforeEach(done => {
@@ -491,8 +491,8 @@ describe.only('CATEGORY', () => {
         })
     })
   })
-  describe.only('DELETE /category/{categoryId}/category/{subcategoryId}', () => {
-    it.only('deberia eliminar una Sub categoría a una categoría', done => {
+  describe('DELETE /category/{categoryId}/category/{subcategoryId}', () => {
+    it('deberia eliminar una Sub categoría a una categoría', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -527,7 +527,7 @@ describe.only('CATEGORY', () => {
         })
     })
 
-    it.only('DELETE /category/{categoryId}/category/{subcategoryId}', done => {
+    it('DELETE /category/{categoryId}/category/{subcategoryId}', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteors',
@@ -549,7 +549,7 @@ describe.only('CATEGORY', () => {
         .catch(error => console.log('ERROR-1::', error))
 
       chai.request(server)
-        .delete('/category/58dece08eb0548118ce31f11/category/'+childCategory._id)
+        .delete('/category/58dece08eb0548118ce31f11/category/' + childCategory._id)
         .set('x-access-token', token)
         .end((error, response) => {
           console.error('RESPONSE::', response.body)
@@ -563,6 +563,61 @@ describe.only('CATEGORY', () => {
         })
     })
 
+  })
+  describe.only('DELETE/category/{categoryId}/categories', () => {
+    it('deberia eliminar las subcategorías seleccionadas de una categoría', done => {
+      let categoryIds = [];
+      let parentCategory = new Category({
+        name: 'Bebidas',
+        description: 'Productos liquidos consumibles',
+        status: 'ACTIVO'
+      })
+      let childCategory = new Category({
+        name: 'Gaseosas',
+        description: 'Bebidas gasificadas',
+        status: 'ACTIVO'
+      })
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+      parentCategory.categories.push(childCategory._id)
+      categoryIds.push(childCategory._id)
+      childCategory = new Category({
+        name: 'Vinos',
+        description: 'Productos vitivinicolas',
+        status: 'ACTIVO'
+      })
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+      parentCategory.categories.push(childCategory._id)
+      childCategory = new Category({
+        name: 'Jugos',
+        description: 'Jugos de frutas',
+        status: 'ACTIVO'
+      })
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+      parentCategory.categories.push(childCategory._id)
+      categoryIds.push(childCategory._id)
+      parentCategory.save()
+        .catch(error => { console.log('ERROR::', error) })
+
+      chai.request(server)
+        .delete('/category/' + parentCategory._id + '/categories')
+        .set('x-access-token', token)
+        .send({ categories: JSON.stringify(categoryIds) })
+        .end((error, response) => {
+          console.log('RESPONSE::BODY::', response.body);
+          console.log('RESPONSE::TEXT::', response.text);
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Sub categorías eliminadas con éxito')
+          response.body.should.have.property('data')
+          response.body.data.should.be.a('array')
+          response.body.data.length.should.be.eql(1)
+          done()
+        })
+    })
   })
 
   describe.skip('DELETE /category/:categoryId', () => {

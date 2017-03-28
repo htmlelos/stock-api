@@ -61,7 +61,8 @@ describe('PERSON: ', () => {
                 .end((error, response) => {
                     response.should.have.status(200)
                     response.body.should.be.a('object')
-                    response.body.should.have.property('message').eql('')
+                    response.body.should.have.property('message')
+                        .eql('')
                     response.body.should.have.property('data')
                     response.body.data.length.should.be.eql(0)
                     done()

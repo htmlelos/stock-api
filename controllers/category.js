@@ -1,4 +1,5 @@
 'use strict';
+const mongoose = require('mongoose')
 const Category = require('../models/category')
 const message = require('../services/response/message')
 
@@ -153,15 +154,11 @@ function addCategory(request, response) {
 }
 
 function removeCategory(request, response) {
-  console.log('REMOVE-CATEGORY--');
 
   let categoryId = request.params.categoryId
-  console.log('CATEGORY_ID--', categoryId);
   let subcategoryId = request.params.subcategoryId
-  console.log('SUB-CATEGORY_ID--', subcategoryId);
   findCategory(request.params.categoryId)
     .then(category => {
-      console.log('CATEGORIA--', category);
       if (category) {
         return Category.update({ _id: categoryId }, { $pull: { categories: subcategoryId } })
       } else {
@@ -169,15 +166,35 @@ function removeCategory(request, response) {
       }
     })
     .then(result => {
-      console.log('RESULT--', result);
       return findCategory(request.params.categoryId)
     })
     .then(category => {
-      console.log('FINAL', category);
       message.success(response, 200, 'Sub categoría eliminada con éxito', category.categories)
     })
     .catch(error => {
-      console.log('ERROR--', error);
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
+function removeCategories(request, response) {
+  findCategory(request.params.categoryId)
+    .then(category => {
+      console.log('CATEGORIA--', category);
+      let categoriesIds = JSON.parse(request.body.categories)
+      console.log('subtegorias ID--', categoriesIds);
+      let categoryId = request.params.categoryId
+      return Promise.all(categoriesIds.map(id => {
+        let subcategoryId = mongoose.Types.ObjectId(id)
+        return Category.update({ _id: categoryId }, { $pull: { categories: subcategoryId } })
+      }))
+    })
+    .then(() => {
+      return findCategory(request.params.categoryId)
+    })
+    .then(category => {
+      message.success(response, 200, 'Sub categorías eliminadas con éxito', category.categories)
+    })
+    .catch(error => {
       message.failure(response, error.code, error.message, error.data)
     })
 }
@@ -190,5 +207,6 @@ module.exports = {
   deleteCategory,
   getCategories,
   addCategory,
-  removeCategory
+  removeCategory,
+  removeCategories
 }
