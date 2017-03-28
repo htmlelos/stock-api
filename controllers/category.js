@@ -125,18 +125,18 @@ function addCategory(request, response) {
   Promise.all([categoryPromise, subCategoryPromise])
     .then(values => {
       let categoryId = null
-      let subCategoryId = null
+      let subcategoryId = null
       if (values[0]) {
         categoryId = values[0]._id
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la categoría', data: null })
       }
       if (values[1]) {
-        subCategoryId = values[1]._id
+        subcategoryId = values[1]._id
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la sub categoría', data: null })
       }
-      return Category.update({ _id: categoryId }, { $push: { 'categories': subCategoryId } })
+      return Category.update({ _id: categoryId }, { $push: { 'categories': subcategoryId } })
     })
     .then(() => {
       return findCategory(request.params.categoryId)
@@ -145,7 +145,7 @@ function addCategory(request, response) {
       return Category.populate(category, { path: 'categories' })
     })
     .then(category => {
-      message.success(response, 200, 'Sub categoria añadida con éxito', category.categories)
+      message.success(response, 200, 'Sub categoría añadida con éxito', category.categories)
     })
     .catch(error => {
       message.failure(response, error.code, error.message, error.data)
@@ -153,24 +153,31 @@ function addCategory(request, response) {
 }
 
 function removeCategory(request, response) {
+  console.log('REMOVE-CATEGORY--');
+
+  let categoryId = request.params.categoryId
+  console.log('CATEGORY_ID--', categoryId);
   let subcategoryId = request.params.subcategoryId
+  console.log('SUB-CATEGORY_ID--', subcategoryId);
   findCategory(request.params.categoryId)
     .then(category => {
+      console.log('CATEGORIA--', category);
       if (category) {
-        console.log('CATEGORIA--', category);
-        return Category.update({ _id: category._id }, { $pull: { categories:  subcategoryId  } })
+        return Category.update({ _id: categoryId }, { $pull: { categories: subcategoryId } })
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la categoría', data: null })
       }
     })
-  .then((result) => {
-    console.log('RESULT--', result);
-    return findCategory(request.params.categoryId)
-  })
+    .then(result => {
+      console.log('RESULT--', result);
+      return findCategory(request.params.categoryId)
+    })
     .then(category => {
+      console.log('FINAL', category);
       message.success(response, 200, 'Sub categoría eliminada con éxito', category.categories)
     })
     .catch(error => {
+      console.log('ERROR--', error);
       message.failure(response, error.code, error.message, error.data)
     })
 }

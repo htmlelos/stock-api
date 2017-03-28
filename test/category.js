@@ -417,14 +417,14 @@ describe.only('CATEGORY', () => {
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Sub categoria añadida con éxito')
+            .eql('Sub categoría añadida con éxito')
           response.body.should.have.property('data')
           response.body.data.length.should.be.eql(1)
           done()
         })
     })
 
-    it('no deberia agregar una sub categoria a una categoria con id invalido', done => {
+    it('no deberia agregar una sub categoría a una categoría con id invalido', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -457,7 +457,7 @@ describe.only('CATEGORY', () => {
         })
     })
 
-    it('no deberia agregar una sub categoria con id invalido a una categoria', done => {
+    it('no deberia agregar una sub categoría con id invalido a una categoría', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -465,7 +465,7 @@ describe.only('CATEGORY', () => {
       })
 
       parentCategory.save()
-        .catch(error => console.log('ERROR::', console.error(error)))
+        .catch(error => console.log('ERROR::', error))
 
       let childCategory = new Category({
         name: 'Quesos',
@@ -475,7 +475,7 @@ describe.only('CATEGORY', () => {
 
 
       childCategory.save()
-        .catch(error => console.error('ERROR::', console.error(error)))
+        .catch(error => console.error('ERROR::', error))
 
       chai.request(server)
         .post('/category/' + parentCategory._id + '/category')
@@ -492,7 +492,7 @@ describe.only('CATEGORY', () => {
     })
   })
   describe.only('DELETE /category/{categoryId}/category/{subcategoryId}', () => {
-    it('deberia agregar una Sub categoría a una categoría', done => {
+    it.only('deberia eliminar una Sub categoría a una categoría', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -517,8 +517,6 @@ describe.only('CATEGORY', () => {
         .delete('/category/' + parentCategory._id + '/category/' + childCategory._id)
         .set('x-access-token', token)
         .end((error, response) => {
-          console.log('RESPONSE::', response.body);
-          console.log('RESPONSE::', response.text);
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -527,11 +525,49 @@ describe.only('CATEGORY', () => {
           response.body.data.length.should.be.eql(0)
           done()
         })
-    })    
+    })
+
+    it.only('DELETE /category/{categoryId}/category/{subcategoryId}', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteors',
+        status: 'ACTIVO'
+      })
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivados Lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+
+      parentCategory.categories.push(childCategory._id)
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR-1::', error))
+
+      chai.request(server)
+        .delete('/category/58dece08eb0548118ce31f11/category/'+childCategory._id)
+        .set('x-access-token', token)
+        .end((error, response) => {
+          console.error('RESPONSE::', response.body)
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontró la categoría')
+          response.body.should.have.property('data')
+            .to.be.null
+          done()
+        })
+    })
+
   })
 
   describe.skip('DELETE /category/:categoryId', () => {
     it('deberia eliminar las categorías seleccionadas', done => {
+
       let category = new Category()
     })
   })
