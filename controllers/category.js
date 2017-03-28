@@ -156,12 +156,10 @@ function removeCategory(request, response) {
   console.log('REMOVE-CATEGORY--');
 
   let categoryId = request.params.categoryId
-  console.log('CATEGORY_ID--', categoryId);
+  console.log('CATEGORY_ID', categoryId);
   let subcategoryId = request.params.subcategoryId
-  console.log('SUB-CATEGORY_ID--', subcategoryId);
   findCategory(request.params.categoryId)
     .then(category => {
-      console.log('CATEGORIA--', category);
       if (category) {
         return Category.update({ _id: categoryId }, { $pull: { categories: subcategoryId } })
       } else {
@@ -169,15 +167,12 @@ function removeCategory(request, response) {
       }
     })
     .then(result => {
-      console.log('RESULT--', result);
       return findCategory(request.params.categoryId)
     })
     .then(category => {
-      console.log('FINAL', category);
       message.success(response, 200, 'Sub categoría eliminada con éxito', category.categories)
     })
     .catch(error => {
-      console.log('ERROR--', error);
       message.failure(response, error.code, error.message, error.data)
     })
 }

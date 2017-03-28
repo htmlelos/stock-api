@@ -492,7 +492,7 @@ describe.only('CATEGORY', () => {
     })
   })
   describe.only('DELETE /category/{categoryId}/category/{subcategoryId}', () => {
-    it.only('deberia eliminar una Sub categoría a una categoría', done => {
+    it('deberia eliminar una Sub categoría a una categoría', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteos',
@@ -527,7 +527,7 @@ describe.only('CATEGORY', () => {
         })
     })
 
-    it.only('DELETE /category/{categoryId}/category/{subcategoryId}', done => {
+    it('no deberia eliminar una sub categoría de una categoria con id invalido', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteors',
@@ -563,6 +563,41 @@ describe.only('CATEGORY', () => {
         })
     })
 
+    it.skip('no deberia eliminar una sub categoria con id invalido de una categoria', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteors',
+        status: 'ACTIVO'
+      })
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivados Lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+
+      parentCategory.categories.push(childCategory._id)
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR::', error))
+
+      chai.request(server)
+        .delete('/category/'+parentCategory._id+'/category/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .end((error, response) => {
+          console.error('RESPONSE::', response.body)
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontró la categoría')
+          response.body.should.have.property('data')
+            .to.be.null
+          done()
+        })
+    })
   })
 
   describe.skip('DELETE /category/:categoryId', () => {
