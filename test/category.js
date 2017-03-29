@@ -527,7 +527,7 @@ describe('CATEGORY', () => {
         })
     })
 
-    it('DELETE /category/{categoryId}/category/{subcategoryId}', done => {
+    it('no deberia eliminar una sub categoría de una categoria con id invalido', done => {
       let parentCategory = new Category({
         name: 'Lacteos',
         description: 'Productos lacteors',
@@ -552,7 +552,6 @@ describe('CATEGORY', () => {
         .delete('/category/58dece08eb0548118ce31f11/category/' + childCategory._id)
         .set('x-access-token', token)
         .end((error, response) => {
-          console.error('RESPONSE::', response.body)
           response.should.have.status(404)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -563,8 +562,42 @@ describe('CATEGORY', () => {
         })
     })
 
+    it.skip('no deberia eliminar una sub categoria con id invalido de una categoria', done => {
+      let parentCategory = new Category({
+        name: 'Lacteos',
+        description: 'Productos lacteors',
+        status: 'ACTIVO'
+      })
+
+      let childCategory = new Category({
+        name: 'Quesos',
+        description: 'Derivados Lacteos',
+        status: 'ACTIVO'
+      })
+
+      childCategory.save()
+        .catch(error => console.error('ERROR::', error))
+
+      parentCategory.categories.push(childCategory._id)
+
+      parentCategory.save()
+        .catch(error => console.log('ERROR::', error))
+
+      chai.request(server)
+        .delete('/category/' + parentCategory._id + '/category/58dece08eb0548118ce31f11')
+        .set('x-access-token', token)
+        .end((error, response) => {
+          response.should.have.status(404)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('No se encontró la categoría')
+          response.body.should.have.property('data')
+            .to.be.null
+          done()
+        })
+    })
   })
-  describe.only('DELETE/category/{categoryId}/categories', () => {
+  describe('DELETE/category/{categoryId}/categories', () => {
     it('deberia eliminar las subcategorías seleccionadas de una categoría', done => {
       let categoryIds = [];
       let parentCategory = new Category({
@@ -606,8 +639,6 @@ describe('CATEGORY', () => {
         .set('x-access-token', token)
         .send({ categories: JSON.stringify(categoryIds) })
         .end((error, response) => {
-          console.log('RESPONSE::BODY::', response.body);
-          console.log('RESPONSE::TEXT::', response.text);
           response.should.have.status(200)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
@@ -620,10 +651,55 @@ describe('CATEGORY', () => {
     })
   })
 
-  describe.skip('DELETE /category/:categoryId', () => {
-    it('deberia eliminar las categorías seleccionadas', done => {
+  // describe.only('DELETE /categories', () => {
+  //   it('deberia eliminar las categorías seleccionadas', done => {
 
-      let category = new Category()
-    })
-  })
+  //     let categoriesIds = [];
+
+  //     let category = new Category({
+  //       name: 'Fiambres',
+  //       description: 'Embutidos',
+  //       status: 'ACTIVO'
+  //     })
+
+  //     category.save()
+  //       .catch(error => { console.error('ERROR::', error) })
+  //     categoriesIds.push(category._id)
+
+  //     category = new Category({
+  //       name: 'Lacteos',
+  //       description: 'Productos derivados de la leche',
+  //       status: 'ACTIVO'
+  //     })
+
+  //     category.save()
+  //       .catch(error => { console.error('ERROR::', error) })
+  //     categoriesIds.push(category._id)
+
+  //     category = new Category({
+  //       name: 'Huevos',
+  //       description: 'Huevos de gallina',
+  //       status: 'ACTIVO'
+  //     })
+
+  //     category.save()
+  //       .catch(error => { console.error('ERROR::', error) })
+  //     categoriesIds.push(category._id) 
+
+  //     chai.request(server)
+  //       .delete('/categories')
+  //       .set('x-access-token', token)
+  //       .send({categories: JSON.stringify(categoriesIds)})
+  //       .end((error, response) => {
+  //         console.log('ERROR::', response.text)
+  //         response.should.have.status(200)
+  //         response.body.should.be.a('object')
+  //         response.body.should.have.property('message')
+  //           .eql('Categorías eliminadas con éxito')
+  //         response.body.should.have.property('data')
+  //           .to.be.null
+  //         done()
+  //       })
+  //   })
+  // })
 })

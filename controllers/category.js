@@ -101,6 +101,17 @@ function deleteCategory(request, response) {
     })
 }
 
+// function deleteCategories(request, response) {
+//   let categoriesIds = JSON.parse(request.body.categories)
+//   return Promise.all(categoriesIds.map(categoryId => {
+//     return Category.remove({_id: categoryId})
+//   }))
+//   .then(result => {
+//     console.log('RESULTADO', result)
+//   })
+//   message.success(response, 200, 'Categorías eliminadas con éxito',  null)
+// }
+
 function getCategories(request, response) {
   findCategory(request.params.categoryId)
     .then(category => {
@@ -179,7 +190,6 @@ function removeCategory(request, response) {
 function removeCategories(request, response) {
   findCategory(request.params.categoryId)
     .then(category => {
-      console.log('CATEGORIA--', category);
       let categoriesIds = JSON.parse(request.body.categories)
       console.log('subtegorias ID--', categoriesIds);
       let categoryId = request.params.categoryId
@@ -205,6 +215,7 @@ module.exports = {
   getCategory,
   updateCategory,
   deleteCategory,
+  // deleteCategories,
   getCategories,
   addCategory,
   removeCategory,

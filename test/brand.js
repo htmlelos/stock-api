@@ -394,7 +394,7 @@ describe('BRAND: ', () => {
 
 
 			chai.request(server)
-				.post('/brand/' + brand._id + '/suppliers')
+				.post('/brand/' + brand._id + '/supplier')
 				.set('x-access-token', token)
 				.send({ supplierId: supplier._id })
 				.end((request, response) => {

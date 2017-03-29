@@ -890,9 +890,6 @@ describe('PRODUCTS: ', () => {
                 .catch(error => { console.error('ERROR', error) })
 
             let filter = {components: [productComponentId2]}
-            console.log('FILTRO::', filter);
-
-            console.log('ProductID::', productBase._id);
 
             chai.request(server)
                 .post('/product/'+productBase._id+'/components')

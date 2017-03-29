@@ -51,7 +51,6 @@ function createProduct(request, response) {
 }
 // Obtener un producto
 function findProduct(productId) {
-    console.log('ID:', productId);
     return Product.findById({ _id: productId })
 }
 // Obtiene un producto por su Id
