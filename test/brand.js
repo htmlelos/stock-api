@@ -394,11 +394,10 @@ describe('BRAND: ', () => {
 
 
 			chai.request(server)
-				.post('/brand/' + brand._id + '/suppliers')
+				.post('/brand/' + brand._id + '/supplier')
 				.set('x-access-token', token)
 				.send({ supplierId: supplier._id })
 				.end((request, response) => {
-					console.log('RESPONSE::', response.body);
 					response.body.should.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')

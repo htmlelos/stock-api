@@ -20,14 +20,16 @@ router.route('/product/:productId/brand')
 // GET /product/:productId/pricelists
 router.route('/product/:productId/pricelists')
     .get(product.getAllPriceLists)
-// Product /product/:productId/price
+// POST /product/:productId/price
 router.route('/product/:productId/pricelist')
     .post(product.addPriceList)
-// Product /product/:productId/component
+// POST /product/:productId/component
 router.route('/product/:productId/component')
     .post(product.addComponent)
-
+// GET  /product/:productId/components
+// DELETE /product/:productId/components
 router.route('/product/:productId/components')
+    // .post(product.getComponents)
     .delete(product.deleteComponents)
 
 module.exports = router

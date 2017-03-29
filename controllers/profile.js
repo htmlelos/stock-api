@@ -50,7 +50,7 @@ function getProfile(request, response) {
 			if (profile) {
 				response.json({ message: 'Perfil obtenido con éxito', profile })
 			} else {
-				response.status(404).json({ message: 'No se encontro el perfil', profile })
+				response.status(404).json({ message: 'No se encontró el perfil', profile })
 			}
 		})
 		.catch(error => {

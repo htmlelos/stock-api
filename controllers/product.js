@@ -240,6 +240,23 @@ function addComponent(request, response) {
         })
 }
 
+// function getComponents(request, response) {
+
+//     console.log('1:', request.body);
+//     console.log('2:', request.params);
+//     //findProduct(request.params.productId)
+//     //{_id: request.params.productId}
+//     Product.find(request.body.filter)
+//        // .where(request.query.filter)
+//         .then(product => {
+//             console.log('PRODUCTO--', product);
+//             message.success(response, 200, 'Se obtuvieron los componentes con éxito', [])
+//         })
+//         .catch(error => {
+//             console.error('ERROR--', error)
+//         })
+// }
+
 function deleteComponents(request, response) {
     findProduct(request.params.productId)
         .then(product => {
@@ -274,5 +291,6 @@ module.exports = {
     addPriceList,
     removePriceList,
     addComponent,
+    // getComponents,
     deleteComponents
 }

@@ -22,7 +22,7 @@ mongoose.Promise = global.Promise
 //     }
 // })
 
-// const Bussines = new Schema({
+// const business = new Schema({
 //     name: {
 //         type: 'String',
 //         required: 'Debe proporcionar el nombre de la empresa'
@@ -63,9 +63,9 @@ mongoose.Promise = global.Promise
 //         default: Date().now,
 //         index: true
 //     },
-//     bussines: {
+//     business: {
 //         type: Schema.Types.ObjectId,
-//         ref: 'Bussines'
+//         ref: 'business'
 //     },
 //     stackholder: ['Stackholder'],    
 //     type: {
