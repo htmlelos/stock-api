@@ -19,10 +19,11 @@ const PriceSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: ['ACTIVO', 'INACTIVO'],
-            message: 'El estado del precio de un producto solo puede ser ACTIVO o INACTIVO'
+            values: ['ACTIVO', 'INACTIVO', 'PENDIENTE'],
+            message: 'El estado del precio de un producto solo puede ser ACTIVO, INACTIVO o PENDIENTE'
         },
         required: 'Debe definir el estado del producto'
+        ,default: 'PENDIENTE'
     },
     createdAt: {
         type: Date,

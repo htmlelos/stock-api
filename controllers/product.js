@@ -64,6 +64,9 @@ function getProduct(request, response) {
             }
         })
         .then(product => {
+            return PriceList.populate(product, { path: 'priceLists.priceListId' })
+        })
+        .then(product => {
             message.success(response, 200, 'Producto obtenido con éxito', product)
         })
         .catch(error => {
@@ -154,11 +157,14 @@ function findPriceList(priceListId) {
 
 function addPriceList(request, response) {
     let promiseProduct = findProduct(request.params.productId)
+    console.log('1--',request.params.productId);
     let promisePriceList = findPriceList(request.body.priceListId)
+    console.log('2--',request.body.priceListId);
+    let productId = null;
+    let priceList = null;    
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
-            let productId = null;
-            let priceList = null;
+
             if (values[0]) {
                 productId = values[0]._id
             } else {
@@ -169,15 +175,31 @@ function addPriceList(request, response) {
             } else {
                 return Promise.reject({ code: 404, message: 'No se encontró la lista de precios', data: null })
             }
+
+            console.log('productId--',productId);
+            console.log('priceList--',priceList);
+            //  Product.find({_id:productId,'priceList.priceListId': priceList._id},{'priceLists.status':'PENDIENTE'})
+             Product.find({_id:productId},{'priceLists.priceListId': priceList._id})
+                .then(result => {
+                    console.log('RESULTADO--',result.priceLists);
+                })
+                .catch(error => {
+                    console.log('ERROR--', error);
+                })
+            
             return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
         })
         .then(() => {
             return findProduct(request.params.productId)
         })
         .then(product => {
+            return PriceList.populate(product, { path: 'priceLists.priceListId' })
+        })
+        .then(product => {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
         .catch(error => {
+            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -194,6 +216,9 @@ function removePriceList(request, response) {
         })
         .then(() => {
             return findProduct(request.params.productId)
+        })
+        .then(product => {
+            return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {
             message.success(response, 200, 'Producto añadido con éxito', producto.priceLists)

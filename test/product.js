@@ -536,8 +536,8 @@ describe('PRODUCTS: ', () => {
         })
     })
     // POST /product/:productId/priceList
-    describe('POST /product/{productId}/priceList', () => {
-        it('deberia agregar un precio con su lista a un producto', done => {
+    describe.only('POST /product/{productId}/priceList', () => {
+        it.only('deberia agregar un precio con su lista a un producto', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
                 brand: null,
@@ -557,6 +557,7 @@ describe('PRODUCTS: ', () => {
                 .catch(error => { console.log('TEST1: ', error) })
 
             product.brand = brand
+            console.log('BRAND::', brand);
 
             let priceList = new PriceList({
                 name: 'Precios al por Menor',
@@ -567,16 +568,20 @@ describe('PRODUCTS: ', () => {
             priceList.save()
                 .catch(error => { console.log('TEST2: ', error) })
 
+            console.log('PRICE::', priceList);
 
             let price = {
                 priceListId: priceList._id,
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
+
+            console.log('PRICE::', price);
 
             product.save()
                 .catch(error => { console.log('TEST3: ', error) })
+            
+            console.log('PRODUCT::', product);
 
             chai.request(server)
                 .post('/product/' + product._id + '/pricelist')
@@ -584,6 +589,7 @@ describe('PRODUCTS: ', () => {
                 .send(price)
                 .end((error, response) => {
                     // El test inicia aqui
+                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -627,8 +633,7 @@ describe('PRODUCTS: ', () => {
             let price = {
                 priceListId: priceList._id,
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
 
             product.save()
@@ -683,8 +688,7 @@ describe('PRODUCTS: ', () => {
             let price = {
                 priceListId: '58dece08eb0548118ce31f11',
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
 
             product.save()
