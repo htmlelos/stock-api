@@ -157,11 +157,11 @@ function findPriceList(priceListId) {
 
 function addPriceList(request, response) {
     let promiseProduct = findProduct(request.params.productId)
-    console.log('1--',request.params.productId);
+    console.log('1--', request.params.productId);
     let promisePriceList = findPriceList(request.body.priceListId)
-    console.log('2--',request.body.priceListId);
+    console.log('2--', request.body.priceListId);
     let productId = null;
-    let priceList = null;    
+    let priceList = null;
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
 
@@ -176,24 +176,25 @@ function addPriceList(request, response) {
                 return Promise.reject({ code: 404, message: 'No se encontró la lista de precios', data: null })
             }
 
-            console.log('productId--',productId);
-            console.log('priceList--',priceList);
-            //  Product.find({_id:productId,'priceList.priceListId': priceList._id},{'priceLists.status':'PENDIENTE'})
-             Product.find({_id:productId},{'priceLists.priceListId': priceList._id})
+            console.log('productId--', productId);
+            console.log('priceList._id--', priceList._id);
+            let plid = mongoose.Types.ObjectId(priceList._id)
+             Product.find({_id:productId, $and:[{'priceLists.priceListId':priceList._id},{'priceLists.status':'PENDIENTE'}]})
+            //  .where('priceLists.priceListId').equals(plid)
+            //  .where('priceLists.status').equals('PENDIENTE')
                 .then(result => {
-                    console.log('RESULTADO--',result.priceLists);
+                    console.log('RESULTADO--', result[0].priceLists);
+                    let z = result[0].priceLists.find(x => {return (x.priceListId === priceList._id && x.status === 'PENDIENTE')})
+                    console.log('ZZZ', z);
                 })
                 .catch(error => {
                     console.log('ERROR--', error);
                 })
-            
+
             return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
         })
         .then(() => {
             return findProduct(request.params.productId)
-        })
-        .then(product => {
-            return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
