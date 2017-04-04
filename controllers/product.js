@@ -164,6 +164,7 @@ function addPriceList(request, response) {
     let priceList = null;
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
+            console.log('VALUES', values);
 
             if (values[0]) {
                 productId = values[0]._id
@@ -178,19 +179,10 @@ function addPriceList(request, response) {
 
             console.log('productId--', productId);
             console.log('priceList._id--', priceList._id);
-            let plid = mongoose.Types.ObjectId(priceList._id)
-             Product.find({_id:productId, $and:[{'priceLists.priceListId':priceList._id},{'priceLists.status':'PENDIENTE'}]})
-            //  .where('priceLists.priceListId').equals(plid)
-            //  .where('priceLists.status').equals('PENDIENTE')
-                .then(result => {
-                    console.log('RESULTADO--', result[0].priceLists);
-                    let z = result[0].priceLists.find(x => {return (x.priceListId === priceList._id && x.status === 'PENDIENTE')})
-                    console.log('ZZZ', z);
-                })
-                .catch(error => {
-                    console.log('ERROR--', error);
-                })
-
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            console.log('PRICE_LISTS', product);
             return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
         })
         .then(() => {
