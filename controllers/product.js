@@ -249,9 +249,10 @@ function addComponent(request, response) {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            // console.log('COMPONENTS--', components);
+            console.log('COMPONENTS--', components);
             components = components.map(component => {
-                return {quantity: component.quantity, 
+                return { _id: component._id,
+                        quantity: component.quantity, 
                         unit: component.unit,
                         name: component.componentId.name,
                         code: component.componentId.code,
@@ -289,20 +290,24 @@ function addComponent(request, response) {
 function deleteComponents(request, response) {
     findProduct(request.params.productId)
         .then(product => {
-            let componentIds = JSON.parse(request.body.components)
+            // console.log('REQUEST_BODY--',request.body.components);
+            // let componentIds = JSON.parse(request.body.components)
+            let componentIds = request.body.components
             let productId = request.params.productId
             return Promise.all(componentIds.map(id => {
                 let componentId = mongoose.Types.ObjectId(id)
-                return Product.update({ _id: productId }, { $pull: { components: { componentId: componentId } } })
+                return Product.update({ _id: productId }, { $pull: { components: { _id: componentId } } })
             }))
         })
         .then(() => {
             return findProduct(request.params.productId)
         })
         .then(product => {
+            // console.log('PRODUCTO', product);
             message.success(response, 200, 'Componentes eliminados con éxito', product.components)
         })
         .catch(error => {
+            // console.error('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
