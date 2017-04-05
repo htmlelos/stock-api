@@ -249,6 +249,19 @@ function addComponent(request, response) {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
+            // console.log('COMPONENTS--', components);
+            components = components.map(component => {
+                return {quantity: component.quantity, 
+                        unit: component.unit,
+                        name: component.componentId.name,
+                        code: component.componentId.code,
+                        brand: component.componentId.brand,
+                        status: component.componentId.status,
+                        createdBy: component.componentId.createdBy,
+                        createdAt: component.componentId.createdAt
+                       }
+            })
+            // console.log('COMPONENTS_FINAL--', components);
             message.success(response, 200, 'Componente agregado con éxito', components)
         })
         .catch(error => {
