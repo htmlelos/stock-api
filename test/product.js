@@ -536,8 +536,8 @@ describe('PRODUCTS: ', () => {
         })
     })
     // POST /product/:productId/priceList
-    describe.only('POST /product/{productId}/priceList', () => {
-        it.only('deberia agregar un precio con su lista a un producto', done => {
+    describe('POST /product/{productId}/priceList', () => {
+        it('deberia agregar un precio con su lista a un producto', done => {
             let product = new Product({
                 name: 'Gaseosa 2L',
                 brand: null,
@@ -554,10 +554,9 @@ describe('PRODUCTS: ', () => {
             })
 
             brand.save()
-                .catch(error => { console.log('TEST1: ', error) })
+                .catch(error => { console.log('TEST: ', error) })
 
             product.brand = brand
-            console.log('BRAND::', brand);
 
             let priceList = new PriceList({
                 name: 'Precios al por Menor',
@@ -566,9 +565,8 @@ describe('PRODUCTS: ', () => {
             })
 
             priceList.save()
-                .catch(error => { console.log('TEST2: ', error) })
+                .catch(error => { console.log('TEST: ', error) })
 
-            console.log('PRICE::', priceList);
 
             let price = {
                 priceListId: priceList._id,
@@ -576,20 +574,15 @@ describe('PRODUCTS: ', () => {
                 profit: 0.3
             }
 
-            console.log('PRICE::', price);
-
             product.save()
-                .catch(error => { console.log('TEST3: ', error) })
+                .catch(error => { console.log('TEST: ', error) })
             
-            console.log('PRODUCT::', product);
-
             chai.request(server)
                 .post('/product/' + product._id + '/pricelist')
                 .set('x-access-token', token)
                 .send(price)
                 .end((error, response) => {
                     // El test inicia aqui
-                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -692,7 +685,7 @@ describe('PRODUCTS: ', () => {
             }
 
             product.save()
-                .catch(error => { console.log('TEST3: ', error) })
+                .catch(error => { console.log('TEST4: ', error) })
 
             chai.request(server)
                 .post('/product/' + product._id + '/pricelist')
@@ -960,7 +953,6 @@ describe('PRODUCTS: ', () => {
                 unit: 'Unidad',
                 componentId: productComponent._id
             }
-            // components.push(productComponent._id)
             productBase.components.push(component)
 
             productBase.save()

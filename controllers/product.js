@@ -157,14 +157,12 @@ function findPriceList(priceListId) {
 
 function addPriceList(request, response) {
     let promiseProduct = findProduct(request.params.productId)
-    console.log('1--', request.params.productId);
     let promisePriceList = findPriceList(request.body.priceListId)
-    console.log('2--', request.body.priceListId);
     let productId = null;
     let priceList = null;
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
-            console.log('VALUES', values);
+            // console.log('VALUES', values);
 
             if (values[0]) {
                 productId = values[0]._id
@@ -177,12 +175,17 @@ function addPriceList(request, response) {
                 return Promise.reject({ code: 404, message: 'No se encontró la lista de precios', data: null })
             }
 
-            console.log('productId--', productId);
-            console.log('priceList._id--', priceList._id);
             return findProduct(request.params.productId)
         })
         .then(product => {
-            console.log('PRICE_LISTS', product);
+            let pendientes = product.priceLists.filter(x => {
+                return (x.priceListId.toString() === priceList._id.toString() && x.status === 'PENDIENTE')
+            });
+            if (pendientes.length !== 0) {
+                return Product.update({ 'priceLists._id': pendientes[0]._id }, { $set: { 'priceLists.$.status': 'ANULADO' } })
+            }
+        })
+        .then(product => {
             return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
         })
         .then(() => {
@@ -192,7 +195,6 @@ function addPriceList(request, response) {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
         .catch(error => {
-            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -222,22 +224,17 @@ function removePriceList(request, response) {
 }
 
 function addComponent(request, response) {
-    // console.log('A-Object');
     let promiseProduct = findProduct(request.params.productId);
     let promiseComponent = findProduct(request.body.componentId)
-    // console.log('B-Objet');
     Promise.all([promiseProduct, promiseComponent])
         .then(values => {
-            // console.log('C-Objet');
             let productId = null;
             let componentId = null;
-            // console.log('BASE--',values[0]);
             if (values[0]) {
                 productId = values[0]._id;
             } else {
                 return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
-            // console.log('COMPONENTE--',values[1]);
             if (values[1]) {
                 componentId = values[1]._id
             } else {
@@ -249,11 +246,12 @@ function addComponent(request, response) {
             return findProduct(request.params.productId)
         })
         .then(product => {
-            // console.log('PRODUCT--', product);
-            message.success(response, 200, 'Componente agregado con éxito', product.components)
+            return Product.populate(product.components, { path: 'componentId' })
+        })
+        .then(components => {
+            message.success(response, 200, 'Componente agregado con éxito', components)
         })
         .catch(error => {
-            // console.log(error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -286,11 +284,9 @@ function deleteComponents(request, response) {
             }))
         })
         .then(() => {
-            // console.log('A--');
             return findProduct(request.params.productId)
         })
         .then(product => {
-            // console.log('RESULT--', product);
             message.success(response, 200, 'Componentes eliminados con éxito', product.components)
         })
         .catch(error => {

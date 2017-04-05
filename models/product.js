@@ -56,7 +56,6 @@ const ProductSchema = new Schema({
         ref: 'Brand'
     },
     code: String,
-    components: [ComponentSchema],
     priceLists: [PriceSchema],
     status: {
         type: String,
@@ -85,5 +84,7 @@ const ProductSchema = new Schema({
 }, {
         versionKey: false
     })
+
+ProductSchema.add({components: [ComponentSchema]})
 
 module.exports = mongoose.model('product', ProductSchema)
