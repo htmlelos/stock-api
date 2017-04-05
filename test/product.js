@@ -554,7 +554,7 @@ describe('PRODUCTS: ', () => {
             })
 
             brand.save()
-                .catch(error => { console.log('TEST1: ', error) })
+                .catch(error => { console.log('TEST: ', error) })
 
             product.brand = brand
 
@@ -565,19 +565,18 @@ describe('PRODUCTS: ', () => {
             })
 
             priceList.save()
-                .catch(error => { console.log('TEST2: ', error) })
+                .catch(error => { console.log('TEST: ', error) })
 
 
             let price = {
                 priceListId: priceList._id,
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
 
             product.save()
-                .catch(error => { console.log('TEST3: ', error) })
-
+                .catch(error => { console.log('TEST: ', error) })
+            
             chai.request(server)
                 .post('/product/' + product._id + '/pricelist')
                 .set('x-access-token', token)
@@ -627,8 +626,7 @@ describe('PRODUCTS: ', () => {
             let price = {
                 priceListId: priceList._id,
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
 
             product.save()
@@ -683,12 +681,11 @@ describe('PRODUCTS: ', () => {
             let price = {
                 priceListId: '58dece08eb0548118ce31f11',
                 cost: 30,
-                profit: 0.3,
-                status: 'ACTIVO'
+                profit: 0.3
             }
 
             product.save()
-                .catch(error => { console.log('TEST3: ', error) })
+                .catch(error => { console.log('TEST4: ', error) })
 
             chai.request(server)
                 .post('/product/' + product._id + '/pricelist')
@@ -956,7 +953,6 @@ describe('PRODUCTS: ', () => {
                 unit: 'Unidad',
                 componentId: productComponent._id
             }
-            // components.push(productComponent._id)
             productBase.components.push(component)
 
             productBase.save()

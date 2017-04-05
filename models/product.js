@@ -19,10 +19,11 @@ const PriceSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: ['ACTIVO', 'INACTIVO'],
-            message: 'El estado del precio de un producto solo puede ser ACTIVO o INACTIVO'
+            values: ['ACTIVO', 'INACTIVO', 'PENDIENTE'],
+            message: 'El estado del precio de un producto solo puede ser ACTIVO, INACTIVO o PENDIENTE'
         },
         required: 'Debe definir el estado del producto'
+        ,default: 'PENDIENTE'
     },
     createdAt: {
         type: Date,
@@ -55,7 +56,6 @@ const ProductSchema = new Schema({
         ref: 'Brand'
     },
     code: String,
-    components: [ComponentSchema],
     priceLists: [PriceSchema],
     status: {
         type: String,
@@ -84,5 +84,7 @@ const ProductSchema = new Schema({
 }, {
         versionKey: false
     })
+
+ProductSchema.add({components: [ComponentSchema]})
 
 module.exports = mongoose.model('product', ProductSchema)
