@@ -29,7 +29,7 @@ router.route('/product/:productId/component')
 // GET  /product/:productId/components
 // DELETE /product/:productId/components
 router.route('/product/:productId/components')
-    // .post(product.getComponents)
+    .get(product.getComponents)
     .delete(product.deleteComponents)
 
 module.exports = router

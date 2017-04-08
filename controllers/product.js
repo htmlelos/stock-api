@@ -249,7 +249,6 @@ function addComponent(request, response) {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            console.log('COMPONENTS--', components);
             components = components.map(component => {
                 return { _id: component._id,
                         quantity: component.quantity, 
@@ -270,29 +269,27 @@ function addComponent(request, response) {
         })
 }
 
-// function getComponents(request, response) {
+function getComponents(request, response) {
+    console.log('PARAMS', request.params)
+    console.log('BODY', request.body)
 
-//     console.log('1:', request.body);
-//     console.log('2:', request.params);
-//     //findProduct(request.params.productId)
-//     //{_id: request.params.productId}
-//     Product.find(request.body.filter)
-//        // .where(request.query.filter)
-//         .then(product => {
-//             console.log('PRODUCTO--', product);
-//             message.success(response, 200, 'Se obtuvieron los componentes con éxito', [])
-//         })
-//         .catch(error => {
-//             console.error('ERROR--', error)
-//         })
-// }
+    findProduct(request.params.productId)
+        .then(producto => {
+            console.log('PRODUCTO--', producto.components)
+            return Promise.all(producto.components.map(component => {
+                return Product.populate(component, {path: 'componentId'})                
+            }))
+        })
+        .then(componentes => {
+            console.log('COMPONENTE--', componentes)
+        })
+}
 
 function deleteComponents(request, response) {
     findProduct(request.params.productId)
         .then(product => {
-            // console.log('REQUEST_BODY--',request.body.components);
-            // let componentIds = JSON.parse(request.body.components)
-            let componentIds = request.body.components
+            let componentIds = JSON.parse(request.body.components)
+            // let componentIds = request.body.components
             let productId = request.params.productId
             return Promise.all(componentIds.map(id => {
                 let componentId = mongoose.Types.ObjectId(id)
@@ -323,6 +320,6 @@ module.exports = {
     addPriceList,
     removePriceList,
     addComponent,
-    // getComponents,
+    getComponents,
     deleteComponents
 }

@@ -191,7 +191,6 @@ function removeCategories(request, response) {
   findCategory(request.params.categoryId)
     .then(category => {
       let categoriesIds = JSON.parse(request.body.categories)
-      console.log('subtegorias ID--', categoriesIds);
       let categoryId = request.params.categoryId
       return Promise.all(categoriesIds.map(id => {
         let subcategoryId = mongoose.Types.ObjectId(id)

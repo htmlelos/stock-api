@@ -833,8 +833,8 @@ describe('PRODUCTS: ', () => {
         })
     })
     // GET /product/:productId/components
-    describe.skip('GET /product/{productId}/components', done => {
-        it('deberia obtener todos los componentes de un producto', done => {
+    describe.only('GET /product/{productId}/components', done => {
+            it('deberia obtener todos los componentes de un producto', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',
                 brand: null,
@@ -855,7 +855,7 @@ describe('PRODUCTS: ', () => {
                 .catch(error => { console.error('ERROR', error) })
 
             let productComponentId2 = productComponent._id
-            console.log('PRODUCT COMPONENTE ID2', productComponentId2);
+            console.log('PRODUCT_COMPONENTE_ID2::', productComponentId2);
             
             let component = {
                 quantity: 30,
@@ -863,7 +863,6 @@ describe('PRODUCTS: ', () => {
                 componentId: productComponent._id
             }
             productBase.components.push(component)
-
 
             productComponent = new Product({
                 name: 'Huevo Blanco',
@@ -885,13 +884,14 @@ describe('PRODUCTS: ', () => {
 
             productBase.save()
                 .catch(error => { console.error('ERROR', error) })
+            console.log('PRODUCT BASE::', productBase)
 
-            let filter = {components: [productComponentId2]}
+            // let filter = {components: [productComponentId2]}
 
             chai.request(server)
-                .post('/product/'+productBase._id+'/components')
+                .get('/product/'+productBase._id+'/components')
                 .set('x-access-token', token)
-                .send(filter)
+                // .send(filter)
                 .end((error, response) => {
                     response.should.have.status(200)
                     response.body.should.be.a('object')
