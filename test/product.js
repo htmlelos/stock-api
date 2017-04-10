@@ -833,7 +833,7 @@ describe('PRODUCTS: ', () => {
         })
     })
     // GET /product/:productId/components
-    describe.only('GET /product/{productId}/components', done => {
+    describe('GET /product/{productId}/components', done => {
             it('deberia obtener todos los componentes de un producto', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',
@@ -884,28 +884,24 @@ describe('PRODUCTS: ', () => {
 
             productBase.save()
                 .catch(error => { console.error('ERROR', error) })
-            console.log('PRODUCT BASE::', productBase)
-
-            // let filter = {components: [productComponentId2]}
 
             chai.request(server)
                 .get('/product/'+productBase._id+'/components')
                 .set('x-access-token', token)
-                // .send(filter)
                 .end((error, response) => {
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
-                        .eql('Se obtuvieron los componentes con éxito')
+                        .eql('Componentes recuperados con éxito')
                     response.body.should.have.property('data')
                     response.body.data.should.be.a('array')
-                    response.body.data.length.should.be.eql(0)
+                    response.body.data.length.should.be.eql(2)
                     done()
                 })            
         })
     })
     // DELETE /product/:productId/components
-    describe('DELETE /product/{productId}/components', () => {
+    describe.skip('DELETE /product/{productId}/components', () => {
         it('deberia eliminar los componentes indicados de un producto ', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',

@@ -162,7 +162,6 @@ function addPriceList(request, response) {
     let priceList = null;
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
-            // console.log('VALUES', values);
 
             if (values[0]) {
                 productId = values[0]._id
@@ -250,18 +249,18 @@ function addComponent(request, response) {
         })
         .then(components => {
             components = components.map(component => {
-                return { _id: component._id,
-                        quantity: component.quantity, 
-                        unit: component.unit,
-                        name: component.componentId.name,
-                        code: component.componentId.code,
-                        brand: component.componentId.brand,
-                        status: component.componentId.status,
-                        createdBy: component.componentId.createdBy,
-                        createdAt: component.componentId.createdAt
-                       }
+                return {
+                    _id: component._id,
+                    quantity: component.quantity,
+                    unit: component.unit,
+                    name: component.componentId.name,
+                    code: component.componentId.code,
+                    brand: component.componentId.brand,
+                    status: component.componentId.status,
+                    createdBy: component.componentId.createdBy,
+                    createdAt: component.componentId.createdAt
+                }
             })
-            // console.log('COMPONENTS_FINAL--', components);
             message.success(response, 200, 'Componente agregado con éxito', components)
         })
         .catch(error => {
@@ -270,18 +269,36 @@ function addComponent(request, response) {
 }
 
 function getComponents(request, response) {
-    console.log('PARAMS', request.params)
-    console.log('BODY', request.body)
 
     findProduct(request.params.productId)
         .then(producto => {
-            console.log('PRODUCTO--', producto.components)
             return Promise.all(producto.components.map(component => {
-                return Product.populate(component, {path: 'componentId'})                
+                return Product.populate(component, { path: 'componentId' })
             }))
         })
         .then(componentes => {
-            console.log('COMPONENTE--', componentes)
+            return Promise.all(componentes.map(component => {
+                return Product.populate(component, { path: '_id' })
+            }))
+        })
+        .then(components => {
+            components = components.map(component => {
+                return {
+                    _id: component._id,
+                    quantity: component.quantity,
+                    unit: component.unit,
+                    name: component.componentId.name,
+                    code: component.componentId.code,
+                    brand: component.componentId.brand,
+                    status: component.componentId.status,
+                    createdBy: component.componentId.createdBy,
+                    createdAt: component.componentId.createdAt
+                }
+            })
+            message.success(response, 200, 'Componentes recuperados con éxito', components)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 
@@ -299,12 +316,7 @@ function deleteComponents(request, response) {
         .then(() => {
             return findProduct(request.params.productId)
         })
-        .then(product => {
-            // console.log('PRODUCTO', product);
-            message.success(response, 200, 'Componentes eliminados con éxito', product.components)
-        })
         .catch(error => {
-            // console.error('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
