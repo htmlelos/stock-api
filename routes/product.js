@@ -30,6 +30,6 @@ router.route('/product/:productId/component')
 // DELETE /product/:productId/components
 router.route('/product/:productId/components')
     .get(product.getComponents)
-    .delete(product.deleteComponents)
+    .delete(product.removeComponents)
 
 module.exports = router

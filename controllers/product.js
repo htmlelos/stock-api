@@ -302,7 +302,7 @@ function getComponents(request, response) {
         })
 }
 
-function deleteComponents(request, response) {
+function removeComponents(request, response) {
     findProduct(request.params.productId)
         .then(product => {
             let componentIds = JSON.parse(request.body.components)
@@ -313,8 +313,32 @@ function deleteComponents(request, response) {
                 return Product.update({ _id: productId }, { $pull: { components: { _id: componentId } } })
             }))
         })
-        .then(() => {
+        .then(values => {
+            // console.log('VALUES--', values)
             return findProduct(request.params.productId)
+        })
+        .then(product => {
+            // console.log('PRODUCT--', product.components)
+            return Product.populate(product.components, { path: 'componentId' })
+        })
+        .then(components => {
+            //  console.log('COMPONENTES--', components)
+
+            components = components.map(component => {
+                return {
+                    _id: component._id,
+                    quantity: component.quantity,
+                    unit: component.unit,
+                    name: component.componentId.name,
+                    code: component.componentId.code,
+                    brand: component.componentId.brand,
+                    status: component.componentId.status,
+                    createdBy: component.componentId.createdBy,
+                    createdAt: component.componentId.createdAt
+                }
+            })
+            // console.log('COMPONENTS--', components)
+            message.success(response, 200, 'Componentes eliminados con éxito', components)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
@@ -333,5 +357,5 @@ module.exports = {
     removePriceList,
     addComponent,
     getComponents,
-    deleteComponents
+    removeComponents
 }
