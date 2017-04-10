@@ -901,7 +901,7 @@ describe('PRODUCTS: ', () => {
         })
     })
     // DELETE /product/:productId/components
-    describe.skip('DELETE /product/{productId}/components', () => {
+    describe('DELETE /product/{productId}/components', () => {
         it('deberia eliminar los componentes indicados de un producto ', done => {
             let productBase = new Product({
                 name: 'Maple Huevos Marrones',
