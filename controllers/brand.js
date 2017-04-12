@@ -71,12 +71,16 @@ function updateBrand(request, response) {
       // Si la marca con el id proporcionado existe se actualiza con los datos proporcionados
       if (brand) {
         let newBrand = request.body
+        console.log('NEW BRAND--', newBrand)
+        console.log('BRAND_ID--', request.params.brandId)
         newBrand.updatedBy = request.decoded.username
         newBrand.updatedAt = Date.now()
-        Brand.findOne({ name: newBrand.name })
+        // Brand.findOne({ name: newBrand.name })
+        findBrand(request.params.brandId)
           .then(result => {
-            if (!result) {
-              Brand.update({ _id: request.params.productId }, { $set: newBrand }, { runValidators: true })
+            console.log('RESULT--', result)
+            if (result) {
+              Brand.update({ _id: request.params.brandId }, { $set: newBrand }, { runValidators: true })
                 .then(result => {
                   message.success(response, 200, 'Marca actualizada con éxito', null)
                 })
