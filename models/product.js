@@ -40,7 +40,7 @@ const PriceSchema = new Schema({
 const ComponentSchema = new Schema({
     quantity: Number,
     unit: String,
-    componentId: { type: Schema.Types.ObjectId, ref: 'Product' }
+    componentId: { type: Schema.Types.ObjectId, ref: 'Product' , index: true}
 }, {
         versionKey: false
     })
@@ -49,13 +49,18 @@ const ProductSchema = new Schema({
     name: {
         type: String,
         required: 'Debe proporcionar un nombre de producto',
-        unique: true
+        unique: true,
+        index: true
     },
     brand: {
         type: Schema.Types.ObjectId,
-        ref: 'Brand'
+        ref: 'Brand',
+        index: true
     },
-    code: String,
+    code: {
+        type: String,
+        index: true
+    },
     priceLists: [PriceSchema],
     status: {
         type: String,
