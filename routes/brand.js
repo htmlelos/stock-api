@@ -5,7 +5,8 @@ const router = require('express').Router()
 
 // POST /brands - obtener todas las marcas
 router.route('/brands')
-  .post(brand.getAllBrands)
+    .get(brand.getAllBrands)
+    .post(brand.getAllBrands)
 // POST /brand - crear una nueva marca
 router.route('/brand')
   .post(brand.createBrand)

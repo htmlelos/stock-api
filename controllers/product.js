@@ -21,7 +21,6 @@ function getAllProducts(request, response) {
             }))
         })
         .then(products => {
-            console.log(products)            
             message.success(response, 200, '', products)
         })
         .catch(error => {
