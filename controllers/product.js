@@ -4,12 +4,24 @@ const Brand = require('../models/brand')
 const Person = require('../models/person')
 const Product = require('../models/product')
 const PriceList = require('../models/priceList')
+const Category = require('../models/category')
 const message = require('../services/response/message')
 
 //Obtiene todos los productos
 function getAllProducts(request, response) {
     Product.find({})
         .then(products => {
+            return Promise.all(products.map(product => {
+                return Brand.populate(product, {path: 'brand'})
+            }))
+        })
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return Category.populate(product, {path: 'category'})
+            }))
+        })
+        .then(products => {
+            console.log(products)            
             message.success(response, 200, '', products)
         })
         .catch(error => {
@@ -64,6 +76,10 @@ function getProduct(request, response) {
             }
         })
         .then(product => {
+            return Category.populate(product, {path: 'category'})
+        })
+        .then(product => {
+            // console.log('PRODUCT_CATEGORY: ', product);
             return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {

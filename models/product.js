@@ -57,6 +57,11 @@ const ProductSchema = new Schema({
         ref: 'Brand',
         index: true
     },
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        index: true
+    },
     code: {
         type: String,
         index: true
