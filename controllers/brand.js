@@ -6,7 +6,8 @@ const mongoose = require('mongoose')
 
 // Obtiene todas las marcas
 function getAllBrands(request, response) {
-  Brand.find({})
+  console.log('BODY--', request.body)
+  Brand.find(request.body)
     .then(brands => {
       Person.populate(brands, { path: 'suppliers' })
         .then(user => {
@@ -64,21 +65,17 @@ function getBrand(request, response) {
       message.error(response, 500, 'No se pudo recuperar la marca', error)
     })
 }
-
+// Actualizar una marca por su id
 function updateBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
       // Si la marca con el id proporcionado existe se actualiza con los datos proporcionados
       if (brand) {
         let newBrand = request.body
-        console.log('NEW BRAND--', newBrand)
-        console.log('BRAND_ID--', request.params.brandId)
         newBrand.updatedBy = request.decoded.username
         newBrand.updatedAt = Date.now()
-        // Brand.findOne({ name: newBrand.name })
         findBrand(request.params.brandId)
           .then(result => {
-            console.log('RESULT--', result)
             if (result) {
               Brand.update({ _id: request.params.brandId }, { $set: newBrand }, { runValidators: true })
                 .then(result => {
@@ -106,7 +103,7 @@ function updateBrand(request, response) {
       message.error(response, 422, 'No se pudo encontrar la marca', error)
     })
 }
-
+// Eliminar una marca por su id
 function deleteBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
@@ -126,12 +123,11 @@ function deleteBrand(request, response) {
       message.error(response, 500, 'No se pudo eliminar la marca', error)
     })
 }
-
 // Obtener una marca
 function findSupplier(brandId) {
   return Person.findById({ _id: brandId })
 }
-
+// Obtener los proveedores de una marca
 function getAllSuppliers(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
@@ -148,7 +144,7 @@ function getAllSuppliers(request, response) {
       message.failure(response, error.code, error.message, error.data)
     })
 }
-
+// Agregar un proveedor a una marca
 function addSupplier(request, response) {
   let promiseBrand = findBrand(request.params.brandId)
   let promiseSupplier = findSupplier(request.body.supplierId)
@@ -181,7 +177,7 @@ function addSupplier(request, response) {
       message.failure(response, error.code, error.message, error.data)
     })
 }
-
+// remover un proveedor de una marca
 function deleteSuppliers(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
