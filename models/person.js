@@ -88,4 +88,4 @@ PersonSchema.virtual('fullname').get(function () {
     return `${this.firstName} ${this.lastName}`
 })
 
-module.exports = mongoose.model('person', PersonSchema)
+module.exports = mongoose.model('Person', PersonSchema)

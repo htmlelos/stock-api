@@ -8,6 +8,7 @@ const passport = require('passport')
 // POST /users - obtener todos los usuarios que cumplan con los criterios especificados
 router.route('/users')
 	.get(user.getAllUsers)
+	.post(user.retrieveAllUsers)
 	// POST /user - crear un nuevo usuarios
 router.route('/user')
 	.post(user.createUser)

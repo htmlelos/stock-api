@@ -4,9 +4,37 @@ const User = require('../models/user')
 const message = require('../services/response/message')
 //Obtiene todos los usuarios
 function getAllUsers(request, response) {
-
+	let fields = '-password'
 	User.find({})
-		.select('-password')
+		.select(fields)
+		.then(users => {
+			return Promise.all(users.map(user => {
+				return Role.populate(user, {path: 'roles'})
+			}))
+		})
+		.then(users => {
+			message.success(response, 200, '', users)
+		})
+		.catch(error => {
+			message.failure(response, 404, 'No se pudieron recuperar los usuarios', error)
+		})
+}
+// obtener todos los usuarios que cumplan con los criterios especificados
+function retrieveAllUsers(request, response) {
+	let limit = parseInt(request.body.limit)
+	let fields = request.body.fields
+	let filter = request.body.filter
+	let sort = request.body.sort
+
+	User.find(filter)
+		.select(fields)
+		.limit(limit)
+		.sort(sort)
+		.then(users => {
+			return Promise.all(users.map(user => {
+				return  Role.populate(user, {path: 'roles'})
+			}))
+		})
 		.then(users => {
 			message.success(response, 200, '', users)
 		})
@@ -240,6 +268,7 @@ function createDefaultUser(request, response, next) {
 
 module.exports = {
 	getAllUsers,
+	retrieveAllUsers,
 	createUser,
 	getUser,
 	updateUser,

@@ -13,6 +13,24 @@ function getAllPersons(request, response) {
             message.error(response, 500, 'No se pudo recuperar las personas', error)
         })
 }
+
+function retrieveAllPerson(request, response) {
+    let limit = parseInt(request.body.limit)
+    let fields = request.body.fields
+    let filter = request.body.filter
+    let sort = request.body.sort
+
+    Person.find(filter)
+        .select(fields)
+        .limit(limit)
+        .sort(sort)
+        .then(people => {
+            message.success(response, 200, '', people)
+        })
+        .catch(error => {
+            message.failure(response, 404, 'No se pudo encontrar las personas', error)
+        })
+}
 // Verifica los datos obligatorios de la persona
 function checkPerson(request, type = null) {
     // Verificar Persona
@@ -311,6 +329,7 @@ function removeAddresses(request, response) {
 
 module.exports = {
     getAllPersons,
+    retrieveAllPerson,
     createPerson,
     getPerson,
     updatePerson,

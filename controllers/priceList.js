@@ -12,6 +12,23 @@ function getAllPriceLists(request, response) {
       message.error(response, 422, '', error)
     })
 }
+function retrieveAllPriceList(request, response) {
+let limit = parseInt(request.body.limit)
+let fields = request.body.fields
+let filter = request.body.filter
+let sort = request.body.sort
+
+  PriceList.find(filter)
+    .select(fields)
+    .limit(limit)
+    .sort(sort)
+    .then(priceLists => {
+      message.success(response, 200, '', priceLists)
+    })
+    .catch(error => {
+      message.failure(response, 404, 'No se pudieron recuperar las Listas de precios', error)
+    })
+}
 // Crea una nueva lista de Precios
 function createPriceList(request, response) {
   // Crea una nueva instancia de PriceList con los parametros recibidos
@@ -98,6 +115,7 @@ function deletePriceList(request, response) {
 
 module.exports = {
   getAllPriceLists,
+  retrieveAllPriceList,
   createPriceList,
   getPriceList,
   updatePriceList,

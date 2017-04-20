@@ -43,4 +43,4 @@ let RoleSchema = new Schema({
 	versionKey: false
 })
 
-module.exports = mongoose.model('role', RoleSchema)
+module.exports = mongoose.model('Role', RoleSchema)
