@@ -5,16 +5,42 @@ const message = require('../services/response/message')
 
 function getAllCategories(request, response) {
   Category.find({})
-    .then(roles => {
-      message.success(response, 200, '', roles)
+    .then(categories => {
+      return Promise.all(categories.map(category => {
+        return Category.populate(category, {path: 'categories'})
+      }))
+    })
+    .then(categories => {
+      message.success(response, 200, '', categories)
     })
     .catch(error => {
       message.error(response, 422, '', error)
     })
-  // Crea una nueva Categooria
+}
+function retrieveAllCategories(request, response) {
+  let limit = parseInt(request.body.limit)
+  let fields = request.body.fields
+  let filter = request.body.filter
+  let sort = request.body.sort
 
+  Category.find(filter)
+          .select(fields)
+          .limit(limit)
+          .sort(sort)
+          .then(categories => {
+            return Promise.all(categories.map(category => {
+              return Category.populate(category, {path: 'categories'})
+            }))
+          })
+          .then(categories => {
+            message.success(response, 200, '', categories)
+          })
+          .catch(error => {
+            message.failure(response, 404, 'No se pudieron recuperar las categorias', error)
+          })
 }
 
+  // Crea una nueva Categooria
 function createCategory(request, response) {
   // Crea una nueva instanscia de Category con los parametros recibidos
   // console.log('CREATE--')
@@ -210,6 +236,7 @@ function removeCategories(request, response) {
 
 module.exports = {
   getAllCategories,
+  retrieveAllCategories,
   createCategory,
   getCategory,
   updateCategory,

@@ -43,4 +43,4 @@ let ProfileSchema = new Schema({
 	versionKey: false
 })
 
-module.exports = mongoose.model('profile', ProfileSchema)
+module.exports = mongoose.model('Profile', ProfileSchema)

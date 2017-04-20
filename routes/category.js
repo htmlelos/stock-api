@@ -5,6 +5,7 @@ const router = require('express').Router()
 // GET /categories - obtener todas las categorías
 router.route('/categories')
   .get(category.getAllCategories)
+  .post(category.retrieveAllCategories)
   // .delete(category.deleteCategories)
 //POST /category - Crea una nueva categoría
 router.route('/category')

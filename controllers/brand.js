@@ -3,23 +3,48 @@ const Person = require('../models/person')
 const Brand = require('../models/brand')
 const message = require('../services/response/message')
 const mongoose = require('mongoose')
+const flatten = require('flatten')
 
 // Obtiene todas las marcas
 function getAllBrands(request, response) {
-  console.log('BODY--', request.body)
-  Brand.find(request.body)
+  // console.log('BODY--', request.body)
+  Brand.find({})
     .then(brands => {
-      Person.populate(brands, { path: 'suppliers' })
-        .then(user => {
-          message.success(response, 200, '', brands)
-        })
-        .catch(error => {
-          message.error(response, 422, 'No se pudo recuperar los proveedores de la marca', error)
-        })
-
+      return Promise.all(brands.map(brand => {
+        return Person.populate(brand, { path: 'suppliers' })
+      }))
+    })
+    .then(brands => {
+      message.success(response, 200, '', brands)
     })
     .catch(error => {
+      console.error('ERROR--', error)
       message.failure(response, 404, 'No se pudo recuperar la marca', error)
+    })
+}
+
+function retrieveAllBrands(request, response) {
+  let limit = parseInt(request.body.limit)
+  let fields = request.body.fields
+  let filter = request.body.filter
+  let sort = request.body.sort
+
+  Brand.find(filter)
+    .select(fields)
+    .limit(limit)
+    .sort(sort)
+    .then(brands => {
+      console.log('BRANDS--', brands)
+      return Promise.all(brands.map(brand => {
+        return Person.populate(brand, { path: 'suppliers' })
+      }))
+    })
+    .then(brands => {
+      message.success(response, 200, '', brands)
+    })
+    .catch(error => {
+      console.log('ERROR--', error)
+      message.failure(response, 404, 'No se pudieron recuperar las Marcas', error)
     })
 }
 
@@ -183,12 +208,12 @@ function deleteSuppliers(request, response) {
     .then(brand => {
       let suppliersIds = JSON.parse(request.body.suppliers)
       let brandId = mongoose.Types.ObjectId(request.params.brandId)
-      return Promise.all(suppliersIds.map(id => {        
+      return Promise.all(suppliersIds.map(id => {
         let supplierId = mongoose.Types.ObjectId(id)
-        return Brand.update({ _id: brandId }, { $pull: { suppliers:  supplierId  } })
+        return Brand.update({ _id: brandId }, { $pull: { suppliers: supplierId } })
       }))
     })
-    .then(values=> {
+    .then(values => {
       return findBrand(request.params.brandId)
     })
     .then(brand => {
@@ -201,6 +226,7 @@ function deleteSuppliers(request, response) {
 
 module.exports = {
   getAllBrands,
+  retrieveAllBrands,
   createBrand,
   getBrand,
   updateBrand,

@@ -95,4 +95,4 @@ UserSchema.statics.comparePasswordAndHash = function (password, passwordHash, ne
 	bcrypt.compare(password, passwordHash, next)
 }
 
-module.exports = mongoose.model('user', UserSchema)
+module.exports = mongoose.model('User', UserSchema)

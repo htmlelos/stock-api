@@ -190,4 +190,4 @@ const DocumentSchema = new Schema({
         versionKey: false
     })
 
-module.exports = mongoose.model('document', DocumentSchema)
+module.exports = mongoose.model('Document', DocumentSchema)

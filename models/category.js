@@ -44,4 +44,4 @@ let CategorySchema = new Schema({
 
 CategorySchema.add({categories: [{ type: Schema.Types.ObjectId, ref: 'category' }]})  
 
-module.exports = mongoose.model('category', CategorySchema)
+module.exports = mongoose.model('Category', CategorySchema)

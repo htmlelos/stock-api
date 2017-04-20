@@ -27,7 +27,45 @@ function getAllProducts(request, response) {
             message.failure(response, 500, 'No se pudo recuperar los productos', error)
         })
 }
+function retrieveAllProducts(request, response) {
+    console.log('BODY--', request.body)
+  let limit = parseInt(request.body.limit)
+  let fields = request.body.fields
+  let filter = request.body.filter
+  let sort = request.body.sort
 
+  Product.find(filter)
+        .select(fields)
+        .limit(limit)
+        .sort(sort)
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return Category.populate(product, {path: 'category'})
+            }))
+        })
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return PriceList.populate(product, {path: 'priceLists.priceListId'})
+            }))
+        })        
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return Brand.populate(product, {path: 'brand'})
+            }))
+        })
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return Product.populate(product, {path: 'components.componentId'})
+            }))
+        })
+        .then(products => {
+            message.success(response, 200, '', products)
+        })
+        .catch(error => {
+            console.log('ERROR--', error)
+            message.failure(response, 404, 'No se pudieron recuperar los productos', error)
+        })
+}
 // Verifica los datos del producto
 function checkProduct(request) {
     request.checkBody('name', 'El nombre del producto esta vacio')
@@ -286,8 +324,8 @@ function addComponent(request, response) {
 function getComponents(request, response) {
 
     findProduct(request.params.productId)
-        .then(producto => {
-            return Promise.all(producto.components.map(component => {
+        .then(product => {
+            return Promise.all(product.components.map(component => {
                 return Product.populate(component, { path: 'componentId' })
             }))
         })
@@ -362,6 +400,7 @@ function removeComponents(request, response) {
 
 module.exports = {
     getAllProducts,
+    retrieveAllProducts,
     createProduct,
     getProduct,
     updateProduct,

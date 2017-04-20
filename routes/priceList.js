@@ -5,6 +5,7 @@ const router = require('express').Router()
 //GET /pricelists - obtenner todas las listas de precio
 router.route('/pricelists')
   .get(priceList.getAllPriceLists)
+  .post(priceList.retrieveAllPriceList)
 // POST /pricelist - crear una nueva lista de precio
 router.route('/pricelist')
   .post(priceList.createPriceList)

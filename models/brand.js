@@ -45,4 +45,4 @@ const BrandSchema = new Schema({
 	versionKey: false
 })
 
-module.exports = mongoose.model('brand', BrandSchema)
+module.exports = mongoose.model('Brand', BrandSchema)

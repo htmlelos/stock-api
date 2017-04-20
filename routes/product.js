@@ -5,6 +5,7 @@ const router = require('express').Router()
 // GET /users - obtener todos los Products
 router.route('/products')
     .get(product.getAllProducts)
+    .post(product.retrieveAllProducts)
 // POST /user - crear un nuevo producto
 router.route('/product')
     .post(product.createProduct)

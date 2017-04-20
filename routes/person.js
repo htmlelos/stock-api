@@ -5,6 +5,7 @@ const router = require('express').Router()
 //GET /persons - Obtener todas las personas
 router.route('/persons')
     .get(person.getAllPersons)
+    .post(person.retrieveAllPerson)
 // POST /person - Crea una nueva persona
 router.route('/person')
     .post(person.createPerson)

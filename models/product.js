@@ -73,7 +73,8 @@ const ProductSchema = new Schema({
             values: ['ACTIVO', 'INACTIVO'],
             message: 'El estado de un usuario solo puede ser ACTIVO o INACTIVO'
         },
-        required: 'Debe definir el estado del producto'
+        required: 'Debe definir el estado del producto',
+        default: 'INACTIVO'
     },
     createdAt: {
         type: Date,
@@ -97,4 +98,4 @@ const ProductSchema = new Schema({
 
 ProductSchema.add({components: [ComponentSchema]})
 
-module.exports = mongoose.model('product', ProductSchema)
+module.exports = mongoose.model('Product', ProductSchema)

@@ -12,6 +12,25 @@ function getAllRoles(request, response) {
 			message.error(response, 422, '', error)
 		})
 }
+// Obtiene los roles que cumplan con los criterios especificados
+function retrieveAllRoles(request, response) {
+	let limit = parseInt(request.body.limit)
+	let fields = request.body.fields;
+	let filter = request.body.filter;
+	let sort = request.body.sort;
+
+	Role.find(filter)
+		.select(fields)
+		.limit(limit)
+		.sort(sort)
+		.then(roles => {
+			message.success(response, 200, '', roles)
+		})
+		.catch(error => {
+			console.log('ERROR--', error)
+			message.failure(response, 404, 'No se recuperaron los roles', error)
+		})
+}
 //Crea un nuevo Rol
 function createRole(request, response) {
 	//Crea una nueva instancia de Role con los parametros recibidos
@@ -98,6 +117,7 @@ function deleteRole(request, response) {
 
 module.exports = {
 	getAllRoles,
+	retrieveAllRoles,
 	createRole,
 	getRole,
 	updateRole,
