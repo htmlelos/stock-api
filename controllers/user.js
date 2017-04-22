@@ -139,45 +139,55 @@ function addUserRole(request, response) {
 	findUser(request.params.userId)
 		.select('-password')
 		.then(user => {
-			if (user) {
-				let roleId = request.body.roleId
-				if (roleId) {
-					findRole(roleId)
-						.then(role => {
-							if (role) {
-								let isIncluded = user.roles
-									.map(current => current.toString())
-									.includes(role._id.toString())
-
-								if (isIncluded) {
-									message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
-								} else {
-									User.update({ _id: user._id }, { $addToSet: { roles: role } })
-										.then(result => {
-											message.success(response, 200, 'El rol se añadio con éxito', { id: user._id })
-										})
-										.catch(error => {
-											message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
-										})
-								}
-
-							} else {
-								message.failure(response, 404, 'El rol no es válido', null)
-							}
-						})
-						.catch(error => {
-							message.error(response, { status: 422, message: '', data: error })
-						})
-				} else {
-					message.failure(response, 422, 'El rol no es válido', null)
+			return new Promise((resolve, reject) => {
+				if (user) {
+					Promise.resolve(request.body.roleId)
 				}
-			} else {
-				message.failure(response, 404, 'El usuario no es válido', null)
-			}
+			})
 		})
-		.catch(error => {
-			message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
-		})
+
+	// findUser(request.params.userId)
+	// 	.select('-password')
+	// 	.then(user => {
+	// 		if (user) {
+	// 			let roleId = request.body.roleId
+	// 			if (roleId) {
+	// 				findRole(roleId)
+	// 					.then(role => {
+	// 						if (role) {
+	// 							let isIncluded = user.roles
+	// 								.map(current => current.toString())
+	// 								.includes(role._id.toString())
+
+	// 							if (isIncluded) {
+	// 								message.failure(response, 422, 'El rol ya se encuentra asociado al usuario', null)
+	// 							} else {
+	// 								User.update({ _id: user._id }, { $addToSet: { roles: role } })
+	// 									.then(result => {
+	// 										message.success(response, 200, 'El rol se añadio con éxito', { id: user._id })
+	// 									})
+	// 									.catch(error => {
+	// 										message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
+	// 									})
+	// 							}
+
+	// 						} else {
+	// 							message.failure(response, 404, 'El rol no es válido', null)
+	// 						}
+	// 					})
+	// 					.catch(error => {
+	// 						message.error(response, { status: 422, message: '', data: error })
+	// 					})
+	// 			} else {
+	// 				message.failure(response, 422, 'El rol no es válido', null)
+	// 			}
+	// 		} else {
+	// 			message.failure(response, 404, 'El usuario no es válido', null)
+	// 		}
+	// 	})
+	// 	.catch(error => {
+	// 		message.error(response, 500, 'No se pudo añadir el rol al usuario', error)
+	// 	})
 }
 // Obtener los roles de un usuario
 function getUserRoles(request, response) {
