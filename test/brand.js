@@ -410,7 +410,7 @@ describe('BRAND: ', () => {
 	})
 	// DELETE /brand/:brandID/supplier
 	describe('DELETE /brand/:brandId/suppliers', () => {
-		it('deberia eliminar todos los proveedores indicados', done => {
+		it('deberia eliminar los proveedores indicados', done => {
 			let brand = new Brand({
 				name: 'Loca cola',
 				description: 'Bebida Gaseosa',
