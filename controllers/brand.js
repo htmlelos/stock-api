@@ -3,7 +3,6 @@ const Person = require('../models/person')
 const Brand = require('../models/brand')
 const message = require('../services/response/message')
 const mongoose = require('mongoose')
-const flatten = require('flatten')
 
 // Obtiene todas las marcas
 function getAllBrands(request, response) {
@@ -18,7 +17,6 @@ function getAllBrands(request, response) {
       message.success(response, 200, '', brands)
     })
     .catch(error => {
-      console.error('ERROR--', error)
       message.failure(response, 404, 'No se pudo recuperar la marca', error)
     })
 }
@@ -43,7 +41,6 @@ function retrieveAllBrands(request, response) {
       message.success(response, 200, '', brands)
     })
     .catch(error => {
-      console.log('ERROR--', error)
       message.failure(response, 404, 'No se pudieron recuperar las Marcas', error)
     })
 }

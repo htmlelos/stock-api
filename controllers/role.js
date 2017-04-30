@@ -27,7 +27,6 @@ function retrieveAllRoles(request, response) {
 			message.success(response, 200, '', roles)
 		})
 		.catch(error => {
-			console.log('ERROR--', error)
 			message.failure(response, 404, 'No se recuperaron los roles', error)
 		})
 }

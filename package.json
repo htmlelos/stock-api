@@ -25,7 +25,6 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "express-validator": "^3.1.2",
-    "flatten": "^1.0.2",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.0",
     "morgan": "^1.7.0",

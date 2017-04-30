@@ -28,4 +28,7 @@ router.route('/user/:userId/role')
 router.route('/user/:userId/role/:roleId')
   .delete(user.deleteUserRole)
 
+router.route('/user/:userId/roles')
+	.delete(user.removeUserRoles)
+
 module.exports = router

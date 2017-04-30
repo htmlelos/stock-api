@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const Person = require('../models/person')
 const message = require('../services/response/message')
 
-//Obtener todos los proveedores
+//Obtener todos los personas
 function getAllPersons(request, response) {
     Person.find(request.query)
         .then(persons => {
@@ -13,7 +13,7 @@ function getAllPersons(request, response) {
             message.error(response, 500, 'No se pudo recuperar las personas', error)
         })
 }
-
+// Recuperar todos las personas
 function retrieveAllPerson(request, response) {
     let limit = parseInt(request.body.limit)
     let fields = request.body.fields
@@ -101,7 +101,7 @@ function createPerson(request, response) {
         .then(result => {
             if (!result.isEmpty()) {
                 let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
-                return Promise.reject({ code: 422, messages, data: null })
+                return Promise.reject({ code: 422, message:messages, data: null })
             }
             return Promise.resolve()
         })
