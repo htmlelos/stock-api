@@ -62,7 +62,6 @@ function retrieveAllProducts(request, response) {
             message.success(response, 200, '', products)
         })
         .catch(error => {
-            console.log('ERROR--', error)
             message.failure(response, 404, 'No se pudieron recuperar los productos', error)
         })
 }
@@ -367,16 +366,12 @@ function removeComponents(request, response) {
             }))
         })
         .then(values => {
-            // console.log('VALUES--', values)
             return findProduct(request.params.productId)
         })
         .then(product => {
-            // console.log('PRODUCT--', product.components)
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            //  console.log('COMPONENTES--', components)
-
             components = components.map(component => {
                 return {
                     _id: component._id,
@@ -390,7 +385,6 @@ function removeComponents(request, response) {
                     createdAt: component.componentId.createdAt
                 }
             })
-            // console.log('COMPONENTS--', components)
             message.success(response, 200, 'Componentes eliminados con éxito', components)
         })
         .catch(error => {
