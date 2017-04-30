@@ -62,10 +62,10 @@ describe.only('USERS: test suite', () => {
 	describe('POST /users', () => {
 		it('deberia obtener todos los usarios seleccionados', done => {
 			let params = {
-				limit:"",
+				limit: "",
 				fields: "status name",
-				filter: {status: "ACTIVO"},
-				sort: {username: 1}
+				filter: { status: "ACTIVO" },
+				sort: { username: 1 }
 			}
 
 			chai.request(server)
@@ -626,6 +626,69 @@ describe.only('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message').eql('El usuario no es un usuario válido')
 					response.body.should.have.property('data').to.be.null
+					done()
+				})
+		})
+	})
+
+	// DELETE /user/:userId/roles
+	describe.only('DELETE /user/:userId/roles', () => {
+		it('deberia eliminar los roles indicados del usuario', done => {
+			let user = new User({
+				username: 'admin@mail.com',
+				password: 'admin',
+				status: 'ACTIVO'
+			})
+
+			let rolesIds = []
+
+			let role = new Role({
+				name: 'accountant',
+				description: 'accountant manager',
+				status: 'ACTIVO'
+			})
+
+			role.save()
+				.catch(error => console.error('TEST:', error))
+			rolesIds.push(role._id)
+			user.roles.push(role._id)
+
+			role = new Role({
+				name: 'cashier',
+				description: 'cashier operator',
+				status: 'ACTIVO'
+			})
+
+			role.save()
+				.catch(error => console.error('TEST:', error))
+			// rolesIds.push(role._id)
+			user.roles.push(role._id)
+
+			role = new Role({
+				name: 'dispatcher',
+				description: 'dispatcher operador',
+				status: 'ACTIVO'
+			})
+
+			role.save()
+				.catch(error => console.error('TEST:', error))
+			rolesIds.push(role._id)
+			user.roles.push(role._id)
+
+			user.save()
+				.catch(error => console.error('TEST:', error))
+
+			chai.request(server)
+				.delete('/user/' + user._id + '/roles')
+				.set('x-access-token', token)
+				.send({ roles: JSON.stringify(rolesIds) })
+				.end((error, response) => {
+					console.log('RESPONSE_BODY::', response.body);
+					response.should.have.status(200)
+					response.body.should.be.a('object')
+					response.body.should.have.property('message')
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('array')
 					done()
 				})
 		})

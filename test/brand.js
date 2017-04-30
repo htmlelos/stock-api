@@ -418,7 +418,7 @@ describe('BRAND: ', () => {
 				status: 'ACTIVO'
 			})
 
-			let suppliersIds = [];
+			let suppliersIds = []
 
 			let supplier = new Person({
 				type: 'PROVEEDOR',
