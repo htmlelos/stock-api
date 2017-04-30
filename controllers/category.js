@@ -4,6 +4,8 @@ const Category = require('../models/category')
 const message = require('../services/response/message')
 
 function getAllCategories(request, response) {
+  console.log('REQUEST_BODY--', request.body);
+  console.log('REQUEST_PARAMS--', request.params);
   Category.find({})
     .then(categories => {
       return Promise.all(categories.map(category => {
@@ -14,6 +16,7 @@ function getAllCategories(request, response) {
       message.success(response, 200, '', categories)
     })
     .catch(error => {
+      console.log('ERROR--', error);
       message.error(response, 422, '', error)
     })
 }
