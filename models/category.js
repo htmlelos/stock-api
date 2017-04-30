@@ -42,6 +42,6 @@ let CategorySchema = new Schema({
     versionKey: false
   })
 
-CategorySchema.add({categories: [{ type: Schema.Types.ObjectId, ref: 'category' }]})  
+CategorySchema.add({categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }]})  
 
 module.exports = mongoose.model('Category', CategorySchema)
