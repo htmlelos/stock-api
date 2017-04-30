@@ -222,6 +222,10 @@ function addUserRole(request, response) {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
+			return User.populate(user, {path: 'roles'})
+		})
+		.then(user => {
+			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'El rol se añadio con éxito', user.roles)
 		})
 		.catch(error => {
@@ -241,6 +245,9 @@ function getUserRoles(request, response) {
 
 				return Promise.reject(error)
 			}
+		})
+		.then(user => {
+			return User.populate(user, {path: 'roles'})
 		})
 		.then(user => {
 			message.success(response, 200, '', user.roles)
@@ -315,16 +322,12 @@ function createDefaultUser(request, response, next) {
 }
 
 function removeUserRoles(request, response) {
-	// console.log('REQUEST_BODY:', request.body);
-	// console.log('REQUEST_PARAM:', request.params);
 	findUser(request.params.userId)
 		.then(user => {
-			// console.log('USER_ANTES--', user);
 			let rolesIds = JSON.parse(request.body.roles)
 			let userId = request.params.userId
 			return Promise.all(rolesIds.map(id => {
 				let roleId = mongoose.Types.ObjectId(id)
-				// console.log('CURRENT_ID', roleId);
 				return User.update({_id: userId}, {$pull:{roles: roleId}})
 			}))
 		})
@@ -332,14 +335,13 @@ function removeUserRoles(request, response) {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
-			// console.log('USER_DESPUES--', user);
 			return User.populate(user, {path: 'roles'})
 		})
 		.then(user => {
+			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'Roles eliminados con éxito', user.roles)
 		})
 		.catch(error => {
-			// console.error('ERROR--', error);
 			message.failure(response, error.code, error.message, error.data)
 		})
 }

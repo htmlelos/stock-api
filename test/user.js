@@ -585,7 +585,7 @@ describe.only('USERS: test suite', () => {
 		})
 	})
 	// GET /user/:userId/roles
-	describe('GET /user/:userId/roles', () => {
+	describe.only('GET /user/:userId/roles', () => {
 		it('deberia obtener todos los roles de un usuario', done => {
 			let user = new User({
 				username: 'admin@mail.com',
@@ -632,7 +632,7 @@ describe.only('USERS: test suite', () => {
 	})
 
 	// DELETE /user/:userId/roles
-	describe.only('DELETE /user/:userId/roles', () => {
+	describe('DELETE /user/:userId/roles', () => {
 		it('deberia eliminar los roles indicados del usuario', done => {
 			let user = new User({
 				username: 'admin@mail.com',
