@@ -73,7 +73,6 @@ describe.only('USERS: test suite', () => {
 				.set('x-access-token', token)
 				.send(params)
 				.end((error, response) => {
-					console.log('RESPONSE_BODY::', response.body.data)
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message').eql('')
@@ -215,9 +214,9 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-	// GET /user/:userId
-	describe('GET /user/:userId', () => {
-		it('deberia obtener un usuario por su id', done => {
+	// Obtener un usuario por su userId
+	describe('GET /user/{userId}', () => {
+		it.only('deberia obtener un usuario por su id', done => {
 			let user = new User({
 				username: 'admin@mail.com',
 				password: 'admin',
@@ -266,8 +265,8 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-	// PUT /user/:userId
-	describe('PUT /user/:userId', () => {
+	// Actualiza un usuario
+	describe('PUT /user/{userId}', () => {
 		it('deberia actualizar un usuario por su id de usuario', done => {
 			let user = new User({
 				username: 'admin@mail.com',
@@ -362,8 +361,8 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-	// DELETE /user/:userId
-	describe('DELETE /user/:userId', () => {
+	// Eliminar un usuario
+	describe('DELETE /user/{userId}', () => {
 		it('deberia eliminar un usuario por su id', done => {
 			let user = new User({
 				username: 'admin@mail.com',
@@ -406,14 +405,14 @@ describe.only('USERS: test suite', () => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('El usuario, no es un usuario válido')
+						.eql('El usuario no es válido')
 					response.body.should.have.property('data').to.be.null
 					done()
 				})
 		})
 	})
-	// POST /user/:userId/role
-	describe('POST /user/:userId/role', () => {
+	// Añadir un rol a un usuario
+	describe('POST /user/{userId}/role', () => {
 		// Deberia agregar un rol a un usuario por su id
 		it('deberia agregar un rol a un usuario por su id', done => {
 			let role = new Role({
@@ -584,8 +583,8 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-	// GET /user/:userId/roles
-	describe.only('GET /user/:userId/roles', () => {
+	// Obtener los roles de un usuario
+	describe('GET /user/{userId}/roles', () => {
 		it('deberia obtener todos los roles de un usuario', done => {
 			let user = new User({
 				username: 'admin@mail.com',
@@ -630,9 +629,8 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-
-	// DELETE /user/:userId/roles
-	describe('DELETE /user/:userId/roles', () => {
+	// Revocar los roles indicados de un usuario
+	describe('DELETE /user/{userId}/roles', () => {
 		it('deberia eliminar los roles indicados del usuario', done => {
 			let user = new User({
 				username: 'admin@mail.com',
@@ -683,7 +681,6 @@ describe.only('USERS: test suite', () => {
 				.set('x-access-token', token)
 				.send({ roles: JSON.stringify(rolesIds) })
 				.end((error, response) => {
-					console.log('RESPONSE_BODY::', response.body);
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
@@ -693,7 +690,7 @@ describe.only('USERS: test suite', () => {
 				})
 		})
 	})
-	// DELETE /user/:userId/role/:roleId
+	// Revocar un rol de un usuario
 	describe('DELETE /user/:userId/role/:roleId', () => {
 		it('deberia eliminar un rol de un usuario por su id de rol', done => {
 			let role = new Role({
@@ -722,7 +719,9 @@ describe.only('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Rol revocado con éxito')
-					response.body.should.have.property('data').to.be.null
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('array')
+					response.body.data.length.should.be.eql(0)
 					done()
 				})
 		})
@@ -753,7 +752,7 @@ describe.only('USERS: test suite', () => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('El usuario, no es un usuario válido')
+						.eql('No se encontró el usuario')
 					response.body.should.have.property('data')
 						.eql(null)
 					done()
@@ -786,23 +785,24 @@ describe.only('USERS: test suite', () => {
 				.end((error, response) => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
-					response.body.should.have.property('message').eql('El rol, no es un rol válido')
+					response.body.should.have.property('message')
+						.eql('No se encontró el rol')
 					response.body.should.have.property('data').eql(null)
 					done()
 				})
 		})
 	})
-	// POST /user/:userId/profile
+	// Agregar un perfil de usuario
 	describe.skip('POST /user/:userId/profile', () => {
 		// Pendiente
 		it('deberia agregar un perfil a un usuario', done => { })
 	})
-	// GET /user/:userId/profiles
+	// Obtener un perfil de usuario
 	describe.skip('GET /user/:userId/profiles', () => {
 		// Pendiente
 		it('deberia obtener todos los perfiles de un usuario')
 	})
-	// DELETE /user/:userId/profile
+	// Revocar un perfil de usuario
 	describe.skip('DELETE //user/:userId/profile', () => {
 		// Pendiente
 		// it('deberia eliminar un perfil de un usuario')

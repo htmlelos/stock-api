@@ -101,13 +101,17 @@ function getUser(request, response) {
 		.select('-password')
 		.then(user => {
 			if (user) {
-				message.success(response, 200, 'Usuario obtenido con éxito', user)
+				return User.populate(user, {path: 'roles'})
 			} else {
-				message.failure(response, 404, 'No se encontró el usuario', null)
+				let error = {code: 404, message: 'No se encontró el usuario', data: null}
+				return Promise.reject(error)
 			}
 		})
+		.then(user => {
+				message.success(response, 200, 'Usuario obtenido con éxito', user)
+		})
 		.catch(error => {
-			message.error(response, 422, 'No se pudo recuperar el usuario', error)
+			message.failure(response, error.code, error.message, error.data)
 		})
 }
 
@@ -145,33 +149,31 @@ function deleteUser(request, response) {
 		.select('-password')
 		.then(user => {
 			if (user) {
-				User.remove({ _id: user.id })
-					.then(user => {
-						message.success(response, 200, 'Usuario eliminado con éxito', null)
-					})
-					.catch(error => {
-						message.error(response, { status: 422, message: '', data: error })
-						message.error(response, 500, 'No se pudo eliminar el usuario', error)
-					})
+				return User.remove({ _id: user.id })
 			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario válido', null)
+				let error = { code: 404, message: 'El usuario no es válido', data: null }
+				return Promise.reject(error)
 			}
 		})
+		.then(user => {
+			message.success(response, 200, 'Usuario eliminado con éxito', null)
+		})
 		.catch(error => {
-			message.error(response, 500, 'No se pudo eliminar el usuario', error)
+			// console.log('ERROR--', error);
+			message.failure(response, error.code, error.message, error.data)
 		})
 }
 // Encontrar un rol
 function findRole(roleId) {
 	return Role.findById({ _id: roleId })
 }
-
+// Verificiar el id de usuario no este vacio
 function checkUserId(request) {
 	// Verificar el usuario id
 	request.checkBody('roleId', 'El rol no es válido')
 		.notEmpty()
 }
-// 
+// Verificar el id de Rol no este vacio
 function checkRoleId(request) {
 	// Verificar el id del rol
 	request.checkParams('userId', 'El usuario no es válido')
@@ -222,10 +224,9 @@ function addUserRole(request, response) {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
-			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'El rol se añadio con éxito', user.roles)
 		})
 		.catch(error => {
@@ -247,7 +248,7 @@ function getUserRoles(request, response) {
 			}
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
 			message.success(response, 200, '', user.roles)
@@ -258,41 +259,36 @@ function getUserRoles(request, response) {
 }
 // Eliminar un rol de un usuario
 function deleteUserRole(request, response) {
-	findUser(request.params.userId)
-		.select('-password')
-		.then(user => {
-			if (user) {
-				findRole(request.params.roleId)
-					.then(role => {
-						if (role) {
-							let index = user.roles
-								.findIndex(element => element.toString() == role._id.toString())
-							if (index >= 0) {
-								user.roles.splice(index, 1)
-								//user.save()
-								User.update({ _id: user._id }, { $set: { roles: user.roles } })
-									.then(result => {
-										message.success(response, 200, 'Rol revocado con éxito', null)
-									})
-									.catch(error => {
-										message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
-									})
-							} else {
-								message.failure(response, 404, 'El rol, no es un rol válido', null)
-							}
-						} else {
-							message.failure(response, 404, 'El rol, no es un rol válido', null)
-						}
-					})
-					.catch(error => {
-						message.error(response, 500, 'No se pudo encontrar el rol', error)
-					})
+	let userId = request.params.userId
+	let roleId = request.params.roleId
+
+	let promiseUser = findUser(userId).select('-password')
+	let promiseRole = findRole(roleId)
+
+	Promise.all([promiseUser, promiseRole])
+		.then(values => {
+			let user = null
+			let role = null
+			if (values[0]) {
+				user = values[0]
 			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario válido', null)
+				return Promise.reject({ code: 404, message: 'No se encontró el usuario', data: null })
 			}
+			if (values[1]) {
+				role = values[1]
+			} else {
+				return Promise.reject({ code: 404, message: 'No se encontró el rol', data: null })
+			}
+			return User.update({ _id: user._id }, { $pull: { roles: role._id } })
+		})
+		.then(() => {
+			return findUser(userId)
+		})
+		.then(user => {
+			message.success(response, 200, 'Rol revocado con éxito', user.roles)
 		})
 		.catch(error => {
-			message.error(response, 500, 'No se pudo eliminar el rol del usuario', error)
+			message.failure(response, error.code, error.message, error.data)
 		})
 }
 
@@ -328,17 +324,16 @@ function removeUserRoles(request, response) {
 			let userId = request.params.userId
 			return Promise.all(rolesIds.map(id => {
 				let roleId = mongoose.Types.ObjectId(id)
-				return User.update({_id: userId}, {$pull:{roles: roleId}})
+				return User.update({ _id: userId }, { $pull: { roles: roleId } })
 			}))
 		})
 		.then(() => {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
-			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'Roles eliminados con éxito', user.roles)
 		})
 		.catch(error => {
