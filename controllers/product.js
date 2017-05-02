@@ -119,6 +119,9 @@ function getProduct(request, response) {
             return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {
+            return Product.populate(product, {path: 'components.componentId'})
+        })
+        .then(product => {
             message.success(response, 200, 'Producto obtenido con éxito', product)
         })
         .catch(error => {
