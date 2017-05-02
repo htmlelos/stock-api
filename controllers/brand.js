@@ -56,11 +56,14 @@ function createBrand(request, response) {
       message.success(response, 200, 'Marca creada con éxito', { id: brand._id })
     })
     .catch(error => {
-      if (error.code === 11000) {
-        message.duplicate(response, 422, 'La marca ya existe', null)
+      if (error.code && error.code === 11000) {
+        let error = {code: 422, message: 'La Marca ya existe', data: null}
+        message.failure(response, error.code, error.message, error.data)
+      } else if (error.code) {
+        message.failure(response, error.code, error.message, error.data)
       } else {
-        message.error(response, 422, 'No se pudo crear la marca', error)
-      }
+				message.error(response, 500, error.message, error)
+			}
     })
 }
 // Obtener una marca
