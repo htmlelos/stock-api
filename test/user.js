@@ -216,7 +216,7 @@ describe.only('USERS: test suite', () => {
 	})
 	// Obtener un usuario por su userId
 	describe('GET /user/{userId}', () => {
-		it.only('deberia obtener un usuario por su id', done => {
+		it('deberia obtener un usuario por su id', done => {
 			let user = new User({
 				username: 'admin@mail.com',
 				password: 'admin',
@@ -290,7 +290,8 @@ describe.only('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Usuario actualizado con éxito')
-					response.body.should.have.property('data').to.be.null
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('object')
 					done()
 				})
 		})
@@ -412,7 +413,7 @@ describe.only('USERS: test suite', () => {
 		})
 	})
 	// Añadir un rol a un usuario
-	describe('POST /user/{userId}/role', () => {
+	describe.only('POST /user/{userId}/role', () => {
 		// Deberia agregar un rol a un usuario por su id
 		it('deberia agregar un rol a un usuario por su id', done => {
 			let role = new Role({

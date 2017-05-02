@@ -41,11 +41,14 @@ function createRole(request, response) {
 			message.success(response, 200, 'Rol creado con éxito', {id: role._id})
 		})
 		.catch(error => {
-			if (error.code === 11000) {
-				message.duplicate(response, 422, 'El rol ya existe', null)
+			if (error.code && error.code === 11000) {
+				let error = {code: 422, message: 'El rol ya existe', data: null}
+				message.failure(response, error.code, error.message, error.data)
+			} else if (error.code) {
+				message.failure(response, error.code, error.data)
 			} else {
-				message.error(response, 422, '', error)
-			}
+				message.error(response, 500, error.message, error)
+			}		
 		})
 }
 // Obtener un rol
