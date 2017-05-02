@@ -3,22 +3,20 @@ const mongoose = require('mongoose')
 const Role = require('../models/role')
 const User = require('../models/user')
 const message = require('../services/response/message')
+
+function populateAll(users) {
+	return Promise.all(users.map(user => {
+		return User.populate(user, { path: 'roles' })
+	}))
+}
 //Obtiene todos los usuarios
 function getAllUsers(request, response) {
 	let fields = '-password'
 	User.find({})
 		.select(fields)
-		.then(users => {
-			return Promise.all(users.map(user => {
-				return Role.populate(user, { path: 'roles' })
-			}))
-		})
-		.then(users => {
-			message.success(response, 200, '', users)
-		})
-		.catch(error => {
-			message.failure(response, 404, 'No se pudieron recuperar los usuarios', error)
-		})
+		.then(users => { return populateAll(users) })
+		.then(users => { message.success(response, 200, '', users) })
+		.catch(error => { message.failure(response, 404, 'No se pudieron recuperar los usuarios', error) })
 }
 // obtener todos los usuarios que cumplan con los criterios especificados
 function retrieveAllUsers(request, response) {
@@ -31,27 +29,21 @@ function retrieveAllUsers(request, response) {
 		.select(fields)
 		.limit(limit)
 		.sort(sort)
-		.then(users => {
-			return Promise.all(users.map(user => {
-				return Role.populate(user, { path: 'roles' })
-			}))
-		})
-		.then(users => {
-			message.success(response, 200, '', users)
-		})
-		.catch(error => {
-			message.failure(response, 404, 'No se pudieron recuperar los usuarios', error)
-		})
+		.then(users => { return populateAll(users) })
+		.then(users => { message.success(response, 200, '', users) })
+		.catch(error => { message.failure(response, 404, 'No se pudieron recuperar los usuarios', error) })
 }
 // Verifica los datos del usuario
 function checkName(request) {
 	request.checkBody('username', 'Debe proporcionar un nombre de usuario')
 		.notEmpty()
 }
+// Valida que exista la contraseña del usuario
 function checkPassword(request) {
 	request.checkBody('password', 'Debe proporcionar una contraseña')
 		.notEmpty()
 }
+// Valida lo datos del estado del usuario
 function checkStatus(request) {
 	request.checkBody('status', 'Debe definir el estado del usuario')
 		.notEmpty()
@@ -65,6 +57,7 @@ function createUser(request, response) {
 	checkPassword(request)
 	checkStatus(request)
 
+	// validateUser(request)
 	request.getValidationResult()
 		.then(result => {
 			if (!result.isEmpty()) {
@@ -72,6 +65,9 @@ function createUser(request, response) {
 				return Promise.reject({ code: 422, message: messages, data: null })
 			}
 			return Promise.resolve()
+		})
+		.catch(error => {
+			return Promise.reject(error)
 		})
 		.then(result => {
 			//Crea una nueva instacia de usuario con los parametros recibidos
@@ -83,11 +79,13 @@ function createUser(request, response) {
 			message.success(response, 200, 'Usuario creado con éxito', { id: user._id })
 		})
 		.catch(error => {
-			if (error.code === 11000) {
+			if (error.code && error.code === 11000) {
 				let error = { code: 422, message: 'El usuario ya existe', data: null }
-				message.duplicate(response, error.code, error.message, error.data)
-			} else {
 				message.failure(response, error.code, error.message, error.data)
+			} else if (error.code) {
+				message.failure(response, error.code, error.message, error.data)
+			} else {
+				message.error(response, 500, error.message, error)
 			}
 		})
 }
@@ -95,83 +93,85 @@ function createUser(request, response) {
 function findUser(userId) {
 	return User.findById({ _id: userId })
 }
+
+function populateUser(user) {
+	if (user) {
+		return User.populate(user, { path: 'roles' })
+	} else {
+		let error = { code: 404, message: 'No se encontró el usuario', data: null }
+		return Promise.reject(error)
+	}
+}
 // Obtener un usuario por su id
 function getUser(request, response) {
 	findUser(request.params.userId)
 		.select('-password')
-		.then(user => {
-			if (user) {
-				message.success(response, 200, 'Usuario obtenido con éxito', user)
-			} else {
-				message.failure(response, 404, 'No se encontró el usuario', null)
-			}
-		})
-		.catch(error => {
-			message.error(response, 422, 'No se pudo recuperar el usuario', error)
-		})
+		.then(user => { return populateUser(user) })
+		.then(user => { message.success(response, 200, 'Usuario obtenido con éxito', user) })
+		.catch(error => { message.failure(response, error.code, error.message, error.data) })
 }
-
+// Modificar el registro del usuario
+function modififyUser(user, newUser) {
+	if (user) {
+		return User.update({ _id: user._id }, { $set: newUser })
+	} else {
+		let error = { code: 404, message: 'El usuario, no es un usuario válido', data: null }
+		return Promise.reject(error)
+	}
+}
 // Actualiza un usuario por su id
 function updateUser(request, response) {
-	// Encuentra el usuario a actualizar
-	findUser(request.params.userId)
-		.then(user => {
-			// Si el usuario existe se actualiza con los datos proporcionados
-			if (user) {
-				let newUser = request.body
-				newUser.updatedBy = request.decoded.username
-				newUser.updatedAt = Date.now()
 
-				return User.update({ _id: request.params.userId }, { $set: newUser })
-			} else {
-				let error = { code: 404, message: 'El usuario, no es un usuario válido', data: null }
-				return Promise.reject(error)
-			}
-		})
-		.then(user => {
-			message.success(response, 200, 'Usuario actualizado con éxito', null)
-		})
+	let userId = request.params.userId
+	let newUser = request.body
+	newUser.updatedBy = request.decoded.username
+	newUser.updatedAt = Date.now()
+	// Encuentra el usuario a actualizar
+	findUser(userId)
+		.then(user => { return modififyUser(user, newUser) })
+		.then(() => { return findUser(userId).select('-password') })
+		.then(user => { return User.populate(user, { path: 'roles' }) })
+		.then(user => { message.success(response, 200, 'Usuario actualizado con éxito', user) })
 		.catch(error => {
-			if (error.code === 11000) {
-				message.failure(response, 422, 'El usuario ya existe', null)
-			} else {
+			if (error.code && error.code === 11000) {
+				let error = { code: 422, message: 'El usuario ya existe', data: null }
 				message.failure(response, error.code, error.message, error.data)
+			} else if (error.code) {
+				message.failure(response, error.code, error.message, error.data)
+			} else {
+				message.error(response, 500, error.message, error)
 			}
 		})
+}
+// Remueve un usuario
+function removeUser(user) {
+	if (user) {
+		return User.remove({ _id: user.id })
+	} else {
+		let error = { code: 404, message: 'El usuario no es válido', data: null }
+		return Promise.reject(error)
+	}
 }
 // Elimina un usuario por su id
 function deleteUser(request, response) {
-	findUser(request.params.userId)
+	let userId = request.params.userId
+	findUser(userId)
 		.select('-password')
-		.then(user => {
-			if (user) {
-				User.remove({ _id: user.id })
-					.then(user => {
-						message.success(response, 200, 'Usuario eliminado con éxito', null)
-					})
-					.catch(error => {
-						message.error(response, { status: 422, message: '', data: error })
-						message.error(response, 500, 'No se pudo eliminar el usuario', error)
-					})
-			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario válido', null)
-			}
-		})
-		.catch(error => {
-			message.error(response, 500, 'No se pudo eliminar el usuario', error)
-		})
+		.then(user => { return removeUser(user) })
+		.then(user => { message.success(response, 200, 'Usuario eliminado con éxito', null) })
+		.catch(error => { message.failure(response, error.code, error.message, error.data) })
 }
 // Encontrar un rol
 function findRole(roleId) {
 	return Role.findById({ _id: roleId })
 }
-
+// Verificiar el id de usuario no este vacio
 function checkUserId(request) {
 	// Verificar el usuario id
 	request.checkBody('roleId', 'El rol no es válido')
 		.notEmpty()
 }
-// 
+// Verificar el id de Rol no este vacio
 function checkRoleId(request) {
 	// Verificar el id del rol
 	request.checkParams('userId', 'El usuario no es válido')
@@ -215,17 +215,18 @@ function addUserRole(request, response) {
 			if (isIncluded) {
 				return Promise.reject({ code: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
 			} else {
-				return User.update({ _id: user._id }, { $push: { roles: role } })
+				user.updatedBy = request.decoded.username
+				user.updatedAt = Date.now()
+				return User.update({ _id: user._id }, { $push: { roles: role }, updatedAt: user.updatedAt, updatedBy: user.updatedBy })
 			}
 		})
 		.then(() => {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
-			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'El rol se añadio con éxito', user.roles)
 		})
 		.catch(error => {
@@ -247,7 +248,7 @@ function getUserRoles(request, response) {
 			}
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
 			message.success(response, 200, '', user.roles)
@@ -258,41 +259,38 @@ function getUserRoles(request, response) {
 }
 // Eliminar un rol de un usuario
 function deleteUserRole(request, response) {
-	findUser(request.params.userId)
-		.select('-password')
-		.then(user => {
-			if (user) {
-				findRole(request.params.roleId)
-					.then(role => {
-						if (role) {
-							let index = user.roles
-								.findIndex(element => element.toString() == role._id.toString())
-							if (index >= 0) {
-								user.roles.splice(index, 1)
-								//user.save()
-								User.update({ _id: user._id }, { $set: { roles: user.roles } })
-									.then(result => {
-										message.success(response, 200, 'Rol revocado con éxito', null)
-									})
-									.catch(error => {
-										message.error(response, 500, 'No se pudo eliminar el rol de usuario', error)
-									})
-							} else {
-								message.failure(response, 404, 'El rol, no es un rol válido', null)
-							}
-						} else {
-							message.failure(response, 404, 'El rol, no es un rol válido', null)
-						}
-					})
-					.catch(error => {
-						message.error(response, 500, 'No se pudo encontrar el rol', error)
-					})
+	let userId = request.params.userId
+	let roleId = request.params.roleId
+
+	let promiseUser = findUser(userId).select('-password')
+	let promiseRole = findRole(roleId)
+
+	Promise.all([promiseUser, promiseRole])
+		.then(values => {
+			let user = null
+			let role = null
+			if (values[0]) {
+				user = values[0]
 			} else {
-				message.failure(response, 404, 'El usuario, no es un usuario válido', null)
+				return Promise.reject({ code: 404, message: 'No se encontró el usuario', data: null })
 			}
+			if (values[1]) {
+				role = values[1]
+			} else {
+				return Promise.reject({ code: 404, message: 'No se encontró el rol', data: null })
+			}
+			user.updatedBy = request.decoded.username
+			user.updatedAt = Date.now()
+			return User.update({ _id: user._id }, { $pull: { roles: role._id }, updatedAt: user.updatedAt, updatedBy: user.updatedBy })
+		})
+		.then(() => {
+			return findUser(userId)
+		})
+		.then(user => {
+			message.success(response, 200, 'Rol revocado con éxito', user.roles)
 		})
 		.catch(error => {
-			message.error(response, 500, 'No se pudo eliminar el rol del usuario', error)
+			message.failure(response, error.code, error.message, error.data)
 		})
 }
 
@@ -328,17 +326,18 @@ function removeUserRoles(request, response) {
 			let userId = request.params.userId
 			return Promise.all(rolesIds.map(id => {
 				let roleId = mongoose.Types.ObjectId(id)
-				return User.update({_id: userId}, {$pull:{roles: roleId}})
+				user.updatedBy = request.decoded.username
+				user.updatedAt = Date.now()
+				return User.update({ _id: userId }, { $pull: { roles: roleId }, updatedAt: user.updatedAt, updatedBy: user.updatedBy })
 			}))
 		})
 		.then(() => {
 			return findUser(request.params.userId)
 		})
 		.then(user => {
-			return User.populate(user, {path: 'roles'})
+			return User.populate(user, { path: 'roles' })
 		})
 		.then(user => {
-			console.log('ROLES--', user.roles);
 			message.success(response, 200, 'Roles eliminados con éxito', user.roles)
 		})
 		.catch(error => {
