@@ -8,8 +8,6 @@ const cfg = require('./config')
 mongoose.Promise = global.Promise
 // Conexion a la base de datos
 //mongoose.connect('mongodb://localhost:27017/authentication')
-
-// console.log('CFG--', cfg);
 const connectionString = `${cfg.url}:${cfg.port}/${cfg.db}`
 mongoose.connect(connectionString, config.dbhost.options)
 const db = mongoose.connection
