@@ -53,7 +53,9 @@ superUser(server)
 // Routes
 routes(server)
 
-server.listen(process.env.REST_PORT, function () {
+console.log('PORT-->', port)
+
+server.listen(parseInt(port), function () {
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 
