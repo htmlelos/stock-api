@@ -1,5 +1,3 @@
 module.exports = {
-  port: process.env.MONGODB_PORT||27017,
-  url: process.env.MONGODB_URL||'mongodb://localhost',
-  db: process.env.MONGODB_DB||'inventory'
+  uri: process.env.MONGODB_URI||'mongodb://localhost:27017/inventory'
 }
