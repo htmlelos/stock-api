@@ -4,7 +4,7 @@ const Role = require('../models/role')
 const User = require('../models/user')
 const security = require('../services/security/security')
 const message = require('../services/response/message')
-const settings = require('../settings.cfg')
+const settings = require('../settings')
 
 const login = (request, response) => {
   User.findOne({ username: request.body.username })
@@ -16,6 +16,7 @@ const login = (request, response) => {
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
+            console.log('ERROR-500--', error);
             message.error(response, 500, '', error)
           })
       } else {

@@ -1,5 +1,5 @@
 const User = require('../../models/user')
-const settings = require('../../settings.cfg')
+const settings = require('../../settings')
 
 // Esta funcionalidad permite crear un superusuario para el sistema
 // La contraseña de este usuario debe ser modificada luego de 

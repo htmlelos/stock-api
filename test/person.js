@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test'
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Person = require('../models/person')
-const settings = require('../settings.cfg')
+const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
 const chaiHttp = require('chai-http')

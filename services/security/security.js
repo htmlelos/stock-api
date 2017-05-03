@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../../models/user')
 const message = require('../response/message')
-const settings = require('../../settings.cfg')
+const settings = require('../../settings')
 
 const verifyCredentials = (request, response, user) => {
   

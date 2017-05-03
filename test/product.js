@@ -8,7 +8,7 @@ const Brand = require('../models/brand')
 const Person = require('../models/person')
 const Product = require('../models/product')
 const PriceList = require('../models/priceList')
-const settings = require('../settings.cfg')
+const settings = require('../settings')
 // Depensencias de desarrollo
 const chai = require('chai')
 const chaiHttp = require('chai-http')
