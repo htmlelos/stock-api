@@ -1,5 +1,6 @@
 const config = require('config')
 const mongoose = require('mongoose')
+const cfg = require('./config')
 
 // Configuracion de la base de datos
 
@@ -7,7 +8,7 @@ const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 // Conexion a la base de datos
 //mongoose.connect('mongodb://localhost:27017/authentication')
-const connectionString = `${config.dbhost.url}:${config.dbhost.port}/${config.dbhost.db}`
+const connectionString = `${cfg.url}:${cfg.port}/${cfg.db}`
 mongoose.connect(connectionString, config.dbhost.options)
 const db = mongoose.connection
 
