@@ -854,9 +854,7 @@ describe('PRODUCTS: ', () => {
             productComponent.save()
                 .catch(error => { console.error('ERROR', error) })
 
-            let productComponentId2 = productComponent._id
-            console.log('PRODUCT_COMPONENTE_ID2::', productComponentId2);
-            
+            let productComponentId2 = productComponent._id            
             let component = {
                 quantity: 30,
                 unit: 'Unidad',

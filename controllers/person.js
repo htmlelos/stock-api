@@ -41,8 +41,9 @@ function checkPerson(request, type = null) {
         .isIn(['ACTIVO', 'INACTIVO'])
 }
 // Verifica los datos del comprador
-function checkCustomer(request, type) {
+function checkCustomer(request) {
     // Verificar Cliente
+    let type = request.body.type
     if (type === 'CLIENTE') {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
@@ -53,8 +54,9 @@ function checkCustomer(request, type) {
     }
 }
 // Verifica los datos del proveedor
-function checkSupplier(request, type) {
+function checkSupplier(request) {
     // Verificar Proveedor
+    let type = request.body.type
     if (type === 'PROVEEDOR') {
         request.checkBody('businessName', `La razón social del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
@@ -68,8 +70,9 @@ function checkSupplier(request, type) {
     }
 }
 // Verifica los datos del vendedor
-function checkSeller(request, type) {
+function checkSeller(request) {
     // Verificar VENDEDOR
+    let type = request.body.type
     if (type === 'VENDEDOR') {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
@@ -78,8 +81,9 @@ function checkSeller(request, type) {
     }
 }
 // Verifica los datos del cajero
-function checkCashier(request, type) {
+function checkCashier(request) {
     // Verificar CAJERO
+    let type = request.body.type
     if (type === 'CAJERO') {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
@@ -89,13 +93,12 @@ function checkCashier(request, type) {
 }
 // Crea una nueva persona en la base de datos
 function createPerson(request, response) {
-    // Validamos los parametros para la creacion de tipos de personas
-    let type = request.body.type
+    // Validamos los parametros para la creacion de tipos de personas    
     checkPerson(request)
-    checkCustomer(request, type)
-    checkSupplier(request, type)
-    checkSeller(request, type)
-    checkCashier(request, type)
+    checkCustomer(request)
+    checkSupplier(request)
+    checkSeller(request)
+    checkCashier(request)
 
     request.getValidationResult()
         .then(result => {
@@ -114,7 +117,7 @@ function createPerson(request, response) {
             message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
         })
         .catch(error => {
-            message.failure(response, error.code, error.messages, error.data)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 // Obtener una persona

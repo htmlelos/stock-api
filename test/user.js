@@ -16,7 +16,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('USERS: test suite', () => {
+describe('USERS: test suite', () => {
 	let token = ''
 	// Se ejecuta antes de cada test
 	beforeEach(done => {
@@ -413,7 +413,7 @@ describe.only('USERS: test suite', () => {
 		})
 	})
 	// Añadir un rol a un usuario
-	describe.only('POST /user/{userId}/role', () => {
+	describe('POST /user/{userId}/role', () => {
 		// Deberia agregar un rol a un usuario por su id
 		it('deberia agregar un rol a un usuario por su id', done => {
 			let role = new Role({
