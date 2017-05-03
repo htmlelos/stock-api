@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const User = require('../models/user')
 const Role = require('../models/role')
-const settings = require('../settings.cfg')
+const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
 const chaiHttp = require('chai-http')
