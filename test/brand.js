@@ -124,7 +124,7 @@ describe('BRAND: ', () => {
 					response.should.have.status(422)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('La marca ya existe')
+						.eql('La Marca ya existe')
 					response.body.should.have.property('data').to.be.null
 					done()
 				})

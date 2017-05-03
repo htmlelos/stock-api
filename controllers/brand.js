@@ -44,26 +44,50 @@ function retrieveAllBrands(request, response) {
       message.failure(response, 404, 'No se pudieron recuperar las Marcas', error)
     })
 }
-
+// Verifica que el nombre de la marca esté presente
+function checkName(request) {
+  request.checkBody('name', 'Debe proporcionar un nombre para la marca')
+    .notEmpty()
+}
+// Valida lo datos del estado de la marca
+function checkStatus(request) {
+  request.checkBody('status', 'Debe definir el estado de la Marca')
+    .notEmpty()
+  request.checkBody('status', 'El estado de la Marca solo puede ser ACTIVO o INACTIVO')
+    .isIn('ACTIVO', 'INACTIVO')
+}
 // Crear una nueva marca
 function createBrand(request, response) {
-  //Crea una nueva instancia de marca con los parametros recibidos
-  let newBrand = new Brand(request.body)
+  checkName(request)
+  checkStatus(request)
 
-  newBrand.createdBy = request.decoded.username
-  newBrand.save()
+  request.getValidationResult()
+    .then(result => {
+      if (!result.isEmpty()) {
+        let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+        return Promise.reject({ code: 422, message: messages, data: null })
+      }
+      return Promise.resolve()
+    })
+    .then(() => {
+      //Crea una nueva instancia de marca con los parametros recibidos
+      let newBrand = new Brand(request.body)
+      newBrand.createdBy = request.decoded.username
+      return newBrand.save()
+    })
     .then(brand => {
       message.success(response, 200, 'Marca creada con éxito', { id: brand._id })
     })
     .catch(error => {
       if (error.code && error.code === 11000) {
-        let error = {code: 422, message: 'La Marca ya existe', data: null}
+        let error = { code: 422, message: 'La Marca ya existe', data: null }
         message.failure(response, error.code, error.message, error.data)
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-				message.error(response, 500, error.message, error)
-			}
+        console.log('ERROR--', error);
+        message.error(response, 500, error.message, error)
+      }
     })
 }
 // Obtener una marca

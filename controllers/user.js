@@ -33,7 +33,7 @@ function retrieveAllUsers(request, response) {
 		.then(users => { message.success(response, 200, '', users) })
 		.catch(error => { message.failure(response, 404, 'No se pudieron recuperar los usuarios', error) })
 }
-// Verifica los datos del usuario
+// Verifica que el nombre del usuario esté presente
 function checkName(request) {
 	request.checkBody('username', 'Debe proporcionar un nombre de usuario')
 		.notEmpty()
@@ -66,10 +66,7 @@ function createUser(request, response) {
 			}
 			return Promise.resolve()
 		})
-		.catch(error => {
-			return Promise.reject(error)
-		})
-		.then(result => {
+		.then(() => {
 			//Crea una nueva instacia de usuario con los parametros recibidos
 			let newUser = new User(request.body)
 			newUser.createdBy = request.decoded.username

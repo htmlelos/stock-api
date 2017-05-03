@@ -30,25 +30,55 @@ function retrieveAllRoles(request, response) {
 			message.failure(response, 404, 'No se recuperaron los roles', error)
 		})
 }
-//Crea un nuevo Rol
+// Valida que el nombre del rol esté presente
+function checkName(request) {
+	request.checkBody('name', 'Debe proporcionar un nombre de Rol')
+		.notEmpty()
+}
+// Valida que este definida la descripción del rol
+function checkDescription(request) {
+	request.checkBody('description', 'Debe proporcionar una descripción del Rol')
+		.notEmpty()	
+}
+// Valida los datos del estado del rol
+function checkStatus(request) {
+	request.checkBody('status', 'Debe definir el estado del Rol')
+		.notEmpty()
+	request.checkBody('status', 'El estado del Rol solo puede ser ACTIVO o INACTIVO')
+		.isIn('ACTIVO', 'INACTIVO')
+}
+// Crea un nuevo Rol
 function createRole(request, response) {
-	//Crea una nueva instancia de Role con los parametros recibidos
-	let newRole = new Role(request.body)
+	checkName(request)
+	checkDescription(request)
+	checkStatus(request)
 
-	newRole.createdBy = request.decoded.username
-	newRole.save()
+	request.getValidationResult()
+		.then(result => {
+			if (!result.isEmpty()) {
+				let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+				return Promise.reject({ code: 422, message: messages, data: null })
+			}
+			return Promise.resolve()
+		})
+		.then(() => {
+			// Crea una nueva instancia de Role con los parametros recibidos
+			let newRole = new Role(request.body)
+			newRole.createdBy = request.decoded.username
+			return newRole.save()
+		})
 		.then(role => {
-			message.success(response, 200, 'Rol creado con éxito', {id: role._id})
+			message.success(response, 200, 'Rol creado con éxito', { id: role._id })
 		})
 		.catch(error => {
 			if (error.code && error.code === 11000) {
-				let error = {code: 422, message: 'El rol ya existe', data: null}
+				let error = { code: 422, message: 'El Rol ya existe', data: null }
 				message.failure(response, error.code, error.message, error.data)
 			} else if (error.code) {
-				message.failure(response, error.code, error.data)
+				message.failure(response, error.code, error.message, error.data)
 			} else {
 				message.error(response, 500, error.message, error)
-			}		
+			}
 		})
 }
 // Obtener un rol

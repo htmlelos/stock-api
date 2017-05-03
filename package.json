@@ -7,7 +7,6 @@
     "start": "node server.js",
     "test": "mocha --timeout 5000",
     "dev": "SET NODE_ENV=dev&& nodemon server.js",
-    "run": "SET NODE_ENV=prod&& nodemon server.js",
     "build": "echo buildme!"
   },
   "author": "Lucero Sergio Alejandro",

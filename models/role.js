@@ -8,20 +8,20 @@ mongoose.Promise = global.Promise
 let RoleSchema = new Schema({
 	name: {
 		type: String,
-		required: 'Debe proporcionar un nombre de rol',
+		required: 'Debe proporcionar un nombre de Rol',
 		unique: true
 	},
 	description: {
 		type: String,
-		required: 'Debe proporcionar una descripcion del rol'
+		required: 'Debe proporcionar una descripción del Rol'
 	},
 	status: {
 		type: String,
 		enum: {
 			values: ['ACTIVO', 'INACTIVO'],
-			message: 'El estado del rol solo puede ser ACTIVO o INACTIVO'
+			message: 'El estado del Rol solo puede ser ACTIVO o INACTIVO'
 		},
-		required: 'Debe definir el estado del rol'
+		required: 'Debe definir el estado del Rol'
 	},
 	createdAt: {
 		type: Date,
