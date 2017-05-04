@@ -11,6 +11,7 @@ const superUser = require('./services/security/superuser')
 const routes = require('./routes/routes')
 
 const port = process.env.REST_PORT || 3000
+server.set('port',port)
 server.use(cors())
 // No mostrar la bitacora cuando se hacen las pruebas
 if (config.util.getEnv('NODE_ENV') !== 'test') {
@@ -53,9 +54,9 @@ superUser(server)
 // Routes
 routes(server)
 
-console.log('PORT-->', port)
+// console.log('PORT-->', port)
 
-server.listen(parseInt(port), function () {
+server.listen(parseInt(server.get('port')), function () {
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 
