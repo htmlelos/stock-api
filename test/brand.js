@@ -208,12 +208,13 @@ describe('BRAND: ', () => {
 					description: 'Otra bebida gaseosa',
 					suppliers: []
 				})
-				.end((error, response) => {
+				.end((error, response) => {				
 					response.should.have.status(200)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Marca actualizada con éxito')
-					response.body.should.have.property('data').to.be.null
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('object')
 					done()
 				})
 		})
@@ -241,7 +242,7 @@ describe('BRAND: ', () => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('La marca, no es una marca valida')
+						.eql('La Marca no es válida')
 					response.body.should.have.property('data').to.be.null
 					done()
 				})

@@ -15,6 +15,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
 describe('ROLE: ', () => {
+
 	let token = ''
 	// Se ejecuta antes de cada test
 	beforeEach(done => {
@@ -81,7 +82,6 @@ describe('ROLE: ', () => {
 					done()
 				})
 		})
-
 		it('no deberia crear un rol sin un nombre', done => {
 			let role = {
 				description: 'Un usuario con este rol, posee permisos de administrador',
@@ -267,11 +267,11 @@ describe('ROLE: ', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Rol actualizado con éxito')
-					response.body.should.have.property('data').to.be.null
+					response.body.should.have.property('data')
+					response.body.data.should.be.a('object')
 					done()
 				})
 		})
-
 		it('no deberia actualizar un rol con un id de rol inválido', done => {
 			let role = new Role({
 				name: 'admin_role',
@@ -299,7 +299,6 @@ describe('ROLE: ', () => {
 					done()
 				})
 		})
-
 		it('No deberia actualizar un rol con nombre duplicado', done => {
 			let role = new Role({
 				name: 'admin_role',
@@ -331,7 +330,7 @@ describe('ROLE: ', () => {
 					response.should.have.status(422)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('El rol ya existe')
+						.eql('El Rol ya existe')
 					response.body.should.have.property('data').to.be.null
 					done()
 				})

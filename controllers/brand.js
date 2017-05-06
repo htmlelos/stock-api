@@ -114,42 +114,40 @@ function getBrand(request, response) {
       message.error(response, 500, 'No se pudo recuperar la marca', error)
     })
 }
+function modifyBrand(brand, newBrand) {
+  if (brand) {
+    return Brand.update({ _id: brand._id }, { $set: newBrand })
+  } else {
+    let error = { code: 404, message: 'La Marca no es válida', data: null }
+    return Promise.reject(error)
+  }
+}
 // Actualizar una marca por su id
 function updateBrand(request, response) {
-  findBrand(request.params.brandId)
+  let brandId = request.params.brandId
+  let newBrand = request.body
+  newBrand.updatedBy = request.decoded.username
+  newBrand.updatedAt = Date.now()
+  findBrand(brandId)
     .then(brand => {
+      return modifyBrand(brand, newBrand)
       // Si la marca con el id proporcionado existe se actualiza con los datos proporcionados
-      if (brand) {
-        let newBrand = request.body
-        newBrand.updatedBy = request.decoded.username
-        newBrand.updatedAt = Date.now()
-        findBrand(request.params.brandId)
-          .then(result => {
-            if (result) {
-              Brand.update({ _id: request.params.brandId }, { $set: newBrand }, { runValidators: true })
-                .then(result => {
-                  message.success(response, 200, 'Marca actualizada con éxito', null)
-                })
-                .catch(error => {
-                  if (error.code === 11000) {
-                    message.duplicate(response, 422, 'La marca ya existe', null)
-                  } else {
-                    message.error(response, 422, 'No se pudo actualizar la marca', error)
-                  }
-                })
-            } else {
-              message.duplicate(response, 422, 'La marca ya existe', null)
-            }
-          })
-          .catch(error => {
-            message.error(response, 422, 'No se pudo actualizar la marca', error)
-          })
-      } else {
-        message.failure(response, 404, 'La marca, no es una marca valida', null)
-      }
+    })
+    .then(() => {
+      return findBrand(brandId)
+    })
+    .then(brand => {
+      return message.success(response, 200, 'Marca actualizada con éxito', brand)
     })
     .catch(error => {
-      message.error(response, 422, 'No se pudo encontrar la marca', error)
+      if (error.code && error.code === 11000) {
+        let error = {code: 422, message: 'La marca ya existe', data: null}
+        message.failure(response, error.code, error.message, error.data)
+      } else if (error.code) {
+        message.failure(response, error.code, error.message, error.data)
+      } else {
+        message.error(response, 500, error.message, error)
+      }
     })
 }
 // Eliminar una marca por su id

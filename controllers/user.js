@@ -48,7 +48,7 @@ function checkStatus(request) {
 	request.checkBody('status', 'Debe definir el estado del usuario')
 		.notEmpty()
 	request.checkBody('status', 'El estado de usuario solo puede ser ACTIVO o INACTIVO')
-		.isIn('ACTIVO', 'INACTIVO')
+		.isIn(['ACTIVO', 'INACTIVO'])
 }
 
 //Crea un nuevo usuario
@@ -108,11 +108,11 @@ function getUser(request, response) {
 		.catch(error => { message.failure(response, error.code, error.message, error.data) })
 }
 // Modificar el registro del usuario
-function modififyUser(user, newUser) {
+function modifyUser(user, newUser) {
 	if (user) {
 		return User.update({ _id: user._id }, { $set: newUser })
 	} else {
-		let error = { code: 404, message: 'El usuario, no es un usuario válido', data: null }
+		let error = { code: 404, message: 'El usuario no es válido', data: null }
 		return Promise.reject(error)
 	}
 }
@@ -123,9 +123,8 @@ function updateUser(request, response) {
 	let newUser = request.body
 	newUser.updatedBy = request.decoded.username
 	newUser.updatedAt = Date.now()
-	// Encuentra el usuario a actualizar
 	findUser(userId)
-		.then(user => { return modififyUser(user, newUser) })
+		.then(user => { return modifyUser(user, newUser) })
 		.then(() => { return findUser(userId).select('-password') })
 		.then(user => { return User.populate(user, { path: 'roles' }) })
 		.then(user => { message.success(response, 200, 'Usuario actualizado con éxito', user) })
@@ -152,11 +151,16 @@ function removeUser(user) {
 // Elimina un usuario por su id
 function deleteUser(request, response) {
 	let userId = request.params.userId
-	findUser(userId)
-		.select('-password')
+	findUser(userId).select('-password')
 		.then(user => { return removeUser(user) })
-		.then(user => { message.success(response, 200, 'Usuario eliminado con éxito', null) })
-		.catch(error => { message.failure(response, error.code, error.message, error.data) })
+		.then(() => { message.success(response, 200, 'Usuario eliminado con éxito', null) })
+		.catch(error => {
+			if (error.code) {
+				message.failure(response, error.code, error.message, error.data)
+			} else {
+				message.failure(response, 500, error.message, error)
+			}
+		})
 }
 // Encontrar un rol
 function findRole(roleId) {
