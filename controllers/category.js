@@ -7,7 +7,7 @@ function getAllCategories(request, response) {
   Category.find({})
     .then(categories => {
       return Promise.all(categories.map(category => {
-        return Category.populate(category, {path: 'categories'})
+        return Category.populate(category, { path: 'categories' })
       }))
     })
     .then(categories => {
@@ -25,23 +25,23 @@ function retrieveAllCategories(request, response) {
   let sort = request.body.sort
 
   Category.find(filter)
-          .select(fields)
-          .limit(limit)
-          .sort(sort)
-          .then(categories => {
-            return Promise.all(categories.map(category => {
-              return Category.populate(category, {path: 'categories'})
-            }))
-          })
-          .then(categories => {
-            message.success(response, 200, '', categories)
-          })
-          .catch(error => {
-            message.failure(response, 404, 'No se pudieron recuperar las categorias', error)
-          })
+    .select(fields)
+    .limit(limit)
+    .sort(sort)
+    .then(categories => {
+      return Promise.all(categories.map(category => {
+        return Category.populate(category, { path: 'categories' })
+      }))
+    })
+    .then(categories => {
+      message.success(response, 200, '', categories)
+    })
+    .catch(error => {
+      message.failure(response, 404, 'No se pudieron recuperar las categorias', error)
+    })
 }
 
-  // Crea una nueva Categooria
+// Crea una nueva Categooria
 function createCategory(request, response) {
   // Crea una nueva instanscia de Category con los parametros recibidos
   // console.log('CREATE--')
@@ -69,10 +69,14 @@ function getCategory(request, response) {
   findCategory(request.params.categoryId)
     .then(category => {
       if (category) {
-        message.success(response, 200, 'categoría obtenida con éxito', category)
+        return Category.populate(category, { path: 'categories' })
       } else {
-        message.failure(response, 404, 'No se encontró la categoría', null)
+        let error = { code: 404, message: 'No se encontró la categoría', data: null }
+        return Promise.reject(error)
       }
+    })
+    .then(category => {
+      message.success(response, 200, 'categoría obtenida con éxito', category)
     })
     .catch(error => {
       message.failure(response, 500, 'El sistema tuvo un fallo al recuperar la categoría', null)

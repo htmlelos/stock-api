@@ -211,8 +211,8 @@ function addUserRole(request, response) {
 				return Promise.reject({ code: 404, message: 'No se encontró el Rol', data: null })
 			}
 			let isIncluded = user.roles
-				.map(current => current.toString())
-				.includes(role._id.toString())
+								.map(current => current.toString())
+								.includes(role._id.toString())
 			if (isIncluded) {
 				return Promise.reject({ code: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
 			} else {

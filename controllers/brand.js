@@ -115,6 +115,8 @@ function getBrand(request, response) {
     })
 }
 function modifyBrand(brand, newBrand) {
+  console.log('BRAND--', brand)
+  console.log('NEW_BRAND--', newBrand)
   if (brand) {
     return Brand.update({ _id: brand._id }, { $set: newBrand })
   } else {
@@ -130,18 +132,21 @@ function updateBrand(request, response) {
   newBrand.updatedAt = Date.now()
   findBrand(brandId)
     .then(brand => {
+      console.log('ANTES: ', brand)
       return modifyBrand(brand, newBrand)
       // Si la marca con el id proporcionado existe se actualiza con los datos proporcionados
     })
-    .then(() => {
+    .then((result) => {
+      console.log('RESULT', result)
       return findBrand(brandId)
     })
     .then(brand => {
+      console.log('DESPUES: ', brand)
       return message.success(response, 200, 'Marca actualizada con éxito', brand)
     })
     .catch(error => {
       if (error.code && error.code === 11000) {
-        let error = {code: 422, message: 'La marca ya existe', data: null}
+        let error = { code: 422, message: 'La marca ya existe', data: null }
         message.failure(response, error.code, error.message, error.data)
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
@@ -197,30 +202,41 @@ function addSupplier(request, response) {
   let promiseSupplier = findSupplier(request.body.supplierId)
   Promise.all([promiseBrand, promiseSupplier])
     .then(values => {
-      let brandId = null
-      let supplierId = null
+      let brand = null
+      let supplier = null
       if (values[0]) {
-        brandId = values[0]._id
+        brand = values[0]
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la marca', data: null })
       }
       if (values[1]) {
-        supplierId = values[1]._id
+        supplier = values[1]
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró el proveedor', data: null })
       }
-      return Brand.update({ _id: brandId }, { $push: { suppliers: supplierId } })
+      let isIncluded = brand.suppliers
+                        .map(current => current.toString())
+                        .includes(supplier._id.toString())
+      if (isIncluded) {
+        return Promise.reject({ code: 422, message: 'El proveedor ya se encuentra asociado a la marca', data: null })
+      } else {
+        brand.updatedBy = request.decoded.username
+        brand.updatedAt = Date.now()
+        return Brand.update({ _id: brand._id }, { $push: { suppliers: supplier._id }, updatedAt: brand.updatedAt, updatedBy: brand.updatedBy })
+      }
     })
     .then(() => {
       return findBrand(request.params.brandId)
     })
     .then(brand => {
+      console.log('DESPUES--', brand)
       return Person.populate(brand, { path: 'suppliers' })
     })
     .then(brand => {
       message.success(response, 200, 'Proveedor agregado con éxito', brand.suppliers)
     })
     .catch(error => {
+      console.log('ERROR--', error)
       message.failure(response, error.code, error.message, error.data)
     })
 }
