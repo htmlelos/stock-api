@@ -10,7 +10,8 @@ const mongoose = require('./services/database/mongoose')
 const superUser = require('./services/security/superuser')
 const routes = require('./routes/routes')
 
-const port = process.env.REST_PORT || 3000
+const port = process.env.PORT || 3000
+server.set('port',port)
 server.use(cors())
 // No mostrar la bitacora cuando se hacen las pruebas
 if (config.util.getEnv('NODE_ENV') !== 'test') {
@@ -53,7 +54,7 @@ superUser(server)
 // Routes
 routes(server)
 
-server.listen(process.env.REST_PORT, function () {
+server.listen(parseInt(server.get('port')), function () {
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 

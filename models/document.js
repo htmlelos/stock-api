@@ -180,10 +180,10 @@ const DocumentSchema = new Schema({
         required: true,
         default: 'anonimo'
     },
-    modifiedAt: {
+    updatedAt: {
         type: Date
     },
-    modifiedBy: {
+    updatedBy: {
         type: String
     }
 }, {

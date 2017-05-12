@@ -19,19 +19,25 @@ const PriceSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: ['ACTIVO', 'INACTIVO', 'PENDIENTE'],
-            message: 'El estado del precio de un producto solo puede ser ACTIVO, INACTIVO o PENDIENTE'
+            values: ['ACTIVO', 'INACTIVO', 'PENDIENTE', 'ANULADO'],
+            message: 'El estado del precio de un producto solo puede ser ACTIVO, INACTIVO, PENDIENTE o ANULADO'
         },
         required: 'Debe definir el estado del producto'
-        ,default: 'PENDIENTE'
+        , default: 'PENDIENTE'
     },
     createdAt: {
         type: Date,
         default: Date.now
     },
-    updatedBy: {
+    createdBy: {
         type: String,
         default: 'anonimo'
+    },
+    updatedBy: {
+        type: String
+    },
+    updatedAt: {
+        type: Date
     }
 }, {
         versionKey: false
@@ -40,7 +46,7 @@ const PriceSchema = new Schema({
 const ComponentSchema = new Schema({
     quantity: Number,
     unit: String,
-    componentId: { type: Schema.Types.ObjectId, ref: 'Product' , index: true}
+    componentId: { type: Schema.Types.ObjectId, ref: 'Product', index: true }
 }, {
         versionKey: false
     })
@@ -86,16 +92,17 @@ const ProductSchema = new Schema({
         required: true,
         default: 'anonimo'
     },
-    modifiedAt: {
-        type: Date
-    },
-    modifiedBy: {
+    updatedBy: {
         type: String
+    },
+    updatedAt: {
+        type: Date
     }
 }, {
+        // timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' },
         versionKey: false
     })
 
-ProductSchema.add({components: [ComponentSchema]})
+ProductSchema.add({ components: [ComponentSchema] })
 
 module.exports = mongoose.model('Product', ProductSchema)

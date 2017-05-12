@@ -64,7 +64,7 @@ function updateProfile(request, response) {
 		.then(profile => {
 			if (profile) {
 				let newProfile = request.body
-				newProfile.updateBy = require.decoded.username
+				newProfile.updatedBy = require.decoded.username
 				newProfile.updatedAt = Date.now()
 				Profile.update({ _id: request.params.userId }, { $set: newProfile }, { runValidators: true })
 					.then(profile => {

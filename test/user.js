@@ -318,7 +318,7 @@ describe('USERS: test suite', () => {
 					response.should.have.status(404)
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
-						.eql('El usuario, no es un usuario válido')
+						.eql('El usuario no es válido')
 					response.body.should.have.property('data').eql(null)
 					done()
 				})
