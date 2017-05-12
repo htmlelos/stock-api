@@ -228,7 +228,6 @@ function addPriceList(request, response) {
             return findProduct(productId)
         })
         .then(product => {
-            // console.log('PRODUCT--', product);
             // Si existen producto pendientes de aprobacion son actualizados en estado ANULADO
             let pendientes = product.priceLists.filter(x => {
                 return (x.priceListId.toString() === priceListId.toString() && x.status === 'PENDIENTE')
@@ -244,9 +243,6 @@ function addPriceList(request, response) {
             return PriceList.populate(product, {path: 'priceLists.priceListId'})
         })
         .then(product => {
-            message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
-        })
-        .then(product => {
             product.updatedBy = request.decoded.username
             product.updatedAt = Date.now()
             product.priceLists.push(request.body)
@@ -259,7 +255,11 @@ function addPriceList(request, response) {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
+            if (error.code) {
+                message.failure(response, error.code, error.message, error.data)
+            } else {
+                message.failure(response, 500, error.message, null)
+            }
         })
 }
 
