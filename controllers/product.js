@@ -240,9 +240,6 @@ function addPriceList(request, response) {
             return findProduct(request.params.productId)
         })
         .then(product => {
-            return PriceList.populate(product, {path: 'priceLists.priceListId'})
-        })
-        .then(product => {
             product.updatedBy = request.decoded.username
             product.updatedAt = Date.now()
             product.priceLists.push(request.body)
@@ -251,6 +248,9 @@ function addPriceList(request, response) {
         .then((result) => {
             return findProduct(productId)
         })
+        .then(product => {
+            return PriceList.populate(product, {path: 'priceLists.priceListId'})
+        })        
         .then(product => {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
