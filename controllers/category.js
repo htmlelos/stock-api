@@ -14,7 +14,6 @@ function getAllCategories(request, response) {
       message.success(response, 200, '', categories)
     })
     .catch(error => {
-      console.log('ERROR--', error);
       message.error(response, 422, '', error)
     })
 }
@@ -79,7 +78,7 @@ function getCategory(request, response) {
       message.success(response, 200, 'categoría obtenida con éxito', category)
     })
     .catch(error => {
-      message.failure(response, 500, 'El sistema tuvo un fallo al recuperar la categoría', null)
+      message.failure(response, error.code, error.message, error.data)
     })
 }
 

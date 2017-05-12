@@ -13,10 +13,10 @@ function getAllPriceLists(request, response) {
     })
 }
 function retrieveAllPriceList(request, response) {
-let limit = parseInt(request.body.limit)
-let fields = request.body.fields
-let filter = request.body.filter
-let sort = request.body.sort
+  let limit = parseInt(request.body.limit)
+  let fields = request.body.fields
+  let filter = request.body.filter
+  let sort = request.body.sort
 
   PriceList.find(filter)
     .select(fields)
@@ -67,50 +67,66 @@ function getPriceList(request, response) {
 }
 
 function updatePriceList(request, response) {
-  findPriceList(request.params.pricelistId)
+  let priceListId = request.params.pricelistId
+  findPriceList(priceListId)
     .then(priceList => {
       if (priceList) {
         let newPriceList = request.body
         newPriceList.updatedBy = request.decoded.username
         newPriceList.updatedAt = Date()
-        PriceList.update({ _id: request.params.pricelistId }, { $set: newPriceList }, { runValidators: true })
+        return PriceList.update({ _id: request.params.pricelistId }, { $set: newPriceList }, { runValidators: true })
+          // .then(result => {
+          // })
+          // .catch(error => {
+          //   if (error.code === 11000) {
+          //     message.duplicate(response, 422, 'La lista de precios ya existe', null)
+          //   } else {
+          //     message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
+          //   }
+          // })
+      } else {
+        let error = {code: 404, message: 'La Lista de Precios no es valida', data: null}
+        return Promise.reject(error)
+        // message.failure(response, 404, 'La Lista de Precios no es valida', null)
+      }
+    })
+    .then(() => {
+      return findPriceList(priceListId)
+    })
+    .then(priceList => {
+      message.success(response, 200, 'Lista de Precios actualizada con éxito', null)
+    })
+    .catch(error => {
+      // console.log('ERROR--', error)
+      if (error.code && error.code === 11000) {
+        let error = { code: 422, message: 'La lista de precios ya existe', data: null }
+        message.failure(response, error.code, error.message, error.data)
+      } else if (error.code) {
+        message.failure(response, error.code, error.message, error.data)
+      } else {
+        message.error(response, 500, 'No se pudo actualizar la Lista de Precios', null)
+      }
+    })
+}
+
+function deletePriceList(request, response) {
+  findPriceList(request.params.pricelistId)
+    .then(priceList => {
+      if (priceList) {
+        PriceList.remove({ _id: priceList._id })
           .then(result => {
-            message.success(response, 200, 'Lista de Precios actualizada con éxito', null)
+            message.success(response, 200, 'Lista de Precios eliminada con éxito', null)
           })
           .catch(error => {
-            if (error.code === 11000) {
-              message.duplicate(response, 422, 'La lista de precios ya existe', null)
-            } else {
-              message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
-            }
+            message.error(response, 422, '', error)
           })
       } else {
         message.failure(response, 404, 'La Lista de Precios no es valida', null)
       }
     })
     .catch(error => {
-      message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
+      message.error(response, 422, 'No se pudo recuperar la lista de precios', error)
     })
-}
-
-function deletePriceList(request, response) {
-  findPriceList(request.params.pricelistId)
-  .then(priceList => {
-    if (priceList) {
-    PriceList.remove({_id: priceList._id})
-      .then(result => {
-        message.success(response, 200, 'Lista de Precios eliminada con éxito', null)
-      })
-      .catch(error => {
-        message.error(response, 422, '', error)
-      })
-    } else {
-      message.failure(response, 404, 'La Lista de Precios no es valida', null)
-    }
-  })
-  .catch(error => {
-    message.error(response, 422, 'No se pudo recuperar la lista de precios', error)
-  })
 }
 
 module.exports = {

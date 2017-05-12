@@ -101,7 +101,7 @@ function getRole(request, response) {
 }
 function modifyRole(role, newRole) {
 	if (role) {
-		return Role.update({ _id: role._id }, { $set: newRole })
+		return Role.update({ _id: role._id }, { $set: newRole }, { runValidators: true })
 	} else {
 		let error = { code: 404, message: 'El rol no es válido', data: null }
 		return Promise.reject(error)
@@ -118,7 +118,6 @@ function updateRole(request, response) {
 		.then((respuesta) => { return findRole(roleId) })
 		.then(role => { message.success(response, 200, 'Rol actualizado con éxito', role) })
 		.catch(error => {
-			// console.log('ERROR--', error)
 			if (error.code && error.code === 11000) {
 				let error = { code: 422, message: 'El Rol ya existe', data: null }
 				message.failure(response, error.code, error.message, error.data)

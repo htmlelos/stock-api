@@ -85,7 +85,6 @@ function createBrand(request, response) {
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        console.log('ERROR--', error);
         message.error(response, 500, error.message, error)
       }
     })
@@ -115,8 +114,6 @@ function getBrand(request, response) {
     })
 }
 function modifyBrand(brand, newBrand) {
-  console.log('BRAND--', brand)
-  console.log('NEW_BRAND--', newBrand)
   if (brand) {
     return Brand.update({ _id: brand._id }, { $set: newBrand })
   } else {
@@ -132,16 +129,13 @@ function updateBrand(request, response) {
   newBrand.updatedAt = Date.now()
   findBrand(brandId)
     .then(brand => {
-      console.log('ANTES: ', brand)
       return modifyBrand(brand, newBrand)
       // Si la marca con el id proporcionado existe se actualiza con los datos proporcionados
     })
     .then((result) => {
-      console.log('RESULT', result)
       return findBrand(brandId)
     })
     .then(brand => {
-      console.log('DESPUES: ', brand)
       return message.success(response, 200, 'Marca actualizada con éxito', brand)
     })
     .catch(error => {
@@ -160,19 +154,21 @@ function deleteBrand(request, response) {
   findBrand(request.params.brandId)
     .then(brand => {
       if (brand) {
-        Brand.remove({ _id: brand.id })
-          .then(brand => {
-            message.success(response, 200, 'Marca eliminada con éxito', null)
-          })
-          .catch(error => {
-            message.error(response, 422, '', error)
-          })
+        return Brand.remove({ _id: brand.id })
       } else {
-        message.failure(response, 404, 'La marca, no es una marca valida', null)
+        let error = { code: 404, message: 'La Marca no es válida', data: null }
+        return Promise.reject(error)
       }
     })
+    .then(() => {
+      message.success(response, 200, 'Marca eliminada con éxito', null)
+    })
     .catch(error => {
-      message.error(response, 500, 'No se pudo eliminar la marca', error)
+      if (error.code) {
+        message.failure(response, error.code, error.message, error.data)
+      } else {
+        message.error(response, 500, 'No se pudo eliminar la marca', error)
+      }
     })
 }
 // Obtener una marca
@@ -215,8 +211,8 @@ function addSupplier(request, response) {
         return Promise.reject({ code: 404, message: 'No se encontró el proveedor', data: null })
       }
       let isIncluded = brand.suppliers
-                        .map(current => current.toString())
-                        .includes(supplier._id.toString())
+        .map(current => current.toString())
+        .includes(supplier._id.toString())
       if (isIncluded) {
         return Promise.reject({ code: 422, message: 'El proveedor ya se encuentra asociado a la marca', data: null })
       } else {
@@ -229,14 +225,12 @@ function addSupplier(request, response) {
       return findBrand(request.params.brandId)
     })
     .then(brand => {
-      console.log('DESPUES--', brand)
       return Person.populate(brand, { path: 'suppliers' })
     })
     .then(brand => {
       message.success(response, 200, 'Proveedor agregado con éxito', brand.suppliers)
     })
     .catch(error => {
-      console.log('ERROR--', error)
       message.failure(response, error.code, error.message, error.data)
     })
 }
@@ -246,9 +240,11 @@ function deleteSuppliers(request, response) {
     .then(brand => {
       let suppliersIds = JSON.parse(request.body.suppliers)
       let brandId = mongoose.Types.ObjectId(request.params.brandId)
+      brand.updatedAt = Date.now()
+      brand.updatedBy = request.decoded.username
       return Promise.all(suppliersIds.map(id => {
         let supplierId = mongoose.Types.ObjectId(id)
-        return Brand.update({ _id: brandId }, { $pull: { suppliers: supplierId } })
+        return Brand.update({ _id: brandId }, { $pull: { suppliers: supplierId }, updatedAt: brand.updatedAt, updatedBy: brand.updatedBy })
       }))
     })
     .then(values => {

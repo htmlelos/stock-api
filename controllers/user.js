@@ -110,7 +110,7 @@ function getUser(request, response) {
 // Modificar el registro del usuario
 function modifyUser(user, newUser) {
 	if (user) {
-		return User.update({ _id: user._id }, { $set: newUser })
+		return User.update({ _id: user._id }, { $set: newUser }, { runValidators: true })
 	} else {
 		let error = { code: 404, message: 'El usuario no es válido', data: null }
 		return Promise.reject(error)

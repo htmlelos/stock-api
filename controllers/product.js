@@ -12,12 +12,12 @@ function getAllProducts(request, response) {
     Product.find({})
         .then(products => {
             return Promise.all(products.map(product => {
-                return Brand.populate(product, {path: 'brand'})
+                return Brand.populate(product, { path: 'brand' })
             }))
         })
         .then(products => {
             return Promise.all(products.map(product => {
-                return Category.populate(product, {path: 'category'})
+                return Category.populate(product, { path: 'category' })
             }))
         })
         .then(products => {
@@ -29,33 +29,33 @@ function getAllProducts(request, response) {
 }
 function retrieveAllProducts(request, response) {
     console.log('BODY--', request.body)
-  let limit = parseInt(request.body.limit)
-  let fields = request.body.fields
-  let filter = request.body.filter
-  let sort = request.body.sort
+    let limit = parseInt(request.body.limit)
+    let fields = request.body.fields
+    let filter = request.body.filter
+    let sort = request.body.sort
 
-  Product.find(filter)
+    Product.find(filter)
         .select(fields)
         .limit(limit)
         .sort(sort)
         .then(products => {
             return Promise.all(products.map(product => {
-                return Category.populate(product, {path: 'category'})
+                return Category.populate(product, { path: 'category' })
             }))
         })
         .then(products => {
             return Promise.all(products.map(product => {
-                return PriceList.populate(product, {path: 'priceLists.priceListId'})
-            }))
-        })        
-        .then(products => {
-            return Promise.all(products.map(product => {
-                return Brand.populate(product, {path: 'brand'})
+                return PriceList.populate(product, { path: 'priceLists.priceListId' })
             }))
         })
         .then(products => {
             return Promise.all(products.map(product => {
-                return Product.populate(product, {path: 'components.componentId'})
+                return Brand.populate(product, { path: 'brand' })
+            }))
+        })
+        .then(products => {
+            return Promise.all(products.map(product => {
+                return Product.populate(product, { path: 'components.componentId' })
             }))
         })
         .then(products => {
@@ -112,14 +112,14 @@ function getProduct(request, response) {
             }
         })
         .then(product => {
-            return Category.populate(product, {path: 'category'})
+            return Category.populate(product, { path: 'category' })
         })
         .then(product => {
             // console.log('PRODUCT_CATEGORY: ', product);
             return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {
-            return Product.populate(product, {path: 'components.componentId'})
+            return Product.populate(product, { path: 'components.componentId' })
         })
         .then(product => {
             message.success(response, 200, 'Producto obtenido con éxito', product)
@@ -211,39 +211,43 @@ function findPriceList(priceListId) {
 }
 
 function addPriceList(request, response) {
-    let promiseProduct = findProduct(request.params.productId)
-    let promisePriceList = findPriceList(request.body.priceListId)
-    let productId = null;
-    let priceList = null;
+    let productId = request.params.productId;
+    let priceListId = request.body.priceListId
+    let promiseProduct = findProduct(productId)
+    let promisePriceList = findPriceList(priceListId)
     Promise.all([promiseProduct, promisePriceList])
         .then(values => {
-
-            if (values[0]) {
-                productId = values[0]._id
-            } else {
+            let product = values[0];
+            let priceList = values[1];
+            if (!product) {
                 return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
-            if (values[1]) {
-                priceList = values[1]
-            } else {
+            if (!priceList) {
                 return Promise.reject({ code: 404, message: 'No se encontró la lista de precios', data: null })
             }
-
-            return findProduct(request.params.productId)
+            return findProduct(productId)
         })
         .then(product => {
+            // console.log('PRODUCT--', product);
+            // Si existen producto pendientes de aprobacion son actualizados en estado ANULADO
             let pendientes = product.priceLists.filter(x => {
-                return (x.priceListId.toString() === priceList._id.toString() && x.status === 'PENDIENTE')
+                return (x.priceListId.toString() === priceListId.toString() && x.status === 'PENDIENTE')
             });
             if (pendientes.length !== 0) {
                 return Product.update({ 'priceLists._id': pendientes[0]._id }, { $set: { 'priceLists.$.status': 'ANULADO' } })
             }
         })
-        .then(product => {
-            return Product.update({ _id: productId }, { $push: { priceLists: request.body } })
-        })
         .then(() => {
-            return findProduct(request.params.productId)
+            return findProduct(productId)
+        })
+        .then(product => {
+            product.updatedBy = request.decoded.username
+            product.updatedAt = Date.now()
+            product.priceLists.push(request.body)
+            return Product.update({ _id: product._id }, { $push: { priceLists: request.body }, updatedBy: product.updatedBy, updatedAt: product.updatedAt }, { runValidators: true })
+        })
+        .then((result) => {
+            return findProduct(productId)
         })
         .then(product => {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
@@ -253,69 +257,32 @@ function addPriceList(request, response) {
         })
 }
 
-function removePriceList(request, response) {
-    findProduct(request.params.productId)
-        .then(product => {
-            if (product) {
-                let priceList = request.body
-                return Product.update({ _id: product._id }, { $pull: { priceLists: priceList } })
-            } else {
-                return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
-            }
-        })
-        .then(() => {
-            return findProduct(request.params.productId)
-        })
-        .then(product => {
-            return PriceList.populate(product, { path: 'priceLists.priceListId' })
-        })
-        .then(product => {
-            message.success(response, 200, 'Producto añadido con éxito', producto.priceLists)
-        })
-        .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
-        })
-}
-
 function addComponent(request, response) {
-    let promiseProduct = findProduct(request.params.productId);
-    let promiseComponent = findProduct(request.body.componentId)
+    let productId = request.params.productId
+    let componentId = request.body.componentId
+    let promiseProduct = findProduct(productId)
+    let promiseComponent = findProduct(componentId)
     Promise.all([promiseProduct, promiseComponent])
         .then(values => {
-            let productId = null;
-            let componentId = null;
-            if (values[0]) {
-                productId = values[0]._id;
-            } else {
+            let product = values[0];
+            let component = values[1];
+            if (!product) {
                 return Promise.reject({ code: 404, message: 'No se encontró el producto', data: null })
             }
-            if (values[1]) {
-                componentId = values[1]._id
-            } else {
+            if (!component) {
                 return Promise.reject({ code: 404, message: 'No se encontró el componente', data: null })
             }
-            return Product.update({ _id: productId }, { $push: { components: request.body } })
+            product.updatedBy = request.decoded.username
+            product.updatedAt = Date.now()
+            return Product.update({ _id: product._id }, { $push: { components: request.body }, updatedBy: product.updatedBy, updatedAt: product.updatedAt })
         })
         .then(() => {
-            return findProduct(request.params.productId)
+            return findProduct(productId)
         })
         .then(product => {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            components = components.map(component => {
-                return {
-                    _id: component._id,
-                    quantity: component.quantity,
-                    unit: component.unit,
-                    name: component.componentId.name,
-                    code: component.componentId.code,
-                    brand: component.componentId.brand,
-                    status: component.componentId.status,
-                    createdBy: component.componentId.createdBy,
-                    createdAt: component.componentId.createdAt
-                }
-            })
             message.success(response, 200, 'Componente agregado con éxito', components)
         })
         .catch(error => {
@@ -324,8 +291,8 @@ function addComponent(request, response) {
 }
 
 function getComponents(request, response) {
-
-    findProduct(request.params.productId)
+    let productId = request.params.productId
+    findProduct(productId)
         .then(product => {
             return Promise.all(product.components.map(component => {
                 return Product.populate(component, { path: 'componentId' })
@@ -337,19 +304,6 @@ function getComponents(request, response) {
             }))
         })
         .then(components => {
-            components = components.map(component => {
-                return {
-                    _id: component._id,
-                    quantity: component.quantity,
-                    unit: component.unit,
-                    name: component.componentId.name,
-                    code: component.componentId.code,
-                    brand: component.componentId.brand,
-                    status: component.componentId.status,
-                    createdBy: component.componentId.createdBy,
-                    createdAt: component.componentId.createdAt
-                }
-            })
             message.success(response, 200, 'Componentes recuperados con éxito', components)
         })
         .catch(error => {
@@ -358,14 +312,15 @@ function getComponents(request, response) {
 }
 
 function removeComponents(request, response) {
-    findProduct(request.params.productId)
+    let productId = request.params.productId
+    findProduct(productId)
         .then(product => {
             let componentIds = JSON.parse(request.body.components)
-            // let componentIds = request.body.components
-            let productId = request.params.productId
+            product.updatedBy = request.decoded.username
+            product.updatedAt = Date.now()
             return Promise.all(componentIds.map(id => {
                 let componentId = mongoose.Types.ObjectId(id)
-                return Product.update({ _id: productId }, { $pull: { components: { _id: componentId } } })
+                return Product.update({ _id: productId }, { $pull: { components: { _id: componentId } }, updatedBy: product.updatedBy, updatedAt: product.updatedAt })
             }))
         })
         .then(values => {
@@ -375,19 +330,19 @@ function removeComponents(request, response) {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            components = components.map(component => {
-                return {
-                    _id: component._id,
-                    quantity: component.quantity,
-                    unit: component.unit,
-                    name: component.componentId.name,
-                    code: component.componentId.code,
-                    brand: component.componentId.brand,
-                    status: component.componentId.status,
-                    createdBy: component.componentId.createdBy,
-                    createdAt: component.componentId.createdAt
-                }
-            })
+            // components = components.map(component => {
+            //     return {
+            //         _id: component._id,
+            //         quantity: component.quantity,
+            //         unit: component.unit,
+            //         name: component.componentId.name,
+            //         code: component.componentId.code,
+            //         brand: component.componentId.brand,
+            //         status: component.componentId.status,
+            //         createdBy: component.componentId.createdBy,
+            //         createdAt: component.componentId.createdAt
+            //     }
+            // })
             message.success(response, 200, 'Componentes eliminados con éxito', components)
         })
         .catch(error => {
@@ -405,7 +360,6 @@ module.exports = {
     getBrand,
     getAllPriceLists,
     addPriceList,
-    removePriceList,
     addComponent,
     getComponents,
     removeComponents
