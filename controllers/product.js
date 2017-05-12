@@ -238,7 +238,13 @@ function addPriceList(request, response) {
             }
         })
         .then(() => {
-            return findProduct(productId)
+            return findProduct(request.params.productId)
+        })
+        .then(product => {
+            return PriceList.populate(product, {path: 'priceLists.priceListId'})
+        })
+        .then(product => {
+            message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
         .then(product => {
             product.updatedBy = request.decoded.username
