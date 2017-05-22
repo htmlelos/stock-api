@@ -126,7 +126,7 @@ function updateBrand(request, response) {
   let brandId = request.params.brandId
   let newBrand = request.body
   newBrand.updatedBy = request.decoded.username
-  newBrand.updatedAt = Date.now()
+  newBrand.updatedAt = Date.now() - Date.getTimezoneOffset()
   findBrand(brandId)
     .then(brand => {
       return modifyBrand(brand, newBrand)

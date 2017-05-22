@@ -97,7 +97,6 @@ function updatePriceList(request, response) {
       message.success(response, 200, 'Lista de Precios actualizada con éxito', null)
     })
     .catch(error => {
-      // console.log('ERROR--', error)
       if (error.code && error.code === 11000) {
         let error = { code: 422, message: 'La lista de precios ya existe', data: null }
         message.failure(response, error.code, error.message, error.data)

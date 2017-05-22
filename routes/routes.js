@@ -9,6 +9,7 @@ const priceList = require('./priceList')
 const category = require('./category')
 const product = require('./product')
 const document = require('./document')
+const branch = require('./branch')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -22,4 +23,5 @@ module.exports = function routes(server) {
   server.use('/', category)
   server.use('/', product)
   server.use('/', document)
+  server.use('/', branch)
 }
