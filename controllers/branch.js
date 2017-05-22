@@ -1,5 +1,5 @@
 'use strict';
-const Branch = require('../models/Branch')
+const Branch = require('../models/branch')
 const message = require('../services/response/message')
 
 //Obtener todas las sucursales
