@@ -4,11 +4,12 @@ const Schema = mongoose.Schema
 // Establece las promesas de mongoose como las promesas nativas de javascript
 mongoose.Promise = global.Promise
 
-const AddressSchema = new Schema({
-    province: {type: String},
-    city: {type: String},
-    street: {type: String}
-})
+// const AddressSchema = new Schema({
+//     id: { type: Schema.Types.ObjectId },
+//     province: { type: String },
+//     city: { type: String },
+//     street: { type: String }
+// })
 
 const BranchSchema = new Schema({
     name: {
@@ -18,8 +19,9 @@ const BranchSchema = new Schema({
         index: true
     },
     address: {
-        type: Schema.Types.ObjectId, 
-        ref: 'AddressSchema'
+        province: { type: String },
+        city: { type: String },
+        street: { type: String }
     },
     status: {
         type: String,
@@ -45,8 +47,8 @@ const BranchSchema = new Schema({
     updatedAt: {
         type: Date
     }
-},{
-    versionKey: false
-})
+}, {
+        versionKey: false
+    })
 
 module.exports = mongoose.model('Branch', BranchSchema)

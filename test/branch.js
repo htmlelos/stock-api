@@ -4,7 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
-const Branch = require('../models/Branch')
+const Branch = require('../models/branch')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
@@ -89,7 +89,11 @@ describe.only('BRANCH: ', () => {
         it('deberia crear una sucursal', done => {
             let branch = {
                 name: 'Sucursal Maipu',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             }
 
@@ -112,7 +116,11 @@ describe.only('BRANCH: ', () => {
 
         it('no deberia crear una sucursal sin nombre', done => {
             let branch = {
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             }
 
@@ -134,7 +142,11 @@ describe.only('BRANCH: ', () => {
         it('no deberia crear una sucursal sin estado', done => {
             let branch = {
                 name: 'Lavalle 868',
-                address: null
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                }
             }
 
             chai.request(server)
@@ -155,7 +167,11 @@ describe.only('BRANCH: ', () => {
         it('el estado de la sucursal solo puede ser ACTIVO o INACTIVO', done => {
             let branch = {
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'SUSPENDIDO'
             }
 
@@ -177,7 +193,11 @@ describe.only('BRANCH: ', () => {
         it('no deberia crear una sucursal con nombre duplicado', done => {
             let branch = {
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             }
 
@@ -205,7 +225,11 @@ describe.only('BRANCH: ', () => {
         it('deberia obtener una sucursal por su id', done => {
             let branch = new Branch({
                 name: 'Maipu y Junin',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -231,7 +255,11 @@ describe.only('BRANCH: ', () => {
         it('no deberia obtener una sucursal con id invalido', done => {
             let branch = new Branch({
                 name: 'Maipu y Junin',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -257,7 +285,11 @@ describe.only('BRANCH: ', () => {
         it('deberia actualizar una sucursal por su id de rol', done => {
             let branch = new Branch({
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -286,7 +318,11 @@ describe.only('BRANCH: ', () => {
         it('no deberia actualizar una sucursal con un id de rol invalido', done => {
             let branch = new Branch({
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -315,7 +351,11 @@ describe.only('BRANCH: ', () => {
         it('no deberia actualizar una sucursal con nombre duplicado', done => {
             let branch = new Branch({
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -350,12 +390,16 @@ describe.only('BRANCH: ', () => {
                 })
         })
     })
-
+    // Eliminar una sucursal
     describe('DELETE /role/{roleId}', () => {
         it('debe eliminar un rol por su id', done => {
             let branch = new Branch({
                 name: 'Lavalle 868',
-                address: null,
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
                 status: 'ACTIVO'
             })
 
@@ -382,11 +426,11 @@ describe.only('BRANCH: ', () => {
                 name: 'Lavalle 868',
                 address: null,
                 status: 'ACTIVO'
-            })            
+            })
 
             branch.save()
                 .catch(error => console.error('TEST:', error))
-            
+
             chai.request(server)
                 .delete('/branch/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)
