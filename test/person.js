@@ -448,7 +448,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('No se encontró la persona')
-                    response.body.should.have.property('data').to.be.null;
+                    response.body.should.have.property('data')
+                        .to.be.null;
                     done();
                 })
         })
@@ -543,7 +544,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Persona eliminada con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                        .to.be.null
                     done()
                 })
         })
@@ -697,7 +699,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('No se encontró la persona')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                        .to.be.null
                     done()
                 })
         })
@@ -781,7 +784,8 @@ describe('PERSON: ', () => {
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('No se encontró la persona')
-                            response.body.should.have.property('data').to.be.null
+                            response.body.should.have.property('data')
+                                .to.be.null
                             done()
                         })
                 })

@@ -7,11 +7,11 @@ mongoose.Promise = global.Promise
 const BusinessSchema = new Schema({
     name: {
         type: String,
-        required: 'Debe proporcionar un nombre de la empresa',
+        required: 'Debe proporcionar el nombre de la empresa',
         unique: true,
         index: true
     },
-    cuit: {
+    tributaryCode: {
         type: String,
         required: 'Debe proporcionar un numero de cuit',
         unique: true,
@@ -25,13 +25,17 @@ const BusinessSchema = new Schema({
         },
         required: 'Debe definir el estado de la empresa'
     },
+    branchs: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Branch'
+    }],
     createdBy: {
         type: String,
         required: true,
         default: 'anonimo'
     },
     createdAt: {
-        type: string,
+        type: Date,
         required: true,
         default: Date.now
     },

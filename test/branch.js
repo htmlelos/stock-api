@@ -14,7 +14,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 // Bloque principal de pruebas de roles
-describe.only('BRANCH: ', () => {
+describe('BRANCH: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -446,5 +446,4 @@ describe.only('BRANCH: ', () => {
                 })
         })
     })
-
 })

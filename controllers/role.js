@@ -104,7 +104,7 @@ function getRole(request, response) {
 			if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(reponse, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
+				message.error(response, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
 			}
 		})
 }
