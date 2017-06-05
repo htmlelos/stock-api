@@ -9,7 +9,7 @@ function getAllPriceLists(request, response) {
       message.success(response, 200, '', priceList)
     })
     .catch(error => {
-      message.error(response, 422, '', error)
+      message.failure(response, 422, '', error)
     })
 }
 function retrieveAllPriceList(request, response) {
@@ -29,23 +29,48 @@ function retrieveAllPriceList(request, response) {
       message.failure(response, 404, 'No se pudieron recuperar las Listas de precios', error)
     })
 }
+
+function checkPriceList(request) {
+  request.checkBody('name', 'Debe proporcionar un nombre para la lista de precios')
+    .notEmpty()
+  request.checkBody('description', 'Debe proporcionar una descripción para la lista de precios')
+    .notEmpty()
+  request.checkBody('status', 'Debe proporcionar el estado de la Lista de Precios')
+    .notEmpty()
+  request.checkBody('status', 'La Lista de Precios solo puede estar en estado ACTIVO o INACTIVO')
+    .isIn('ACTIVO','INACTIVO')
+}
 // Crea una nueva lista de Precios
 function createPriceList(request, response) {
-  // Crea una nueva instancia de PriceList con los parametros recibidos
-  let newPriceList = new PriceList(request.body)
+  checkPriceList(request)
 
-  newPriceList.createdBy = request.decoded.username
-  newPriceList.save()
-    .then(priceList => {
-      message.success(response, 200, 'Lista de Precios creada con éxito', { id: priceList._id })
-    })
-    .catch(error => {
-      if (error.code === 11000) {
-        message.duplicate(response, 422, 'La Lista de Precios ya existe', null)
-      } else {
-        message.error(response, 422, '', error)
-      }
-    })
+    request.getValidationResult()
+        .then(result => {
+            if (!result.isEmpty()) {
+                let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+                return Promise.reject({ code: 422, message: messages, data: null })
+            }
+            return Promise.resolve()
+        })
+        .then(() => {          
+          // Crea una nueva instancia de PriceList con los parametros recibidos
+          let newPriceList = new PriceList(request.body)
+          newPriceList.createdBy = request.decoded.username
+          return newPriceList.save()
+        })
+        .then(priceList => {
+          message.success(response, 200, 'Lista de Precios creada con éxito', { id: priceList._id })
+        })
+      .catch(error => {
+        if (error.code && error.code === 11000) {
+          let error = {code: 422, message: 'La Lista de Precios ya existe', data: null}
+          message.failure(response, error.code, error.message, error.data)
+        } else if (error.code) {
+          message.failure(response, error.code, error.message, error.data)
+        } else {
+          message.failure(response, 500, 'No se pudo crear la lista de precios', null)
+        }
+      })
 }
 // Buscar un rol
 function findPriceList(pricelistId) {
@@ -62,7 +87,7 @@ function getPriceList(request, response) {
       }
     })
     .catch(error => {
-      message.error(response, 500, 'El sistema tuvo un fallo al recuperar la lista de precios, contactar al adminstrador del sistema', error)
+      message.failure(response, 500, 'El sistema tuvo un fallo al recuperar la lista de precios, contactar al adminstrador del sistema', error)
     })
 }
 
@@ -75,19 +100,9 @@ function updatePriceList(request, response) {
         newPriceList.updatedBy = request.decoded.username
         newPriceList.updatedAt = Date()
         return PriceList.update({ _id: request.params.pricelistId }, { $set: newPriceList }, { runValidators: true })
-          // .then(result => {
-          // })
-          // .catch(error => {
-          //   if (error.code === 11000) {
-          //     message.duplicate(response, 422, 'La lista de precios ya existe', null)
-          //   } else {
-          //     message.error(response, 500, 'No se pudo actualizar la Lista de Precios', error)
-          //   }
-          // })
       } else {
         let error = {code: 404, message: 'La Lista de Precios no es valida', data: null}
         return Promise.reject(error)
-        // message.failure(response, 404, 'La Lista de Precios no es valida', null)
       }
     })
     .then(() => {
@@ -103,7 +118,7 @@ function updatePriceList(request, response) {
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        message.error(response, 500, 'No se pudo actualizar la Lista de Precios', null)
+        message.failure(response, 500, 'No se pudo actualizar la Lista de Precios', null)
       }
     })
 }
@@ -117,14 +132,14 @@ function deletePriceList(request, response) {
             message.success(response, 200, 'Lista de Precios eliminada con éxito', null)
           })
           .catch(error => {
-            message.error(response, 422, '', error)
+            message.failure(response, 422, '', error)
           })
       } else {
         message.failure(response, 404, 'La Lista de Precios no es valida', null)
       }
     })
     .catch(error => {
-      message.error(response, 422, 'No se pudo recuperar la lista de precios', error)
+      message.failure(response, 422, 'No se pudo recuperar la lista de precios', error)
     })
 }
 

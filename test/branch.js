@@ -80,7 +80,7 @@ describe('BRANCH: ', () => {
         })
 
         it.skip('deberia obtener la cantidad de sucursales indicada', () => { })
-        it.skip('deberia obtener los campos indicados de las sucursales', () => { })
+        it.skip('deberia obtener los campos seleccionados  de las sucursales', () => { })
         it.skip('deberia obtener las sucursales seleccionados', () => { })
         it.skip('deberia obtener las sucursales en el orden indicado', () => { })
     })
@@ -305,12 +305,14 @@ describe('BRANCH: ', () => {
                     status: 'ACTIVO'
                 })
                 .end((error, response) => {
+                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Sucursal actualizada con éxito')
                     response.body.should.have.property('data')
-                    response.body.data.should.be.a('object')
+                    response.body.data.should.have.property('id')
+                        .to.be.not.null
                     done()
                 })
         })
@@ -410,7 +412,6 @@ describe('BRANCH: ', () => {
                 .delete('/branch/' + branch._id)
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -435,7 +436,6 @@ describe('BRANCH: ', () => {
                 .delete('/branch/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body)
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')

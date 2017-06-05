@@ -9,7 +9,7 @@ function getAllRoles(request, response) {
 			message.success(response, 200, '', roles)
 		})
 		.catch(error => {
-			message.error(response, 422, '', error)
+			message.failure(response, 422, '', error)
 		})
 }
 // Obtiene los roles que cumplan con los criterios especificados
@@ -77,7 +77,7 @@ function createRole(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, error.message, error)
+				message.failure(response, 500, error.message, null)
 			}
 		})
 }
@@ -93,7 +93,7 @@ function getRole(request, response) {
 			if (role) {
 				return Promise.resolve(role)
 			} else {
-				let error = { code: 200, message: 'No se encontró el rol', data: null }
+				let error = { code: 404, message: 'No se encontró el rol', data: null }
 				return Promise.reject(error)
 			}
 		})
@@ -104,7 +104,7 @@ function getRole(request, response) {
 			if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
+				message.failure(response, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
 			}
 		})
 }

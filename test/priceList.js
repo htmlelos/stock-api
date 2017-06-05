@@ -159,7 +159,7 @@ describe('PRICE LIST: test suite', () => {
               response.should.have.status(422)
               response.body.should.be.a('object')
               response.body.should.have.property('message')
-                .eql('Debe proporcionar una descripcion para la lista de precios')
+                .eql('Debe proporcionar una descripción para la lista de precios')
               response.body.should.have.property('data').to.be.null
               done()
             })

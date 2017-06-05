@@ -15,7 +15,6 @@ function getAllBusinesses(request, response) {
         .then(businesses => { return populateAll(businesses) })
         .then(businesses => { message.success(response, 200, '', businesses) })
         .catch(error => {
-            console.log('ERROR--', error);
             message.failure(response, 404, 'No se pudieron recuperar las empresas', error)
         })
 }
@@ -63,7 +62,7 @@ function createBusiness(request, response) {
             }
             return Promise.resolve()
         })
-        .then(result => {
+        .then(() => {
             let newBusiness = new Business(request.body)
             newBusiness.createdBy = request.decoded.username
             return newBusiness.save()
@@ -89,7 +88,6 @@ function findBusiness(businessId) {
 
 function getBusiness(request, response) {
     let businessId = request.params.businessId;
-    // console.log('GET_BUSINESS--', businessId);
     findBusiness(businessId)
         .then(business => {
             if (business) {
@@ -98,6 +96,9 @@ function getBusiness(request, response) {
                 let error = { code: 404, message: 'No se encontró la empresa', data: null }
                 return Promise.reject(error)
             }
+        })
+        .then(business => {
+            return Business.populate(business, {path:'branchs'})
         })
         .then(business => {
             message.success(response, 200, 'Empresa obtenida con éxito', business)

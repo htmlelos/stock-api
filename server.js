@@ -65,7 +65,6 @@ process.on('unhandledRejection', reason => {
 	console.error('UNHANDLED :', reason);
 })
 // process.on('uncaughtException', error => {
-//     console.error('--ERROR--', error);
 //     if (error.syscall !== 'listen')
 //       throw error
 //

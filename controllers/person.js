@@ -10,7 +10,7 @@ function getAllPersons(request, response) {
             message.success(response, 200, '', persons)
         })
         .catch(error => {
-            message.error(response, 500, 'No se pudo recuperar las personas', error)
+            message.failure(response, 500, 'No se pudo recuperar las personas', error)
         })
 }
 // Recuperar todos las personas

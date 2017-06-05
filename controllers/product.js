@@ -28,7 +28,6 @@ function getAllProducts(request, response) {
         })
 }
 function retrieveAllProducts(request, response) {
-    console.log('BODY--', request.body)
     let limit = parseInt(request.body.limit)
     let fields = request.body.fields
     let filter = request.body.filter
@@ -184,7 +183,7 @@ function getBrand(request, response) {
             message.success(response, 200, 'Marca obtenida con éxito', product.brand)
         })
         .catch(error => {
-            message.error(response, erro.code, error.message, error.data)
+            message.failure(response, erro.code, error.message, error.data)
         })
 }
 

@@ -16,7 +16,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de empresa
-describe.only('BUSINESS', () => {
+describe('BUSINESS', () => {
     let token = '';
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -49,7 +49,6 @@ describe.only('BUSINESS', () => {
                 .get('/businesses')
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -76,7 +75,6 @@ describe.only('BUSINESS', () => {
                 .set('x-access-token', token)
                 .send(criteria)
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body)
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -368,7 +366,6 @@ describe.only('BUSINESS', () => {
                 .delete('/business/' + business._id)
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -536,14 +533,13 @@ describe.only('BUSINESS', () => {
             business.branchs.push(branch)
 
             business.save()
-                .catch(error => { console.log('ERROR--', error) })
+                .catch(error => { console.log('TEST:', error) })
 
             chai.request(server)
                 .delete('/business/' + business._id + '/branch')
                 .set('x-access-token', token)
                 .send({ branchId: branch._id })
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -575,14 +571,13 @@ describe.only('BUSINESS', () => {
             business.branchs.push(branch)
 
             business.save()
-                .catch(error => { console.log('ERROR--', error) })
+                .catch(error => { console.log('TEST:', error) })
 
             chai.request(server)
                 .delete('/business/58dece08eb0548118ce31f11/branch')
                 .set('x-access-token', token)
                 .send({ branchId: branch._id })
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
                     response.should.have.status(404)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -614,7 +609,7 @@ describe.only('BUSINESS', () => {
             business.branchs.push(branch)
 
             business.save()
-                .catch(error => { console.log('ERROR--', error) })
+                .catch(error => { console.log('TEST:', error) })
 
             chai.request(server)
                 .delete('/business/' + business._id + '/branch')

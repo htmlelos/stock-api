@@ -14,7 +14,7 @@ function getAllCategories(request, response) {
       message.success(response, 200, '', categories)
     })
     .catch(error => {
-      message.error(response, 422, '', error)
+      message.failure(response, 422, '', error)
     })
 }
 function retrieveAllCategories(request, response) {
@@ -40,23 +40,47 @@ function retrieveAllCategories(request, response) {
     })
 }
 
+function checkCategory(request) {
+  request.checkBody('name', 'Debe proporcionar un nombre de categoría')
+    .notEmpty()
+  request.checkBody('description', 'Debe proporcionar una descripción de la categoría')
+    .notEmpty()
+  request.checkBody('status', 'Debe definir el estado de la categoria')
+    .notEmpty()
+  request.checkBody('status', 'El estado de la categoria solo puede ser ACTIVO o INACTIVO')
+    .isIn('ACTIVO', 'INACTIVO')
+}
+
 // Crea una nueva Categooria
 function createCategory(request, response) {
+  checkCategory(request)
   // Crea una nueva instanscia de Category con los parametros recibidos
-  // console.log('CREATE--')
-  let newCategory = new Category(request.body)
 
-  newCategory.createdBy = request.decoded.username
-  newCategory.save()
-    .then(category => {
-      message.success(response, 200, 'categoría creada con éxito', { id: category._id })
-    })
-    .catch(error => {
-      if (error.code === 11000) {
-        message.duplicate(response, 422, 'El rol ya existe', null)
-      } else {
-        message.error(response, 422, '', error)
-      }
+   request.getValidationResult()
+        .then(result => {
+            if (!result.isEmpty()) {
+                let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
+                return Promise.reject({ code: 422, message: messages, data: null })
+            }
+            return Promise.resolve()
+        })
+      .then(() => {
+        let newCategory = new Category(request.body)
+        newCategory.createdBy = request.decoded.username
+        return newCategory.save()
+      })  
+      .then(category => {
+        message.success(response, 200, 'categoría creada con éxito', { id: category._id })
+      })
+      .catch(error => {
+        if (error.code && error.code === 11000) {
+          let error = {code: 422, message:'El rol ya existe' , data: null}          
+          message.failure(response, error.code, error.message, error.data)
+        } else if (error.code) {
+          message.failure(response, error.code, error.message, error.data)
+        } else {
+          message.failute(response, 500, 'No se pudo crear la categoria', null)
+        }
     })
 }
 // Obtener una category
@@ -104,7 +128,7 @@ function updateCategory(request, response) {
     })
     .catch(error => {
       if (error.code === 11000) {
-        message.duplicate(response, 422, 'La categoría ya existe', null)
+        message.failure(response, 422, 'La categoría ya existe', null)
       } else {
         message.failure(response, error.code, error.message, error.data)
       }
@@ -120,14 +144,14 @@ function deleteCategory(request, response) {
             message.success(response, 200, 'categoría eliminada con éxito', null)
           })
           .catch(error => {
-            message.error(response, 422, 'No se pudo eliminar la categoría', error)
+            message.failure(response, 422, 'No se pudo eliminar la categoría', error)
           })
       } else {
         message.failure(response, 404, 'La categoría no es válida', null)
       }
     })
     .catch(error => {
-      message.error(response, 422, 'No se pudo recuperar ', error)
+      message.failure(response, 422, 'No se pudo recuperar ', error)
     })
 }
 

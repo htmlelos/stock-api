@@ -13,7 +13,7 @@ function getAllDocuments(request, response) {
             })
         })
         .catch(error => {
-            message.error(response, {
+            message.failure(response, {
                 status: 422,
                 message: '',
                 data: error

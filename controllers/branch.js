@@ -118,7 +118,7 @@ function updateBranch(request, response) {
             return findBranch(branchId)
         })
         .then(branch => { 
-            message.success(response, 200, 'Sucursal actualizada con éxito', branch)
+            message.success(response, 200, 'Sucursal actualizada con éxito', {id: branch.id})
         })
         .catch(error => {
             if (error.code && error.code === 11000) {

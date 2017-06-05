@@ -11,6 +11,7 @@ const product = require('./product')
 const document = require('./document')
 const business = require('./business')
 const branch = require('./branch')
+const demand = require('./demand')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -26,4 +27,5 @@ module.exports = function routes(server) {
   server.use('/', document)
   server.use('/', business)
   server.use('/', branch)
+  server.use('/', demand)
 }
