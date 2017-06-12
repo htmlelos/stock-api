@@ -1195,7 +1195,7 @@ describe('DEMAND: ', () => {
                 })
         })
 
-        it('no deberia agregar un itema a la solicitud de pedido con id de solicitud inválido', done => {
+        it('no deberia eliminar un itema de la solicitud de pedido con id de solicitud inválido', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -1266,7 +1266,7 @@ describe('DEMAND: ', () => {
     })
 
     describe('DELETE /demand({demandId}/delete/items', () => {
-        it.only('deberia eliminar los items seleccionados', done => {
+        it('deberia eliminar los items seleccionados', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -1343,9 +1343,6 @@ describe('DEMAND: ', () => {
 
             demand.save()
                 .catch(error => {console.error('TEST:', error)})
-
-            // console.log('DEMAND::', demand);
-            // console.log('ITEM_LIST', itemslist);
 
             chai.request(server)
                 .put('/demand/'+demand._id+'/delete/items')

@@ -31,6 +31,10 @@ const BranchSchema = new Schema({
         },
         required: 'Debe definir el estado de la sucursal'
     },
+    // business: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Business'
+    // },
     createdBy: {
         type: String,
         required: true,

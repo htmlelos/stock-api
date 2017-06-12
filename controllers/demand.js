@@ -64,7 +64,6 @@ function createDemand(request, response) {
             return newDemand.save()
         })
         .then(demand => {
-            console.log('DEMAND--', demand);
             message.success(response, 200, 'Solicitud creada con éxito', { id: demand._id })
         })
         .catch(error => {
@@ -139,13 +138,13 @@ const deleteDemand = (request, response) => {
                 return Demand.remove({ _id: demand._id })
             } else {
                 let error = { code: 404, message: 'No se encontró la solicitud', data: null }
+                return Promise.reject(error)
             }
         })
         .then(() => {
             message.success(response, 200, 'Solicitud eliminada con éxito', null)
         })
         .catch(error => {
-            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -196,16 +195,15 @@ const addItem = (request, response) => {
 }
 
 const deleteItem = (request, response) => {
-    console.log('DELETE_ITEM');
     let demandId = request.params.demandId
     let itemId = request.body.demandId
 
     findDemand(demandId)
         .then(demand => {
             if (demand) {
-                return Demand.update({_id: demand._id},{$pull:{'items':{id:itemId}}})
+                return Demand.update({ _id: demand._id }, { $pull: { 'items': { id: itemId } } })
             } else {
-                let error = {code: 404, message: 'No se encontró la solicitud', data: null}
+                let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
         })
@@ -217,7 +215,6 @@ const deleteItem = (request, response) => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })
         .catch(error => {
-            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -229,10 +226,10 @@ const deleteSelectedItems = (request, response) => {
         .then(demand => {
             if (demand) {
                 return Promise.all(items.map(id => {
-                    return Demand.update({_id: demandId}, {$pull:{items:{_id:id}}})
+                    return Demand.update({ _id: demandId }, { $pull: { items: { _id: id } } })
                 }))
             } else {
-                let error = {code: 404, message: 'No se encontró la solicitud', data: null}
+                let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
         })
