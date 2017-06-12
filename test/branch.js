@@ -305,7 +305,6 @@ describe('BRANCH: ', () => {
                     status: 'ACTIVO'
                 })
                 .end((error, response) => {
-                    console.log('RESPONSE::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')

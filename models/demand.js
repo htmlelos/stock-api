@@ -52,7 +52,8 @@ const DemandSchema = new Schema({
     items: [ItemSchema],
     createdBy: {
         type: String,
-        required: 'Debe proporcionar el usuario que creo el registro'        
+        required: 'Debe proporcionar el usuario que creo el registro' ,
+        default: 'anonimo'
     },
     createdAt: {
         type: Date,
