@@ -6,18 +6,36 @@ const message = require('../services/response/message')
 function getAllDocuments(request, response) {
     Document.find({})
         .then(documents => {
-            message.success(response, {
-                status: 200,
-                message: '',
-                data: documents
-            })
+            message.success(response, 
+                200,
+                '',
+                documents
+            )
         })
         .catch(error => {
-            message.error(response, {
-                status: 422,
-                message: '',
-                data: error
-            })
+            console.log('ERROR--', error);
+            message.failure(response,
+                422,
+                '',
+                error
+            )
+        })
+}
+// Obtener un documento segun el criterio indicado
+function retrieveAllDocuments(request, response) {
+    let filter = request.body.filter
+    let limit = request.body.limit
+    let fields = request.body.fields
+    let sort = request.body.sort
+    Document.find(filter)
+        .limit(limit)
+        .select(fields)
+        .sort(sort)
+        .then(documents => {
+            message.success(response, 200, '', documents)
+        })
+        .catch(error => {
+            message.failure(response, 404, 'No se pudo encontrar documentos', error)
         })
 }
 // Crea un nuevo documento
@@ -26,5 +44,6 @@ function getAllDocuments(request, response) {
 // Eliminar un documento
 
 module.exports = {
-    getAllDocuments
+    getAllDocuments,
+    retrieveAllDocuments
 }

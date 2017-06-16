@@ -9,7 +9,7 @@ function getAllRoles(request, response) {
 			message.success(response, 200, '', roles)
 		})
 		.catch(error => {
-			message.error(response, 422, '', error)
+			message.failure(response, 422, '', error)
 		})
 }
 // Obtiene los roles que cumplan con los criterios especificados
@@ -77,7 +77,7 @@ function createRole(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, error.message, error)
+				message.failure(response, 500, error.message, null)
 			}
 		})
 }
@@ -87,16 +87,25 @@ function findRole(roleId) {
 }
 // Obtener un rol por su roleId
 function getRole(request, response) {
-	findRole(request.params.roleId)
+	let roleId = request.params.roleId
+	findRole(roleId)
 		.then(role => {
 			if (role) {
-				message.success(response, 200, 'Rol obtenido con éxito', role)
+				return Promise.resolve(role)
 			} else {
-				message.failure(response, 404, 'No se encontró el rol', null)
+				let error = { code: 404, message: 'No se encontró el rol', data: null }
+				return Promise.reject(error)
 			}
 		})
+		.then(role => {
+			message.success(response, 200, 'Rol obtenido con éxito', role)
+		})
 		.catch(error => {
-			message.error(reponse, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
+			if (error.code) {
+				message.failure(response, error.code, error.message, error.data)
+			} else {
+				message.failure(response, 500, 'El sistema tuvo un fallo al recuperar el rol, contactar al administrador del sistema', error)
+			}
 		})
 }
 function modifyRole(role, newRole) {
@@ -115,7 +124,7 @@ function updateRole(request, response) {
 	newRole.updatedAt = Date.now()
 	findRole(roleId)
 		.then(role => { return modifyRole(role, newRole) })
-		.then((respuesta) => { return findRole(roleId) })
+		.then(() => { return findRole(roleId) })
 		.then(role => { message.success(response, 200, 'Rol actualizado con éxito', role) })
 		.catch(error => {
 			if (error.code && error.code === 11000) {
@@ -124,29 +133,29 @@ function updateRole(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, 'No se pudo recuperar el rol ', error)
+				message.failure(response, 500, 'No se pudo recuperar el rol ', null)
 			}
 		})
 }
 
 function removeRole(role) {
 	if (role) {
-		return Role.remove({_id: role.id})
+		return Role.remove({ _id: role.id })
 	} else {
-		let error = {code: 404, message: 'El rol no es válido', data: null}
-		return Promise.reject(error)		
+		let error = { code: 404, message: 'El rol no es válido', data: null }
+		return Promise.reject(error)
 	}
 }
-
+// Eliminar un rol por su roleID
 function deleteRole(request, response) {
 	findRole(request.params.roleId)
 		.then(role => { return removeRole(role) })
 		.then(() => { message.success(response, 200, 'Rol eliminado con éxito', null) })
-		.catch(error => { 
+		.catch(error => {
 			if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.failure(response, 500, error.message, error)
+				message.failure(response, 500, error.message, null)
 			}
 		})
 }

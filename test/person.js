@@ -43,17 +43,17 @@ describe('PERSON: ', () => {
     // GET /persons - Obtener todas las personas
     describe('GET /persons', () => {
         it('deberia obtener todas las personas', done => {
-            let person = {
-                type: 'CLIENTE',
-                firstName: 'Juan',
-                lastName: 'Perez',
-                address: [],
-                tributaryCode: '202202231962',
-                taxStatus: 'RESPONSABLE INSCRIPTO',
-                grossIncomeCode: '122022022319623',
-                contacts: [],
-                status: 'ACTIVO'
-            }
+            // let person = {
+            //     type: 'CLIENTE',
+            //     firstName: 'Juan',
+            //     lastName: 'Perez',
+            //     address: [],
+            //     tributaryCode: '202202231962',
+            //     taxStatus: 'RESPONSABLE INSCRIPTO',
+            //     grossIncomeCode: '122022022319623',
+            //     contacts: [],
+            //     status: 'ACTIVO'
+            // }
 
             chai.request(server)
                 .get('/persons')
@@ -448,7 +448,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('No se encontró la persona')
-                    response.body.should.have.property('data').to.be.null;
+                    response.body.should.have.property('data')
+                        .to.be.null;
                     done();
                 })
         })
@@ -543,7 +544,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Persona eliminada con éxito')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                        .to.be.null
                     done()
                 })
         })
@@ -697,7 +699,8 @@ describe('PERSON: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('No se encontró la persona')
-                    response.body.should.have.property('data').to.be.null
+                    response.body.should.have.property('data')
+                        .to.be.null
                     done()
                 })
         })
@@ -781,7 +784,8 @@ describe('PERSON: ', () => {
                             response.body.should.be.a('object')
                             response.body.should.have.property('message')
                                 .eql('No se encontró la persona')
-                            response.body.should.have.property('data').to.be.null
+                            response.body.should.have.property('data')
+                                .to.be.null
                             done()
                         })
                 })

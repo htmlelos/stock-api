@@ -10,7 +10,7 @@ function getAllPersons(request, response) {
             message.success(response, 200, '', persons)
         })
         .catch(error => {
-            message.error(response, 500, 'No se pudo recuperar las personas', error)
+            message.failure(response, 500, 'No se pudo recuperar las personas', error)
         })
 }
 // Recuperar todos las personas
@@ -104,7 +104,7 @@ function createPerson(request, response) {
         .then(result => {
             if (!result.isEmpty()) {
                 let messages = result.useFirstErrorOnly().array().map(x => x.msg).join(',')
-                return Promise.reject({ code: 422, message:messages, data: null })
+                return Promise.reject({ code: 422, message: messages, data: null })
             }
             return Promise.resolve()
         })
@@ -138,7 +138,8 @@ function findPerson(personId) {
 }
 // Obtiene una persona por su id
 function getPerson(request, response) {
-    findPerson(request.params.personId)
+    let personId = request.params.personId
+    findPerson(personId)
         .then(person => {
             message.success(response, 200, 'Persona obtenida con éxito', person)
         })
@@ -148,14 +149,19 @@ function getPerson(request, response) {
 }
 // Actualiza una persona
 function updatePerson(request, response) {
+    let personId = request.params.personId
     // Encuentra la persona a actualizar
-    findPerson(request.params.personId)
+    findPerson(personId)
         .then(person => {
-            let newPerson = request.body
-            newPerson.username = request.decoded.username
-            newPerson.updatedAt = Date.now()
-            let personId = mongoose.Types.ObjectId(request.params.personId)
-            return Person.update({ _id: personId }, { $set: newPerson }, { runValidators: true })
+            if (person) {
+                let newPerson = request.body
+                newPerson.username = request.decoded.username
+                newPerson.updatedAt = Date.now()
+                return Person.update({ _id: person._id }, { $set: newPerson }, { runValidators: true })
+            } else {
+                let error = { code: 404, message: 'No se encontró la persona', data: null }
+                return Promise.reject(error)
+            }
         })
         .then(person => {
             message.success(response, 200, 'Persona actualizada con éxito', null)
@@ -166,9 +172,15 @@ function updatePerson(request, response) {
 }
 // Elimina una persona
 function deletePerson(request, response) {
-    findPerson(request.params.personId)
+    let personId = request.params.personId
+    findPerson(personId)
         .then(person => {
-            return Person.remove({ _id: person.id })
+            if (person) {
+                return Person.remove({ _id: person.id })
+            } else {
+                let error = { code: 404, message: 'No se encontró la persona', data: null }
+                return Promise.reject(error)
+            }
         })
         .then(() => {
             message.success(response, 200, 'Persona eliminada con éxito', null)
@@ -238,7 +250,7 @@ function removeContacts(request, response) {
                 let contactsIds = JSON.parse(request.body.contacts)
                 let personId = request.params.personId
                 return Promise.all(contactsIds.map(id => {
-                    let contactId = mongoose.Types.ObjectId(id)
+                    // let contactId = mongoose.Types.ObjectId(id)
                     return Person.update({ _id: personId }, { $pull: { 'contacts': { _id: id } } })
                 }))
             } else {

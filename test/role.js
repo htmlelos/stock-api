@@ -37,8 +37,8 @@ describe('ROLE: ', () => {
 	})
 	// Se ejecuta despues de cada test
 	afterEach(done => {
-		Role.remove({}, error => { })
-		done();
+		Role.remove({}, error => {})
+		done()
 	})
 	// GET /roles - Obtener todos los roles
 	describe('GET /roles', () => {
@@ -183,13 +183,14 @@ describe('ROLE: ', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('El Rol ya existe')
-					response.body.should.have.property('data').to.be.null
-					done();
+					response.body.should.have.property('data')
+						.to.be.null
+					done()
 				})
 		})
 	})
 	// GET /role/:roleId
-	describe('GET /role/:roleId', () => {
+	describe('GET /role/{roleId}', () => {
 		it('deberia obtener un usario por su id', done => {
 			let role = new Role({
 				name: 'admin_role',
@@ -243,7 +244,7 @@ describe('ROLE: ', () => {
 		})
 	})
 	// PUT /role/:roleId
-	describe('PUT /role/:roleId', () => {
+	describe('PUT /role/{roleId}', () => {
 		it('deberia actualizar un rol por su id de rol', done => {
 			let role = new Role({
 				name: 'admin_role',
@@ -337,7 +338,7 @@ describe('ROLE: ', () => {
 		})
 	})
 	// DELETE /role/:roleId
-	describe('DELETE /role/:roleId', () => {
+	describe('DELETE /role/{roleId}', () => {
 		it('deberia eliminar un rol por su id', done => {
 			let role = new Role({
 				name: 'admin_role',

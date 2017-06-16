@@ -11,6 +11,7 @@ const superUser = require('./services/security/superuser')
 const routes = require('./routes/routes')
 
 const port = process.env.PORT || 3000
+server.disable('x-powered-by')
 server.set('port',port)
 server.use(cors())
 // No mostrar la bitacora cuando se hacen las pruebas
@@ -55,6 +56,7 @@ superUser(server)
 routes(server)
 
 server.listen(parseInt(server.get('port')), function () {
+	// process.env.TZ = "America/Argentina"
 	console.log('Servicio ejecutandose en el puerto: ' + port);
 })
 
@@ -63,7 +65,6 @@ process.on('unhandledRejection', reason => {
 	console.error('UNHANDLED :', reason);
 })
 // process.on('uncaughtException', error => {
-//     console.error('--ERROR--', error);
 //     if (error.syscall !== 'listen')
 //       throw error
 //

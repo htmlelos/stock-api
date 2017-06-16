@@ -7,18 +7,18 @@ mongoose.Promise = global.Promise
 let CategorySchema = new Schema({
   name: {
     type: String,
-    required: 'Debe proporcionar un nombre de Categoría',
+    required: 'Debe proporcionar un nombre de categoría',
     unique: true
   },
   description: {
     type: String,
-    required: 'Debe proporcionar una descripción de la Categoría'
+    required: 'Debe proporcionar una descripción de la categoría'
   },
   status: {
     type: String,
     enum: {
       values: ['ACTIVO', 'INACTIVO'],
-      message: 'El estado del rol solo puede ser ACTIVO o INACTIVO'
+      message: 'El estado de la categoria solo puede ser ACTIVO o INACTIVO'
     },
     required: 'Debe definir el estado de la categoría'
   },

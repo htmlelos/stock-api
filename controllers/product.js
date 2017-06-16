@@ -28,7 +28,6 @@ function getAllProducts(request, response) {
         })
 }
 function retrieveAllProducts(request, response) {
-    console.log('BODY--', request.body)
     let limit = parseInt(request.body.limit)
     let fields = request.body.fields
     let filter = request.body.filter
@@ -184,7 +183,7 @@ function getBrand(request, response) {
             message.success(response, 200, 'Marca obtenida con éxito', product.brand)
         })
         .catch(error => {
-            message.error(response, erro.code, error.message, error.data)
+            message.failure(response, erro.code, error.message, error.data)
         })
 }
 
@@ -204,7 +203,6 @@ function getAllPriceLists(request, response) {
             message.failure(response, error.code, error.message, error.data)
         })
 }
-
 // Obtener una lista de precios
 function findPriceList(priceListId) {
     return PriceList.findById({ _id: priceListId })
@@ -228,7 +226,6 @@ function addPriceList(request, response) {
             return findProduct(productId)
         })
         .then(product => {
-            // console.log('PRODUCT--', product);
             // Si existen producto pendientes de aprobacion son actualizados en estado ANULADO
             let pendientes = product.priceLists.filter(x => {
                 return (x.priceListId.toString() === priceListId.toString() && x.status === 'PENDIENTE')
@@ -241,12 +238,6 @@ function addPriceList(request, response) {
             return findProduct(request.params.productId)
         })
         .then(product => {
-            return PriceList.populate(product, {path: 'priceLists.priceListId'})
-        })
-        .then(product => {
-            message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
-        })
-        .then(product => {
             product.updatedBy = request.decoded.username
             product.updatedAt = Date.now()
             product.priceLists.push(request.body)
@@ -256,10 +247,17 @@ function addPriceList(request, response) {
             return findProduct(productId)
         })
         .then(product => {
+            return PriceList.populate(product, {path: 'priceLists.priceListId'})
+        })        
+        .then(product => {
             message.success(response, 200, 'Precio añadido con éxito', product.priceLists)
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
+            if (error.code) {
+                message.failure(response, error.code, error.message, error.data)
+            } else {
+                message.failure(response, 500, error.message, null)
+            }
         })
 }
 

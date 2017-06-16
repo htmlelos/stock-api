@@ -82,7 +82,7 @@ function createUser(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, error.message, error)
+				message.failure(response, 500, error.message, error)
 			}
 		})
 }
@@ -135,7 +135,7 @@ function updateUser(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.error(response, 500, error.message, error)
+				message.failure(response, 500, error.message, error)
 			}
 		})
 }
@@ -310,13 +310,13 @@ function createDefaultUser(request, response, next) {
 						next()
 					})
 					.catch(error => {
-						message.error(response, 500, 'No se pudo crear el superusuario', null)
+						message.failure(response, 500, 'No se pudo crear el superusuario', null)
 					})
 			}
 			next()
 		})
 		.catch(error => {
-			message.error(response, 500, 'No se pudo crear el super usuario', null)
+			message.failure(response, 500, 'No se pudo crear el super usuario', null)
 		})
 }
 

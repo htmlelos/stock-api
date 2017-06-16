@@ -95,7 +95,7 @@ describe('CATEGORY', () => {
           response.should.have.status(422)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Debe proporcionar un nombre de Categoría')
+            .eql('Debe proporcionar un nombre de categoría')
           response.body.should.have.property('data').to.be.null
           done()
         })
@@ -115,7 +115,7 @@ describe('CATEGORY', () => {
           response.should.have.status(422)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('Debe proporcionar una descripción de la Categoría')
+            .eql('Debe proporcionar una descripción de la categoría')
           response.body.should.have.property('data').to.be.null
           done()
         })
@@ -136,7 +136,7 @@ describe('CATEGORY', () => {
           response.should.have.status(422)
           response.body.should.be.a('object')
           response.body.should.have.property('message')
-            .eql('El estado del rol solo puede ser ACTIVO o INACTIVO')
+            .eql('El estado de la categoria solo puede ser ACTIVO o INACTIVO')
           response.body.should.have.property('data')
             .to.be.null
           done()
@@ -651,7 +651,7 @@ describe('CATEGORY', () => {
     })
   })
 
-  // describe.only('DELETE /categories', () => {
+  // describe('DELETE /categories', () => {
   //   it('deberia eliminar las categorías seleccionadas', done => {
 
   //     let categoriesIds = [];

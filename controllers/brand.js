@@ -6,7 +6,6 @@ const mongoose = require('mongoose')
 
 // Obtiene todas las marcas
 function getAllBrands(request, response) {
-  // console.log('BODY--', request.body)
   Brand.find({})
     .then(brands => {
       return Promise.all(brands.map(brand => {
@@ -85,7 +84,7 @@ function createBrand(request, response) {
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        message.error(response, 500, error.message, error)
+        message.failure(response, 500, error.message, error)
       }
     })
 }
@@ -103,14 +102,14 @@ function getBrand(request, response) {
             message.success(response, 200, 'Marca obtenida con éxito', brand)
           })
           .catch(error => {
-            message.error(response, 422, 'No se pudo recuperar ', error)
+            message.failure(response, 422, 'No se pudo recuperar ', error)
           })
       } else {
         message.failure(response, 404, 'No se encontró la marca', null)
       }
     })
     .catch(error => {
-      message.error(response, 500, 'No se pudo recuperar la marca', error)
+      message.failure(response, 500, 'No se pudo recuperar la marca', error)
     })
 }
 function modifyBrand(brand, newBrand) {
@@ -127,6 +126,7 @@ function updateBrand(request, response) {
   let newBrand = request.body
   newBrand.updatedBy = request.decoded.username
   newBrand.updatedAt = Date.now()
+
   findBrand(brandId)
     .then(brand => {
       return modifyBrand(brand, newBrand)
@@ -145,7 +145,7 @@ function updateBrand(request, response) {
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        message.error(response, 500, error.message, error)
+        message.failure(response, 500, error.message, error)
       }
     })
 }
@@ -167,7 +167,7 @@ function deleteBrand(request, response) {
       if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        message.error(response, 500, 'No se pudo eliminar la marca', error)
+        message.failure(response, 500, 'No se pudo eliminar la marca', error)
       }
     })
 }

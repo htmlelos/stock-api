@@ -13,7 +13,7 @@ const PriceListSchema = new Schema({
   },
   description: {
     type: String,
-    required: 'Debe proporcionar una descripcion para la lista de precios'
+    required: 'Debe proporcionar una descripción para la lista de precios'
   },
   status: {
     type: String,

@@ -50,7 +50,8 @@ describe('USERS: test suite', () => {
 				.end((error, response) => {
 					response.should.have.status(200)
 					response.body.should.be.a('object')
-					response.body.should.have.property('message').eql('')
+					response.body.should.have.property('message')
+						.eql('')
 					response.body.should.have.property('data')
 					response.body.data.should.be.a('array')
 					response.body.data.length.should.be.eql(1)
@@ -100,9 +101,11 @@ describe('USERS: test suite', () => {
 				.end((error, response) => {
 					response.should.have.status(200)
 					response.body.should.be.a('object')
-					response.body.should.have.property('message').eql('Usuario creado con éxito')
+					response.body.should.have.property('message')
+						.eql('Usuario creado con éxito')
 					response.body.should.have.property('data')
-					response.body.data.should.have.property('id').to.be.not.null
+					response.body.data.should.have.property('id')
+						.to.be.not.null
 					done()
 				})
 		})
@@ -123,7 +126,8 @@ describe('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('Debe proporcionar un nombre de usuario')
-					response.body.should.have.property('data').eql(null)
+					response.body.should.have.property('data')
+						.eql(null)
 					done()
 				})
 		})
@@ -168,7 +172,7 @@ describe('USERS: test suite', () => {
 				})
 		})
 		// El valor del estado deberia ser ACTIVO o INACTIVO
-		it('el estado deberia ser ACTIVO or INACTIVO', done => {
+		it('el estado deberia ser ACTIVO o INACTIVO', done => {
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
@@ -209,7 +213,8 @@ describe('USERS: test suite', () => {
 					response.body.should.be.a('object')
 					response.body.should.have.property('message')
 						.eql('El usuario ya existe')
-					response.body.should.have.property('data').eql(null)
+					response.body.should.have.property('data')
+						.to.be.null
 					done()
 				})
 		})
@@ -692,7 +697,7 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// Revocar un rol de un usuario
-	describe('DELETE /user/:userId/role/:roleId', () => {
+	describe('DELETE /user/{userId}/role/{roleId}', () => {
 		it('deberia eliminar un rol de un usuario por su id de rol', done => {
 			let role = new Role({
 				name: 'guest',
@@ -794,17 +799,17 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// Agregar un perfil de usuario
-	describe.skip('POST /user/:userId/profile', () => {
+	describe.skip('POST /user/{userId}/profile', () => {
 		// Pendiente
 		it('deberia agregar un perfil a un usuario', done => { })
 	})
 	// Obtener un perfil de usuario
-	describe.skip('GET /user/:userId/profiles', () => {
+	describe.skip('GET /user/{userId}/profiles', () => {
 		// Pendiente
 		it('deberia obtener todos los perfiles de un usuario')
 	})
 	// Revocar un perfil de usuario
-	describe.skip('DELETE //user/:userId/profile', () => {
+	describe.skip('DELETE /user/{userId}/profile', () => {
 		// Pendiente
 		// it('deberia eliminar un perfil de un usuario')
 	})
