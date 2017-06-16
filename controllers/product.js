@@ -203,7 +203,6 @@ function getAllPriceLists(request, response) {
             message.failure(response, error.code, error.message, error.data)
         })
 }
-
 // Obtener una lista de precios
 function findPriceList(priceListId) {
     return PriceList.findById({ _id: priceListId })

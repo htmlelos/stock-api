@@ -697,7 +697,7 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// Revocar un rol de un usuario
-	describe('DELETE /user/:userId/role/:roleId', () => {
+	describe('DELETE /user/{userId}/role/{roleId}', () => {
 		it('deberia eliminar un rol de un usuario por su id de rol', done => {
 			let role = new Role({
 				name: 'guest',
@@ -799,17 +799,17 @@ describe('USERS: test suite', () => {
 		})
 	})
 	// Agregar un perfil de usuario
-	describe.skip('POST /user/:userId/profile', () => {
+	describe.skip('POST /user/{userId}/profile', () => {
 		// Pendiente
 		it('deberia agregar un perfil a un usuario', done => { })
 	})
 	// Obtener un perfil de usuario
-	describe.skip('GET /user/:userId/profiles', () => {
+	describe.skip('GET /user/{userId}/profiles', () => {
 		// Pendiente
 		it('deberia obtener todos los perfiles de un usuario')
 	})
 	// Revocar un perfil de usuario
-	describe.skip('DELETE //user/:userId/profile', () => {
+	describe.skip('DELETE /user/{userId}/profile', () => {
 		// Pendiente
 		// it('deberia eliminar un perfil de un usuario')
 	})

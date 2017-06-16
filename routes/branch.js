@@ -1,19 +1,21 @@
 'use strict'
 
-const Branch = require('../controllers/branch')
+const branch = require('../controllers/branch')
 const router = require('express').Router()
 
 router.route('/branchs')
-    .get(Branch.getAllBranchs)
-    .post(Branch.retrieveAllBranchs)
+    .get(branch.getAllBranchs)
+    .post(branch.retrieveAllBranchs)
 
 router.route('/branch')
-    .post(Branch.createBranch)
+    .post(branch.createBranch)
     
 router.route('/branch/:branchId')
-    .get(Branch.getBranch)
-    .put(Branch.updateBranch)
-    .delete(Branch.deleteBranch)
+    .get(branch.getBranch)
+    .put(branch.updateBranch)
+    .delete(branch.deleteBranch)
 
+// router.route('/branch/:branchId/business')
+//     .post(branch.addBusiness)
 
 module.exports = router

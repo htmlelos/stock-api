@@ -60,7 +60,7 @@ describe('BUSINESS', () => {
                 })
         })
     })
-
+    // Obtener todas las empresas segun el criterio indicado
     describe('POST /businesses', () => {
         it('obtener las empresas segun los criterios indicados', done => {
             let criteria = {
@@ -86,7 +86,7 @@ describe('BUSINESS', () => {
                 })
         })
     })
-
+    // Crear una nueva empresa
     describe('POST /business', () => {
         it('crea una nueva empresa', done => {
             let business = new Business({
@@ -246,7 +246,7 @@ describe('BUSINESS', () => {
         })
 
     })
-
+    // Obtener la empresa segun su id
     describe('GET /business/{businessId}', () => {
         it('deberia obtener una empresa por su id', done => {
             let business = new Business({
@@ -298,7 +298,7 @@ describe('BUSINESS', () => {
                 })
         })
     })
-
+    // Actualizar una empresa segun su id
     describe('PUT /business/{businessId}', () => {
         it('deberia actualizar una empresa por su id', done => {
             let business = new Business({
@@ -350,7 +350,7 @@ describe('BUSINESS', () => {
                 })
         })
     })
-
+    // Eliminar una empresa segun su id
     describe('DELETE /business/{businessId}', () => {
         it('deberia eliminar una empresa por su id', done => {
             let business = new Business({
@@ -396,302 +396,6 @@ describe('BUSINESS', () => {
                         .eql('No se encontró la empresa')
                     response.body.should.have.property('data')
                         .to.be.null
-                    done()
-                })
-        })
-    })
-
-    describe('POST /business/{businessId}/branch', () => {
-        it('deberia agregar una sucursal a la empresa', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            chai.request(server)
-                .post('/business/' + business._id + '/branch')
-                .set('x-access-token', token)
-                .send({ branchId: branch._id })
-                .end((error, response) => {
-                    response.should.have.status(200)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('Sucursal agregada con éxito')
-                    response.body.should.have.property('data')
-                    response.body.data.should.be.a('array')
-                    done()
-                })
-        })
-
-        it('no deberia agregar una sucursal a la empresa con id inválido', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            chai.request(server)
-                .post('/business/58dece08eb0548118ce31f11/branch')
-                .set('x-access-token', token)
-                .send({ branchId: branch._id })
-                .end((error, response) => {
-                    response.should.have.status(404)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('no se encontró la empresa')
-                    response.body.should.have.property('data')
-                        .to.be.null
-                    done()
-                })
-        })
-
-        it('no deberia agregar una sucursal con id invalido a la empresa', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            chai.request(server)
-                .post('/business/' + business._id + '/branch')
-                .set('x-access-token', token)
-                .send({ branchId: '58dece08eb0548118ce31f11' })
-                .end((error, response) => {
-                    response.should.have.status(404)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('no se encontró la sucursal')
-                    response.body.should.have.property('data')
-                        .to.be.null
-                    done()
-                })
-        })
-    })
-
-    describe('DELETE /business/{businessId}/branch', () => {
-        it('deberia eliminar una sucursal de una empresa por su id', done => {
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let business = new Business({
-                name: 'Water Point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.branchs.push(branch)
-
-            business.save()
-                .catch(error => { console.log('TEST:', error) })
-
-            chai.request(server)
-                .delete('/business/' + business._id + '/branch')
-                .set('x-access-token', token)
-                .send({ branchId: branch._id })
-                .end((error, response) => {
-                    response.should.have.status(200)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('Sucursal eliminada con éxito')
-                    response.body.should.have.property('data')
-                    response.body.data.should.be.a('array')
-                    done()
-                })
-        })
-
-        it('no deberia eliminar una sucursal de una empresa con id inválido', done => {
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let business = new Business({
-                name: 'Water Point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.branchs.push(branch)
-
-            business.save()
-                .catch(error => { console.log('TEST:', error) })
-
-            chai.request(server)
-                .delete('/business/58dece08eb0548118ce31f11/branch')
-                .set('x-access-token', token)
-                .send({ branchId: branch._id })
-                .end((error, response) => {
-                    response.should.have.status(404)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('No se encontró la empresa')
-                    response.body.should.have.property('data')
-                        .to.be.null
-                    done()
-                })
-        })
-
-        it('no deberia eliminar una sucursal con id inválido de una empresa', done => {
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => { console.error('TEST: ', error) })
-
-            let business = new Business({
-                name: 'Water Point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.branchs.push(branch)
-
-            business.save()
-                .catch(error => { console.log('TEST:', error) })
-
-            chai.request(server)
-                .delete('/business/' + business._id + '/branch')
-                .set('x-access-token', token)
-                .send({ branchId: '58dece08eb0548118ce31f11' })
-                .end((error, response) => {
-                    response.should.have.status(404)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('No se encontró la sucursal')
-                    response.body.should.have.property('data')
-                        .to.be.null
-                    done()
-                })
-        })
-    })
-
-    describe('DELETE /business/{businessId}/branchs', () => {
-        it('deberia eliminar todas las sucursales indicadas', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: 20232021692,
-                status: 'ACTIVO'
-            })
-            let selecteds = []
-
-            let branch = new Branch({
-                name: 'Lavalle',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Lavalle 868',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => {console.log('TEST:', error)})
-
-            business.branchs.push(branch)
-            selecteds.push(branch._id)            
-
-            branch = new Branch({
-                name: 'Maipu',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'Maipu 858',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => {console.log('TEST:', error)})
-
-            business.branchs.push(branch)
-
-            branch = new Branch({
-                name: 'España',
-                province: 'San Luis',
-                city: 'San Luis',
-                street: 'España 254',
-                status: 'ACTIVO'
-            })
-
-            branch.save()
-                .catch(error => {console.log('TEST:', error)})
-
-            business.branchs.push(branch)
-            selecteds.push(branch._id)
-
-            business.save()
-                .catch(error => {console.error('ERROR: ', error); })
-
-
-            chai.request(server)                
-                .delete('/business/'+business._id+'/branchs')
-                .set('x-access-token', token)
-                .send({branchs: JSON.stringify(selecteds)})
-                .end((error, response) => {
-                    response.should.be.status(200)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql('Sucursales eliminadas con éxito')
-                    response.body.should.have.property('data')
-                    response.body.data.should.be.a('array')
                     done()
                 })
         })

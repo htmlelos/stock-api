@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Branch = require('../models/branch')
 const settings = require('../settings')
 // Dependencias de desarrollo
@@ -37,6 +38,7 @@ describe('BRANCH: ', () => {
     // Se ejecuta despues de cada test
     afterEach(done => {
         Branch.remove({}, error => { })
+        Business.remove({}, error => { })
         done()
     })
     // Obtener todas las sucursales
@@ -87,6 +89,15 @@ describe('BRANCH: ', () => {
     // Agregar una nueva sucursal
     describe('POST /branch', () => {
         it('deberia crear una sucursal', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'          
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
             let branch = {
                 name: 'Sucursal Maipu',
                 address: {
@@ -94,7 +105,8 @@ describe('BRANCH: ', () => {
                     city: 'San Luis',
                     street: 'Maipu'
                 },
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -115,13 +127,23 @@ describe('BRANCH: ', () => {
         })
 
         it('no deberia crear una sucursal sin nombre', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+                            
             let branch = {
                 address: {
                     province: 'San Luis',
                     city: 'San Luis',
                     street: 'Maipu'
                 },
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -140,13 +162,23 @@ describe('BRANCH: ', () => {
         })
 
         it('no deberia crear una sucursal sin estado', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'           
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
             let branch = {
                 name: 'Lavalle 868',
                 address: {
                     province: 'San Luis',
                     city: 'San Luis',
                     street: 'Maipu'
-                }
+                },
+                business: business._id
             }
 
             chai.request(server)
@@ -165,6 +197,15 @@ describe('BRANCH: ', () => {
         })
 
         it('el estado de la sucursal solo puede ser ACTIVO o INACTIVO', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'           
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
             let branch = {
                 name: 'Lavalle 868',
                 address: {
@@ -172,7 +213,8 @@ describe('BRANCH: ', () => {
                     city: 'San Luis',
                     street: 'Maipu'
                 },
-                status: 'SUSPENDIDO'
+                status: 'SUSPENDIDO',
+                business: business._id                
             }
 
             chai.request(server)
@@ -191,6 +233,15 @@ describe('BRANCH: ', () => {
         })
 
         it('no deberia crear una sucursal con nombre duplicado', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'           
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
             let branch = {
                 name: 'Lavalle 868',
                 address: {
@@ -198,7 +249,8 @@ describe('BRANCH: ', () => {
                     city: 'San Luis',
                     street: 'Maipu'
                 },
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id                
             }
 
             let newBranch = new Branch(branch)
@@ -218,6 +270,42 @@ describe('BRANCH: ', () => {
                         .to.be.null
                     done()
                 })
+        })
+
+        it('no deberia crear una sucursal con id de empresa invalido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'              
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
+            let branch = {
+                name: 'Sucursal Maipu',
+                address: {
+                    province: 'San Luis',
+                    city: 'San Luis',
+                    street: 'Maipu'
+                },
+                status: 'ACTIVO',
+                business: '58dece08eb0548118ce31f11'
+            }
+
+            chai.request(server)
+                .post('/branch')
+                .set('x-access-token', token)
+                .send(branch)
+                .end((error, response) => {
+                    response.should.be.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('No se encontró la empresa')
+                    response.body.should.have.property('data')
+                        .to.be.null
+                    done()
+                })            
         })
     })
     // Obtener una sucursal
@@ -445,4 +533,5 @@ describe('BRANCH: ', () => {
                 })
         })
     })
+
 })

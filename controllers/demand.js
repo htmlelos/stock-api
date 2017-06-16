@@ -208,7 +208,6 @@ const deleteItem = (request, response) => {
             }
         })
         .then((result) => {
-            console.log('RESULT', result);
             return findDemand(demandId)
         })
         .then(demand => {

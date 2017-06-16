@@ -15,7 +15,6 @@ describe('SERVER: test suite', () => {
 		chai.request(server)
 			.get('/ping')
 			.end((error, response) => {
-				console.log('FALLO');
 				response.should.have.status(200)
 				response.body.should.be.a('string')
 				response.body.should.be.eql('pong')
