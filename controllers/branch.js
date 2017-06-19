@@ -72,7 +72,9 @@ function createBranch(request, response) {
             branch.createdBy = request.decoded.username
             return branch.save()
         })
-        .then(branch => { message.success(response, 200, 'Sucursal creada con éxito', { id: branch._id }) })
+        .then(branch => { 
+            console.log('BRANCH--', branch);
+            message.success(response, 200, 'Sucursal creada con éxito', { id: branch._id }) })
         .catch(error => {
             if (error.code && error.code === 11000) {
                 let error = { code: 422, message: 'La sucursal ya existe', data: null }

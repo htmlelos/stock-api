@@ -8,11 +8,11 @@ const DocumentSchema = new Schema({
     header: {
         type: {
             type: String,
-        enum: {
-            values: ['FACTURA', 'ORDEN', 'REMITO', 'RECIBO', 'RECEPCION', 'DESPACHO'],
-            message: 'El tipo de dactura solo puede ser FACTURA, ORDEN, REMITO, RECIBO, RECEPCION o DESPACHO'
-        },
-            required: 'Debe indicar el tipo de documento'            
+            enum: {
+                values: ['FACTURA', 'ORDEN', 'REMITO', 'RECIBO', 'RECEPCION', 'DESPACHO'],
+                message: 'El tipo de factura solo puede ser FACTURA, ORDEN, REMITO, RECIBO, RECEPCION o DESPACHO'
+            },
+            required: 'Debe indicar el tipo de documento'
         },
         status: {
             type: String,
@@ -26,8 +26,8 @@ const DocumentSchema = new Schema({
             type: Date,
             required: 'Debe indicar la fecha del comprobante'
         },
-        actors: [{type: Schema.Types.ObjectId, ref: 'Person'}],
-        business: {type: Schema.Types.ObjectId, ref: 'Business'}
+        actors: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
+        business: { type: Schema.Types.ObjectId, ref: 'Business' }
     },
     details: [
         {
@@ -62,9 +62,9 @@ const DocumentSchema = new Schema({
         type: Date,
         required: true,
         default: Date.now
-    },    
+    },
     createdBy: {
-        type: Date,
+        type: String,
         required: true,
         default: 'anonimo'
     },
@@ -75,7 +75,7 @@ const DocumentSchema = new Schema({
         type: String
     }
 }, {
-    versionKey: false    
-})
+        versionKey: false
+    })
 
 module.exports = mongoose.model('Document', DocumentSchema)

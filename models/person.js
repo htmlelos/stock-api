@@ -27,8 +27,8 @@ const PersonSchema = new Schema({
     type: {
         type: String,
         enum: {
-            values: ['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'],
-            message: 'El tipo de persona solo puede ser o CLIENTE, PROVEEDOR, VENDEDOR o CAJERO'
+            values: ['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO', 'ORDENANTE'],
+            message: 'El tipo de persona solo puede ser o CLIENTE, PROVEEDOR, VENDEDOR, CAJERO u ORDENANTE'
         },
         required: 'Debe proporcionar un tipo de persona'
     },

@@ -43,17 +43,6 @@ describe('PERSON: ', () => {
     // GET /persons - Obtener todas las personas
     describe('GET /persons', () => {
         it('deberia obtener todas las personas', done => {
-            // let person = {
-            //     type: 'CLIENTE',
-            //     firstName: 'Juan',
-            //     lastName: 'Perez',
-            //     address: [],
-            //     tributaryCode: '202202231962',
-            //     taxStatus: 'RESPONSABLE INSCRIPTO',
-            //     grossIncomeCode: '122022022319623',
-            //     contacts: [],
-            //     status: 'ACTIVO'
-            // }
 
             chai.request(server)
                 .get('/persons')
