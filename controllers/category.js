@@ -113,14 +113,12 @@ function updateCategory(request, response) {
         let newCategory = request.body
         newCategory.updatedBy = request.decoded.username
         newCategory.updatedAt = Date()
-        // console.log('ACTUALIZADO--');
         return Category.update({ _id: request.params.categoryId }, { $set: newCategory }, { runValidators: true })
       } else {
         return Promise.reject({ code: 404, message: 'No se encontró la categoría', data: null })
       }
     })
     .then(() => {
-      // console.log('RESPONSE--', response);
       return findCategory(request.params.categoryId)
     })
     .then(category => {

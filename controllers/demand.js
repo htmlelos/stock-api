@@ -94,7 +94,6 @@ const getDemand = (request, response) => {
             }
         })
         .then(demand => {
-            console.log();
             return Demand.populate(demand, { path: 'items' })
         })
         .then(demand => {

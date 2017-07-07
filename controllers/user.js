@@ -34,30 +34,23 @@ function retrieveAllUsers(request, response) {
 		.catch(error => { message.failure(response, 404, 'No se pudieron recuperar los usuarios', error) })
 }
 // Verifica que el nombre del usuario esté presente
-function checkName(request) {
+function checkUser(request) {
 	request.checkBody('username', 'Debe proporcionar un nombre de usuario')
 		.notEmpty()
-}
-// Valida que exista la contraseña del usuario
-function checkPassword(request) {
 	request.checkBody('password', 'Debe proporcionar una contraseña')
-		.notEmpty()
-}
-// Valida lo datos del estado del usuario
-function checkStatus(request) {
+		.notEmpty()		
 	request.checkBody('status', 'Debe definir el estado del usuario')
 		.notEmpty()
 	request.checkBody('status', 'El estado de usuario solo puede ser ACTIVO o INACTIVO')
 		.isIn(['ACTIVO', 'INACTIVO'])
+	request.checkBody('business', 'Debe indicar la empresa a la que pertence el usuario')
+		.notEmpty()
 }
 
 //Crea un nuevo usuario
-function createUser(request, response) {
-	checkName(request)
-	checkPassword(request)
-	checkStatus(request)
+function createUser(request, response) {	
+	checkUser(request)
 
-	// validateUser(request)
 	request.getValidationResult()
 		.then(result => {
 			if (!result.isEmpty()) {
@@ -292,31 +285,6 @@ function deleteUserRole(request, response) {
 		})
 		.catch(error => {
 			message.failure(response, error.code, error.message, error.data)
-		})
-}
-
-function createDefaultUser(request, response, next) {
-	User.findOne({ username: settings.superuser })
-		.then(user => {
-			if (!user) {
-				let superUser = new User({
-					username: settings.superuser,
-					password: 'super',
-					status: 'ACTIVO'
-				})
-
-				superUser.save()
-					.then(user => {
-						next()
-					})
-					.catch(error => {
-						message.failure(response, 500, 'No se pudo crear el superusuario', null)
-					})
-			}
-			next()
-		})
-		.catch(error => {
-			message.failure(response, 500, 'No se pudo crear el super usuario', null)
 		})
 }
 

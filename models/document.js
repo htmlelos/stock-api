@@ -1,81 +1,62 @@
-'use strict';
+'use strict'
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
+// Establece las promesas de mongoose como las promesas
 mongoose.Promise = global.Promise
 
 const DocumentSchema = new Schema({
-    header: {
-        type: {
-            type: String,
-            enum: {
-                values: ['FACTURA', 'ORDEN', 'REMITO', 'RECIBO', 'RECEPCION', 'DESPACHO'],
-                message: 'El tipo de factura solo puede ser FACTURA, ORDEN, REMITO, RECIBO, RECEPCION o DESPACHO'
-            },
-            required: 'Debe indicar el tipo de documento'
-        },
-        status: {
-            type: String,
-            required: 'El documento debe tener un estado'
-        },
-        documentNumber: {
-            type: String,
-            required: 'El comprobante debe tener un numero de comprobante'
-        },
-        documentDate: {
-            type: Date,
-            required: 'Debe indicar la fecha del comprobante'
-        },
-        actors: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
-        business: { type: Schema.Types.ObjectId, ref: 'Business' }
-    },
-    details: [
-        {
-            product: {
-                type: Schema.Types.ObjectId,
-                ref: 'Product'
-            },
-            quantity: {
-                type: Number,
-                required: 'Debe inidicar la cantidad del producto'
-            },
-            price: {
-                type: Number
-            },
-            discount: {
-                type: Number
-            }
-        }
-    ],
-    footer: {
-        subtotal: {
-            type: Number
-        },
-        discounts: {
-            type: Number
-        },
-        taxes: {
-            type: Number
-        }
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    createdBy: {
+    documentType: {
         type: String,
-        required: true,
-        default: 'anonimo'
-    },
-    updatedAt: {
-        type: Date
-    },
-    updatedBy: {
-        type: String
+        enum: {
+            values: ['ORDEN', 'RECEPCION', 'FACTURA'],
+            message: 'El tipo de documento solo puede ser ORDEN, RECEPCION o FACTURA'
+        },
+        required: 'Debe indicar el tipo del documento'
     }
-}, {
-        versionKey: false
-    })
+    , documentName: {
+        type: String,
+        required: 'Debe indicar el nombre del documento'
+    },
+    documentNumber: {
+        type: Number,
+        required: `Debe indicar el numero del Documento`
+    },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business'
+    },
+    receiver: {
+        type: Schema.Types.ObjectId,
+        ref: 'Person'
+    },
+    sender: {
+        type: Schema.Types.ObjectId,
+        ref: 'Person'
+    },
+    detail: {
+        product: {
+            type: Schema.Types.ObjectId,
+            ref: 'Product'
+        },
+        quantity: {
+            type: Number,
+            default: 1
+        },
+        price: {
+            type: Number,
+            default: 0
+        }
+    },
+    subtotal: {
+        type: Number
+    },
+    salesTaxes: {
+        type: Number
+        // Minimo y Maximo
+    },
+    total: {
+        type: Number
+    }
+})
 
 module.exports = mongoose.model('Document', DocumentSchema)

@@ -31,7 +31,6 @@ function retrieveAllBrands(request, response) {
     .limit(limit)
     .sort(sort)
     .then(brands => {
-      console.log('BRANDS--', brands)
       return Promise.all(brands.map(brand => {
         return Person.populate(brand, { path: 'suppliers' })
       }))

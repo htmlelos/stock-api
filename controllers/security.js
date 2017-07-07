@@ -16,11 +16,10 @@ const login = (request, response) => {
             security.verifyCredentials(request, response, user)
           })
           .catch(error => {
-            console.log('ERROR-500--', error);
             message.failure(response, 500, '', error)
           })
       } else {
-        message.notAuthorized(response, 401, 'No se pudo autenticar verifique sus credenciales', { token: null })
+        message.failure(response, 401, 'No se pudo autenticar verifique sus credenciales', { token: null })
       }
     })
     .catch(error => {

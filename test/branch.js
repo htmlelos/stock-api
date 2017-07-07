@@ -88,7 +88,7 @@ describe('BRANCH: ', () => {
     })
     // Agregar una nueva sucursal
     describe('POST /branch', () => {
-        it.only('deberia crear una sucursal', done => {
+        it('deberia crear una sucursal', done => {
             let business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',

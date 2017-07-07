@@ -114,7 +114,6 @@ function getProduct(request, response) {
             return Category.populate(product, { path: 'category' })
         })
         .then(product => {
-            // console.log('PRODUCT_CATEGORY: ', product);
             return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {

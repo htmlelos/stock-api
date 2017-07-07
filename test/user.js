@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/user')
 const User = require('../models/user')
 const Role = require('../models/role')
 const settings = require('../settings')
@@ -39,6 +40,7 @@ describe('USERS: test suite', () => {
 	afterEach(done => {
 		User.remove({}, error => { })
 		Role.remove({}, error => { })
+		Business.remove({}, error => { })
 		done()
 	})
 	// Obtener todos los usuarios
@@ -88,9 +90,18 @@ describe('USERS: test suite', () => {
 	// Crea un usuario
 	describe('POST /user', () => {
 		it('deberia crear un nuevo usuario', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
+				business: business._id,
 				status: 'ACTIVO'
 			}
 
@@ -109,10 +120,19 @@ describe('USERS: test suite', () => {
 					done()
 				})
 		})
-		// No deberia crear un usuario sin nombre de usuario
+
 		it('no deberia crear un usuario sin username', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				password: 'admin',
+				business: business._id,
 				status: 'ACTIVO'
 			}
 
@@ -131,10 +151,19 @@ describe('USERS: test suite', () => {
 					done()
 				})
 		})
-		// No deberia crear un usuario sin la contraseña
+
 		it('no deberia crear un usuario sin contraseña', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				username: 'admin@mail.com',
+				business: business._id,				
 				status: 'ACTIVO'
 			}
 
@@ -151,11 +180,20 @@ describe('USERS: test suite', () => {
 					done()
 				})
 		})
-		// No deberia crear un usuario sin estado
+
 		it('no deberia crear un nuevo usuario sin estado', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				username: 'admin@mail.com',
-				password: 'admin'
+				password: 'admin',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -171,11 +209,20 @@ describe('USERS: test suite', () => {
 					done()
 				})
 		})
-		// El valor del estado deberia ser ACTIVO o INACTIVO
+
 		it('el estado deberia ser ACTIVO o INACTIVO', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
+				business: business._id,
 				status: 'HABILITADO'
 			}
 
@@ -194,9 +241,18 @@ describe('USERS: test suite', () => {
 		})
 
 		it('no deberia crear un usuario con nombre duplicado', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
+				business: business._id,				
 				status: 'ACTIVO'
 			}
 
@@ -217,6 +273,40 @@ describe('USERS: test suite', () => {
 						.to.be.null
 					done()
 				})
+		})
+
+		it('no deberia crear un nuevo usuario sin empresa', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST1--'. error)})
+
+			let user = {
+				username: 'admin@mail.com',
+				password: 'admin',
+				status: 'ACTIVO'
+			}
+
+			let newUser = new User(user)
+			newUser.save()
+				.catch(error => console.error('TEST:', error))
+
+			chai.request(server)
+				.post('/user')
+				.set('x-access-token', token)
+				.send(user)
+				.end((error, response) => {
+					response.should.have.status(422)
+					response.body.should.be.a('object')
+					response.body.should.have.property('message')
+						.eql('Debe indicar la empresa a la que pertence el usuario')
+					response.body.should.have.property('data')
+						.to.be.null
+					done()
+				})			
 		})
 	})
 	// Obtener un usuario por su userId

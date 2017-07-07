@@ -26,7 +26,7 @@ server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 server.use(expressValidator({
 	customValidators: {
-		isCUIT: function (cuit) {
+		isCUIT: (cuit) => {
 			if (cuit) {
 				let aMult = '6789456789';
 				// let cuit = cuit;
@@ -48,6 +48,9 @@ server.use(expressValidator({
 				}
 			}
 			return false;
+		},
+		isArray: (array) => {
+			return Array.isArray(array);
 		}
 	}
 }))

@@ -5,7 +5,6 @@ const message = require('../services/response/message')
 
 //Obtener todas las sucursales
 function getAllBranchs(request, response) {
-    // console.log('GET_ALL');
     Branch.find({})
         .then(branchs => message.success(response, 200, '', branchs))
         .catch(error => message.failure(response, 422, '', null))
@@ -73,7 +72,6 @@ function createBranch(request, response) {
             return branch.save()
         })
         .then(branch => { 
-            console.log('BRANCH--', branch);
             message.success(response, 200, 'Sucursal creada con éxito', { id: branch._id }) })
         .catch(error => {
             if (error.code && error.code === 11000) {
