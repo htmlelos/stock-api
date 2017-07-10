@@ -8,4 +8,7 @@ router.route('/documents')
     .get(document.getAllDocuments)
     .post(document.retrieveAllDocuments)
 
+router.route('/document')
+    .post(document.createDocument)
+
 module.exports = router

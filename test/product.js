@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Brand = require('../models/brand')
 const Person = require('../models/person')
 const Product = require('../models/product')
@@ -43,6 +44,7 @@ describe('PRODUCTS: ', () => {
         Person.remove({}, error => { })
         Product.remove({}, error => { })
         PriceList.remove({}, error => { })
+        Business.remove({}, error => { })
         done()
     })
     // Obtener /products - Obtener todos los products
@@ -66,12 +68,21 @@ describe('PRODUCTS: ', () => {
     describe('POST /product', () => {
         // Deberia crear un nuevo producto
         it('deberia crear un nuevo producto', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST', error)})
+
             let product = {
                 name: 'Gaseosa 2L',
                 brand: null,
                 price: 35,
                 components: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -90,11 +101,20 @@ describe('PRODUCTS: ', () => {
         })
         // No deberia crear un nuevo producto sin nombre
         it('no deberia crear un nuevo producto sin nombre', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST', error)})
+
             let product = {
                 brand: null,
                 price: 35,
                 components: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -112,12 +132,21 @@ describe('PRODUCTS: ', () => {
         })
         // No deberia crear un producto con un nombre duplicado
         it('no deberia crear un producto con un nombre duplicado', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST', error)})
+
             let product = new Product({
                 name: 'Gaseosa 2L',
                 brand: null,
                 price: 35.5,
                 components: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             product.save()
@@ -131,7 +160,8 @@ describe('PRODUCTS: ', () => {
                     brand: null,
                     price: 35.5,
                     components: [],
-                    status: 'ACTIVO'
+                    status: 'ACTIVO',
+                    business: business._id
                 })
                 .end((error, response) => {
                     response.should.have.status(422)

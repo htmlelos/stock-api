@@ -39,6 +39,8 @@ function checkPriceList(request) {
     .notEmpty()
   request.checkBody('status', 'La Lista de Precios solo puede estar en estado ACTIVO o INACTIVO')
     .isIn('ACTIVO','INACTIVO')
+  request.checkBody('business', 'Debe indicar la empresa a la que pertenece la lista de precios')
+    .notEmpty()
 }
 // Crea una nueva lista de Precios
 function createPriceList(request, response) {

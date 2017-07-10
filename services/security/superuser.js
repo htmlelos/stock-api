@@ -1,3 +1,4 @@
+const Business = require('../../models/business')
 const User = require('../../models/user')
 const settings = require('../../settings')
 
@@ -5,29 +6,26 @@ const settings = require('../../settings')
 // La contraseña de este usuario debe ser modificada luego de 
 // iniciada la aplicacion por primera vez
 module.exports = function superUser(server) {
-    server.use(function(request, response, next) {
-        User.findOne({username: settings.superuser})
+    server.use(function (request, response, next) {
+
+        User.findOne({ username: settings.superuser })
             .then(user => {
                 if (!user) {
                     const superuser = new User({
                         username: settings.superuser,
                         password: 'super',
+                        business: null,
                         status: 'ACTIVO'
                     })
-
-                    superuser.save()
-                        .then(user => {
-                            next()
-                        })
-                        .catch(error => {
-                            next(error)
-                        })
-                } else {
-                    next()
+                    return superuser.save()
                 }
+                return Promise.resolve(user)
+            })
+            .then(user => {
+                next()
             })
             .catch(error => {
                 next(error);
-            })        
+            })
     })
 }

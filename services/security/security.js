@@ -11,6 +11,7 @@ const verifyCredentials = (request, response, user) => {
       // Si la contraseña es correcta y el usuario esta activo
       // Se autentica el usuario
 
+
       if (user.status === 'ACTIVO' && isAuthenticated) {
         let token = jwt.sign(user, settings.secret, { expiresIn: "8h" })
         if (process.env.NODE_ENV === 'test') {
@@ -20,7 +21,7 @@ const verifyCredentials = (request, response, user) => {
             roles: []
           }
          } 
-        message.success(response, 200, 'Usuario autenticado con éxito', { token, username: user.username, roles: user.roles })
+        message.success(response, 200, 'Usuario autenticado con éxito', { token, username: user.username, business: user.business, roles: user.roles })
       } else {
         if (user.status === 'INACTIVO') {
           message.notAuthorized(response, 401, 'El usuario no esta ACTIVO, verifique sus credenciales', null)

@@ -43,6 +43,8 @@ function checkDemand(request) {
         .notEmpty()
     request.checkBody('startDate', 'Debe proporcionar una fecha inicial del pedido')
         .notEmpty()
+    request.checkBody('business', 'Debe indicar la empresa a la que pertenece la solicitud')
+        .notEmpty()        
 }
 
 function createDemand(request, response) {
@@ -94,7 +96,6 @@ const getDemand = (request, response) => {
             }
         })
         .then(demand => {
-            console.log();
             return Demand.populate(demand, { path: 'items' })
         })
         .then(demand => {

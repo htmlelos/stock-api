@@ -30,28 +30,23 @@ function retrieveAllRoles(request, response) {
 			message.failure(response, 404, 'No se recuperaron los roles', error)
 		})
 }
-// Valida que el nombre del rol esté presente
-function checkName(request) {
+
+function checkRole(request) {
 	request.checkBody('name', 'Debe proporcionar un nombre de Rol')
 		.notEmpty()
-}
-// Valida que este definida la descripción del rol
-function checkDescription(request) {
 	request.checkBody('description', 'Debe proporcionar una descripción del Rol')
 		.notEmpty()
-}
-// Valida los datos del estado del rol
-function checkStatus(request) {
 	request.checkBody('status', 'Debe definir el estado del Rol')
 		.notEmpty()
 	request.checkBody('status', 'El estado del Rol solo puede ser ACTIVO o INACTIVO')
 		.isIn('ACTIVO', 'INACTIVO')
+	request.checkBody('business', 'Debe indicar la empresa a la que pertenece el rol ')
+		.notEmpty()
 }
+
 // Crea un nuevo Rol
 function createRole(request, response) {
-	checkName(request)
-	checkDescription(request)
-	checkStatus(request)
+	checkRole(request)
 
 	request.getValidationResult()
 		.then(result => {

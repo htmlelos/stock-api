@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const PriceList = require('../models/priceList')
 const settings = require('../settings')
 // Dependencias de desarrollo
@@ -23,6 +24,7 @@ describe('PRICE LIST: test suite', () => {
   // Se ejecuta despues de cada test
   afterEach(done => {
     PriceList.remove({}, error => { })
+    Business.remove({}, error => { })
     done()
   })
 
@@ -60,130 +62,108 @@ describe('PRICE LIST: test suite', () => {
   // POST /pricelist - crea una nueva lista de precios
   describe('POST /pricelist', () => {
     it('deberia crear una nueva lista de precios', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST', error) })
+
+      let priceList = {
+        name: 'Precios con IVA',
+        description: 'Lista de precios de cliente inscriptos en el IVA',
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
-        .post('/login')
-        .send(superUser)
+        .post('/pricelist')
+        .set('x-access-token', token)
+        .send(priceList)
         .end((error, response) => {
-          response.should.be.status(200)
+          response.should.have.status(200)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Lista de Precios creada con éxito')
           response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
-          let priceList = {
-            name: 'Precios con IVA',
-            description: 'Lista de precios de cliente inscriptos en el IVA',
-            status: 'ACTIVO'
-          }
-
-          chai.request(server)
-            .post('/pricelist')
-            .set('x-access-token', token)
-            .send(priceList)
-            .end((error, response) => {
-              response.should.have.status(200)
-              response.body.should.be.a('object')
-              response.body.should.have.property('message')
-                .eql('Lista de Precios creada con éxito')
-              response.body.should.have.property('data')
-              response.body.data.should.have.property('id').to.be.not.null;
-              done()
-            })
+          response.body.data.should.have.property('id').to.be.not.null;
+          done()
         })
     })
 
     it('no deberia crear una Lista de Precios sin nombre', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST', error) })
+
+      let priceList = {
+        description: 'Lista de precios de clientes inscriptos en el IVA',
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
-        .post('/login')
-        .send(superUser)
+        .post('/pricelist')
+        .set('x-access-token', token)
+        .send(priceList)
         .end((error, response) => {
-          response.should.be.status(200)
-          response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
-          let priceList = {
-            description: 'Lista de precios de clientes inscriptos en el IVA',
-            status: 'ACTIVO'
-          }
-
-          chai.request(server)
-            .post('/pricelist')
-            .set('x-access-token', token)
-            .send(priceList)
-            .end((error, response) => {
-              response.should.have.status(422)
-              response.body.should.be.a('object')
-              response.body.should.have.property('message')
-                .eql('Debe proporcionar un nombre para la lista de precios')
-              response.body.should.have.property('data').to.be.null
-              done()
-            })
+          response.should.have.status(422)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Debe proporcionar un nombre para la lista de precios')
+          response.body.should.have.property('data').to.be.null
+          done()
         })
     })
 
     it('no deberia crear una Lista de Precios sin descripcion', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+
+      business.save()
+        .catch(error => { console.error('TEST', error) })
+
+      let priceList = {
+        name: 'Precios con IVA',
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
-        .post('/login')
-        .send(superUser)
+        .post('/pricelist')
+        .set('x-access-token', token)
+        .send(priceList)
         .end((error, response) => {
-          response.should.be.status(200)
-          response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
-          let priceList = {
-            name: 'Precios con IVA',
-            status: 'ACTIVO'
-          }
-
-          chai.request(server)
-            .post('/pricelist')
-            .set('x-access-token', token)
-            .send(priceList)
-            .end((error, response) => {
-              response.should.have.status(422)
-              response.body.should.be.a('object')
-              response.body.should.have.property('message')
-                .eql('Debe proporcionar una descripción para la lista de precios')
-              response.body.should.have.property('data').to.be.null
-              done()
-            })
+          response.should.have.status(422)
+          response.body.should.be.a('object')
+          response.body.should.have.property('message')
+            .eql('Debe proporcionar una descripción para la lista de precios')
+          response.body.should.have.property('data').to.be.null
+          done()
         })
     })
 
     it('no deberia crear una Lista de Precios sin estado', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
-      }
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST', error) })
 
-      chai.request(server)
-        .post('/login')
-        .send(superUser)
-        .end((error, response) => {
-          response.should.be.status(200)
-          response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
           let priceList = {
             name: 'Precios con IVA',
             description: 'Lista de precios de clientes inscriptos en el IVA',
+            business: business._id
           }
 
           chai.request(server)
@@ -198,28 +178,22 @@ describe('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })
     })
 
     it('el estado de la lista de precios deber ser ACTIVO o INACTIVO', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
-      }
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST', error) })
 
-      chai.request(server)
-        .post('/login')
-        .send(superUser)
-        .end((error, response) => {
-          response.should.be.status(200)
-          response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
           let priceList = {
             name: 'Precios con IVA',
             description: 'Lista de precios de clientes inscriptos en el IVA',
-            status: 'HABILITADO'
+            status: 'HABILITADO',
+            business: business._id
           }
 
           chai.request(server)
@@ -234,28 +208,23 @@ describe('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null
               done()
             })
-        })
     })
 
     it('no deberia crear una lista de precios con nombre duplicado', done => {
-      let superUser = {
-        username: 'super@mail.com',
-        password: 'super'
-      }
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
 
-      chai.request(server)
-        .post('/login')
-        .send(superUser)
-        .end((error, response) => {
-          response.should.be.status(200)
-          response.body.should.have.property('data')
-          response.body.data.should.have.property('token')
-          token = response.body.data.token
-          // Test from here
+      business.save()
+        .catch(error => { console.error('TEST', error) })
+
           let priceList = {
             name: 'Precios con IVA',
             description: 'Lista de precios de clientes inscriptos en el IVA',
-            status: 'ACTIVO'
+            status: 'ACTIVO',
+            business: business._id
           }
 
           let newPriceList = new PriceList(priceList)
@@ -274,7 +243,6 @@ describe('PRICE LIST: test suite', () => {
               response.body.should.have.property('data').to.be.null;
               done()
             })
-        })
     })
   })
   // GET /pricelist/pricelistId - obtiene una lista de precios por su id

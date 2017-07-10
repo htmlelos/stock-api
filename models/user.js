@@ -38,6 +38,10 @@ const UserSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Profile'
 	}],
+	business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'
+	},
 	createdAt: {
 		type: Date,
 		required: true,

@@ -39,6 +39,8 @@ function checkPerson(request, type = null) {
         .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'])
     request.checkBody('status', 'El estado no es válido')
         .isIn(['ACTIVO', 'INACTIVO'])
+    request.checkBody('business', 'Debe indicar la empresa a la que pertenece la persona')
+        .notEmpty()
 }
 // Verifica los datos del comprador
 function checkCustomer(request) {

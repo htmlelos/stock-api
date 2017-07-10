@@ -68,6 +68,8 @@ function retrieveAllProducts(request, response) {
 function checkProduct(request) {
     request.checkBody('name', 'El nombre del producto esta vacio')
         .notEmpty()
+    request.checkBody('business', 'Debe indicar la empresa a la que pertenece producto')
+        .notEmpty()
 }
 // Crea un nuevo producto
 function createProduct(request, response) {
@@ -114,7 +116,6 @@ function getProduct(request, response) {
             return Category.populate(product, { path: 'category' })
         })
         .then(product => {
-            // console.log('PRODUCT_CATEGORY: ', product);
             return PriceList.populate(product, { path: 'priceLists.priceListId' })
         })
         .then(product => {

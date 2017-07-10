@@ -23,6 +23,10 @@ let RoleSchema = new Schema({
 		},
 		required: 'Debe definir el estado del Rol'
 	},
+	business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'
+	},
 	createdAt: {
 		type: Date,
 		required: true,

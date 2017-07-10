@@ -82,6 +82,10 @@ const ProductSchema = new Schema({
         required: 'Debe definir el estado del producto',
         default: 'INACTIVO'
     },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business'
+    },
     createdAt: {
         type: Date,
         required: true,
