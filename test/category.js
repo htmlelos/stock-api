@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Category = require('../models/category')
 const settings = require('../settings')
 // Dependencias de desarrollo
@@ -36,6 +37,7 @@ describe('CATEGORY', () => {
   })
   afterEach(done => {
     Category.remove({}, error => { })
+    Business.remove({}, error => { })
     done()
   })
   // GET /categories - Obtener todos las categorías
@@ -58,11 +60,19 @@ describe('CATEGORY', () => {
   // POST /category - Crea una nueva categoría
   describe('POST /category', () => {
     it('deberia crear una nueva categoría', done => {
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST1', error) })
 
       let category = {
         name: 'Quesos',
         description: 'categorías de quesos',
-        status: 'ACTIVO'
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
@@ -82,9 +92,18 @@ describe('CATEGORY', () => {
     })
 
     it('no deberia crear una categoría sin nombres', done => {
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST1', error) })      
+
       let category = {
         description: 'categorías de quesos',
-        status: 'ACTIVO'
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
@@ -102,9 +121,18 @@ describe('CATEGORY', () => {
     })
 
     it('no deberia crear una categoría sin nombre', done => {
+      let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST1', error) })   
+
       let category = {
         name: 'Quesos',
-        status: 'ACTIVO'
+        status: 'ACTIVO',
+        business: business._id
       }
 
       chai.request(server)
@@ -122,10 +150,19 @@ describe('CATEGORY', () => {
     })
 
     it('es estado de la categoría deberia ser ACTIVO o INACTIVO', done => {
+       let business = new Business({
+        name: 'Punta del Agua',
+        tributaryCode: '20232021692',
+        status: 'ACTIVO'
+      })
+      business.save()
+        .catch(error => { console.error('TEST1', error) })   
+
       let category = {
         name: 'Quesos',
         description: 'categorías de quesos',
-        status: 'HABILITADO'
+        status: 'HABILITADO',
+        business: business._id
       }
 
       chai.request(server)

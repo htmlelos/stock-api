@@ -49,6 +49,8 @@ function checkCategory(request) {
     .notEmpty()
   request.checkBody('status', 'El estado de la categoria solo puede ser ACTIVO o INACTIVO')
     .isIn('ACTIVO', 'INACTIVO')
+  request.checkBody('business', 'Debe indicar la empresa a la que pertenece la categoria')
+    .notEmpty()
 }
 
 // Crea una nueva Categooria

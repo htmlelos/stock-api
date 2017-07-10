@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Person = require('../models/person')
 const settings = require('../settings')
 // Dependencias de desarrollo
@@ -38,6 +39,7 @@ describe('PERSON: ', () => {
     // Se ejecuta despues de cada test
     afterEach(done => {
         Person.remove({}, error => { })
+        Business.remove({}, error => { })
         done()
     })
     // GET /persons - Obtener todas las personas
@@ -61,6 +63,14 @@ describe('PERSON: ', () => {
     // POST /person - Crea una persona
     describe('POST /person', () => {
         it('deberia crear una nueva persona (CLIENTE)', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -70,7 +80,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -87,6 +98,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('no deberia crear una nueva persona sin tipo de persona', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 firstName: 'Juan',
                 lastName: 'Perez',
@@ -95,7 +114,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -112,6 +132,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('no deberia crear una person con tipo inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'COBRADOR',
                 firstName: 'Pedro',
@@ -121,7 +149,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -138,6 +167,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('no deberia crear cliente persona sin nombre', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'CLIENTE',
                 lastName: 'Perez',
@@ -146,7 +183,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -163,6 +201,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('no deberia crear cliente persona sin apellido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -171,7 +217,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -188,6 +235,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('no deberia crear un proveedor sin razon social', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'PROVEEDOR',
                 address: [],
@@ -195,7 +250,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -212,6 +268,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('El tipo de iva debe ser un valor válido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -221,7 +285,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'IRRESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021962',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -239,6 +304,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('el estado de la persona solo puede ser ACTIVO o INACTIVO', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -248,7 +321,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'HABILITADO'
+                status: 'HABILITADO',
+                business: business._id
             }
 
             chai.request(server)
@@ -266,6 +340,14 @@ describe('PERSON: ', () => {
 
         })
         it('el cuit del proveedor no puede ser vacio', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -273,7 +355,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -290,6 +373,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('el cuit del proveedor debe ser válido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -298,7 +389,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021962',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -315,6 +407,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('el cuit del proveedor debe tener 11 caracteres', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -323,7 +423,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)
@@ -340,6 +441,14 @@ describe('PERSON: ', () => {
                 })
         })
         it('el codigo de ingresos brutos del proveedor debe tener 13 caracteres', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = {
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -348,7 +457,8 @@ describe('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202320216921',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }
 
             chai.request(server)

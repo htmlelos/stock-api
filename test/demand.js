@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Product = require('../models/product')
 const Branch = require('../models/branch')
 const Person = require('../models/person')
@@ -44,6 +45,7 @@ describe('DEMAND: ', () => {
         Branch.remove({}, error => { })
         Person.remove({}, error => { })
         Demand.remove({}, error => { })
+        Business.remove({}, error => { })
         done()
     })
 
@@ -95,10 +97,19 @@ describe('DEMAND: ', () => {
 
     describe('POST /demand', () => {
         it('deberia crear una solicitud', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let demand = {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
-                items: []
+                items: [],
+                business: business._id
             }
 
             let product = new Product({
@@ -163,9 +174,18 @@ describe('DEMAND: ', () => {
         })
 
         it('no deberia crear una solicitud sin nombre', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let demand = {
                 startDate: new Date(Date.now()).toLocaleDateString(),
-                items: []
+                items: [],
+                business: business._id
             }
 
             let product = new Product({
@@ -228,9 +248,18 @@ describe('DEMAND: ', () => {
         })
 
         it('no deberia crear una solicitud sin fecha de pedido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })      
+
             let demand = {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString()}`,
-                items: []
+                items: [],
+                business: business._id
             }
 
             let product = new Product({
@@ -1342,10 +1371,10 @@ describe('DEMAND: ', () => {
             itemslist.push(demand.items[2]._id)
 
             demand.save()
-                .catch(error => {console.error('TEST:', error)})
+                .catch(error => { console.error('TEST:', error) })
 
             chai.request(server)
-                .put('/demand/'+demand._id+'/delete/items')
+                .put('/demand/' + demand._id + '/delete/items')
                 .set('x-access-token', token)
                 .send(itemslist)
                 .end((error, response) => {
@@ -1353,7 +1382,7 @@ describe('DEMAND: ', () => {
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
                         .eql('Items seleccionados eliminados con éxito')
-                    response.body.should.have.property('data')                    
+                    response.body.should.have.property('data')
                     done()
                 })
         })

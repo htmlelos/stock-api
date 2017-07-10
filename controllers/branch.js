@@ -23,21 +23,20 @@ function retrieveAllBranchs(request, response) {
         .then(roles => { message.success(response, 200, '', roles) })
         .catch(error => { message.failure(response, 404, 'No se recuperó la sucursal', null) })
 }
-//Valida que el nombre de la sucursal esté presente
-function checkName(request) {
+
+function checkBranch(request) {
     request.checkBody('name', 'Debe proporcionar el nombre de la sucursal')
         .notEmpty()
-}
-function checkStatus(request) {
     request.checkBody('status', 'Debe definir el estado de la sucursal')
         .notEmpty()
     request.checkBody('status', 'El estado de la sucursal solo puede ser ACTIVO o INACTIVO')
         .isIn('ACTIVO', 'INACTIVO')
+    request.checkBody('business', 'Debe indicar la empresa a la que pertenece la sucursal')
+        .notEmpty()
 }
 // Crea una nueva sucursal
 function createBranch(request, response) {
-    checkName(request)
-    checkStatus(request)
+    checkBranch(request)
 
     request.getValidationResult()
         .then(result => {
@@ -50,18 +49,18 @@ function createBranch(request, response) {
             }
             return Promise.resolve()
         })
-        .then(()=> {            
+        .then(() => {
             let businessId = request.body.business
             if (businessId) {
-                return  findBusiness(request.body.business)
+                return findBusiness(request.body.business)
             } else {
-                let error = {code: 404, message: 'La empresa indicada no es válida'}
+                let error = { code: 404, message: 'La empresa indicada no es válida' }
                 return Promise.reject(error)
             }
         })
         .then(business => {
             if (!business) {
-                let error = {code: 404, message: 'No se encontró la empresa', data: null}
+                let error = { code: 404, message: 'No se encontró la empresa', data: null }
                 return Promise.reject(error)
             }
         })
@@ -71,8 +70,9 @@ function createBranch(request, response) {
             branch.createdBy = request.decoded.username
             return branch.save()
         })
-        .then(branch => { 
-            message.success(response, 200, 'Sucursal creada con éxito', { id: branch._id }) })
+        .then(branch => {
+            message.success(response, 200, 'Sucursal creada con éxito', { id: branch._id })
+        })
         .catch(error => {
             if (error.code && error.code === 11000) {
                 let error = { code: 422, message: 'La sucursal ya existe', data: null }
@@ -90,10 +90,10 @@ function findBranch(branchId) {
 }
 // Obtener una sucursal por su branchId
 function getBranch(request, response) {
-    let branchId = request.params.branchId    
+    let branchId = request.params.branchId
     findBranch(branchId)
         .then(branch => {
-            if (branch) {                
+            if (branch) {
                 return Promise.resolve(branch)
             } else {
                 let error = { code: 404, message: 'No se encontro la sucursal', data: null }

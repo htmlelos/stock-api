@@ -68,6 +68,8 @@ function retrieveAllProducts(request, response) {
 function checkProduct(request) {
     request.checkBody('name', 'El nombre del producto esta vacio')
         .notEmpty()
+    request.checkBody('business', 'Debe indicar la empresa a la que pertenece producto')
+        .notEmpty()
 }
 // Crea un nuevo producto
 function createProduct(request, response) {

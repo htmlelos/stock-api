@@ -4,9 +4,9 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
-const Business = require('../models/user')
 const User = require('../models/user')
 const Role = require('../models/role')
+const Business = require('../models/business')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
@@ -96,13 +96,13 @@ describe('USERS: test suite', () => {
 				status: 'ACTIVO'
 			})
 			business.save()
-				.catch(error => {console.error('TEST1--'. error)})
+				.catch(error => {console.error('TEST1', error)})
 
 			let user = {
 				username: 'admin@mail.com',
 				password: 'admin',
-				business: business._id,
-				status: 'ACTIVO'
+				status: 'ACTIVO',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -128,7 +128,7 @@ describe('USERS: test suite', () => {
 				status: 'ACTIVO'
 			})
 			business.save()
-				.catch(error => {console.error('TEST1--'. error)})
+				.catch(error => {console.error('TEST--'. error)})
 
 			let user = {
 				password: 'admin',
@@ -159,7 +159,7 @@ describe('USERS: test suite', () => {
 				status: 'ACTIVO'
 			})
 			business.save()
-				.catch(error => {console.error('TEST1--'. error)})
+				.catch(error => {console.error('TEST--'. error)})
 
 			let user = {
 				username: 'admin@mail.com',
@@ -188,7 +188,7 @@ describe('USERS: test suite', () => {
 				status: 'ACTIVO'
 			})
 			business.save()
-				.catch(error => {console.error('TEST1--'. error)})
+				.catch(error => {console.error('TEST--'. error)})
 
 			let user = {
 				username: 'admin@mail.com',
@@ -217,7 +217,7 @@ describe('USERS: test suite', () => {
 				status: 'ACTIVO'
 			})
 			business.save()
-				.catch(error => {console.error('TEST1--'. error)})
+				.catch(error => {console.error('TEST--'. error)})
 
 			let user = {
 				username: 'admin@mail.com',

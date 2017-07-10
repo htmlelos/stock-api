@@ -42,22 +42,19 @@ function retrieveAllBrands(request, response) {
       message.failure(response, 404, 'No se pudieron recuperar las Marcas', error)
     })
 }
-// Verifica que el nombre de la marca esté presente
-function checkName(request) {
+function checkBrand(request) {
   request.checkBody('name', 'Debe proporcionar un nombre para la marca')
     .notEmpty()
-}
-// Valida lo datos del estado de la marca
-function checkStatus(request) {
   request.checkBody('status', 'Debe definir el estado de la Marca')
     .notEmpty()
   request.checkBody('status', 'El estado de la Marca solo puede ser ACTIVO o INACTIVO')
     .isIn('ACTIVO', 'INACTIVO')
+  request.checkBody('business', 'Debe indicar la empresa a la que pertenece la marca')
+    .notEmpty()
 }
 // Crear una nueva marca
 function createBrand(request, response) {
-  checkName(request)
-  checkStatus(request)
+  checkBrand(request)
 
   request.getValidationResult()
     .then(result => {

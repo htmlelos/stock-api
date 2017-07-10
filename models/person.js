@@ -64,6 +64,10 @@ const PersonSchema = new Schema({
         },
         required: 'Debe definir el estado del proveedor'
     },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business'
+    },
     createdAt: {
         type: Date,
         required: true,

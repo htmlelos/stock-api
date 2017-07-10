@@ -20,7 +20,7 @@ const UserSchema = new Schema({
 	},
 	password: {
 		type: String,
-		required: 'Debe proporcionar una contraseña 2'
+		required: 'Debe proporcionar una contraseña'
 	},
 	status: {
 		type: String,

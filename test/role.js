@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const Business = require('../models/business')
 const Role = require('../models/role')
 const settings = require('../settings')
 // Dependencias de desarrollo
@@ -37,7 +38,8 @@ describe('ROLE: ', () => {
 	})
 	// Se ejecuta despues de cada test
 	afterEach(done => {
-		Role.remove({}, error => {})
+		Role.remove({}, error => { })
+		Business.remove({}, error => { })
 		done()
 	})
 	// GET /roles - Obtener todos los roles
@@ -61,9 +63,18 @@ describe('ROLE: ', () => {
 	// POST /role - Crea un nuevo rol
 	describe('POST /role', () => {
 		it('deberia crear un nuevo rol', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => { console.error('TEST--'.error) })
+
 			let role = {
 				name: 'admin_role',
 				description: 'Un usuario con este rol, posee permisos de administrador',
+				business: business._id,
 				status: 'ACTIVO'
 			}
 
@@ -83,9 +94,18 @@ describe('ROLE: ', () => {
 				})
 		})
 		it('no deberia crear un rol sin un nombre', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => { console.error('TEST--'.error) })
+
 			let role = {
 				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
+				status: 'ACTIVO',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -103,9 +123,18 @@ describe('ROLE: ', () => {
 		})
 		//
 		it('no deberia crear un rol sin descripcion', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST--'. error)})						
+
 			let role = {
 				name: 'admin_role',
-				status: 'ACTIVO'
+				status: 'ACTIVO',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -123,9 +152,20 @@ describe('ROLE: ', () => {
 		})
 		//
 		it('no deberia crear un rol sin estado', done => {
+
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST--'. error)})
+
+
 			let role = {
 				name: 'admin_role',
 				description: 'Un usuario con este rol, posee permisos de administrador',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -143,10 +183,19 @@ describe('ROLE: ', () => {
 		})
 		//
 		it('es estado del rol deberia ser ACTIVO or INACTIVO', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST--'. error)})			
+
 			let role = {
 				name: 'admin_role',
 				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'HABILITADO'
+				status: 'HABILITADO',
+				business: business._id
 			}
 
 			chai.request(server)
@@ -164,10 +213,19 @@ describe('ROLE: ', () => {
 		})
 		//
 		it('no deberia crear un rol con nombre duplicado', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+				.catch(error => {console.error('TEST--'. error)})						
+			
 			let role = {
 				name: 'admin_role',
 				description: 'Un usuario con este rol, posee permisos de administrador',
-				status: 'ACTIVO'
+				status: 'ACTIVO',
+				business: business._id
 			}
 
 			let newRole = new Role(role)
