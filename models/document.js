@@ -33,7 +33,7 @@ const DocumentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Person'
     },
-    detail: {
+    detail: [{
         product: {
             type: Schema.Types.ObjectId,
             ref: 'Product'
@@ -46,7 +46,7 @@ const DocumentSchema = new Schema({
             type: Number,
             default: 0
         }
-    },
+    }],
     subtotal: {
         type: Number
     },

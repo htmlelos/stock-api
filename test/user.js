@@ -467,7 +467,6 @@ describe('USERS: test suite', () => {
 			})
 
 			user.save()
-
 				.catch(error => console.error('TEST:', error))
 
 			chai.request(server)
