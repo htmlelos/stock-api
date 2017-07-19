@@ -1,6 +1,9 @@
 const message = require('../services/response/message')
 const Document = require('../models/document')
 const Business = require('../models/business')
+const Persona = require('../models/person')
+const Product = require('../models/product')
+
 
 const getAllDocuments = (request, response) => {
     Document.find()
@@ -96,8 +99,157 @@ const createDocument = (request, response) => {
         })
 }
 
+const findDocument = (documentId) => {
+    return Document.findById({ _id: documentId })
+}
+
+const updateDocument = (request, response) => {
+    let documentId = request.params.documentId
+    findDocument(documentId)
+        .then(document => {
+            if (document) {
+                let newDocument = request.body
+                newDocument.username = request.decoded.username
+                newDocument.updatedAt = Date.now()
+                return Document.update({ _id: document._id }, { $set: newDocument }, { runValidators: true })
+            } else {
+                let error = { code: 404, message: 'No se encontró el documento', data: null }
+                return Promise.reject(error)
+            }
+        })
+        .then((result) => {
+            return findDocument(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, 'Documento actualizado con éxito', document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const deleteDocument = (request, response) => {
+    let documentId = request.params.documentId
+    findDocument(documentId)
+        .then(document => {
+            if (document) {
+                return Document.remove({ _id: document._id })
+            } else {
+                let error = { code: 404, message: 'No se encontró el documento', data: null }
+                return Promise.reject(error)
+            }
+        })
+        .then(() => {
+            message.success(response, 200, 'Documento eliminado con éxito', null)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const getDocument = (request, response) => {
+    let documentId = request.params.documentId
+    findDocument(documentId)
+        .then(document => {
+            if (document) {
+                return Promise.resolve(document)
+            } else {
+                let error = { code: 404, message: 'No se encontró el documento', data: null }
+                return Promise.reject(error)
+            }
+        })
+        .then(document => {
+            return Business.populate(document, { path: 'business' })
+        })
+        .then(document => {
+            return Persona.populate(document, { path: 'receiver' })
+        })
+        .then(document => {
+            return Persona.populate(document, { path: 'sender' })
+        })
+        .then(document => {
+            message.success(response, 200, 'Documento obtenido con éxito', document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const findProduct = (itemId) => {
+    return Product.findById({ _id: itemId })
+}
+
+const addItem = (request, response) => {
+    let documentId = request.params.documentId
+    let item = request.body
+    let productId = item.product
+    let promiseItem = findProduct(productId)
+    let promiseDocument = findDocument(documentId)
+
+    Promise.all([promiseItem, promiseDocument])
+        .then(values => {
+            let product = values[0]
+            let document = values[1]
+
+            if (!document) {
+                let error = {code: 404, message: 'No se encontró el documento', data: null}
+                return Promise.reject(error)
+            }
+
+            if (!product) {
+                let error = {code: 404, message: 'No se encontró el producto', data: null}
+                return Promise.reject(error)
+            }
+
+            return Document.update({ _id: documentId }, { $push: { detail: item } })
+
+        })
+        .then((result) => {
+            return findDocument(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, 'Item agregado con éxito', document.detail)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const deleteItem = (request, response) => {
+    let documentId = request.params.documentId
+    let promiseDocument = findDocument(documentId)
+
+    findDocument(documentId)
+        .then(document => {
+            if (document) {
+                itemId = request.body.itemId
+                return Document.update({_id: documentId}, {$pull: {detail: {_id: itemId}}})
+            } else {
+                let error = {code:404, message:'No se encontró el documento', data: null}
+                return Promise.reject(error)
+            }
+        })
+        .then(() => {
+            return findDocument(documentId)
+        })
+        .then(document => {
+            return Product.populate(document, {path: 'detail.product'})
+        })
+        .then(document => {            
+            message.success(response, 200, 'Item eliminado con exito', document.detail)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
 module.exports = {
     getAllDocuments,
     retrieveAllDocuments,
-    createDocument
+    createDocument,
+    updateDocument,
+    deleteDocument,
+    getDocument,
+    addItem,
+    deleteItem
 }

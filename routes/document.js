@@ -11,4 +11,13 @@ router.route('/documents')
 router.route('/document')
     .post(document.createDocument)
 
+router.route('/document/:documentId')
+    .put(document.updateDocument)
+    .delete(document.deleteDocument)
+    .get(document.getDocument)
+
+router.route('/document/:documentId/item')
+    .post(document.addItem)
+    .delete(document.deleteItem)
+
 module.exports = router

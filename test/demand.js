@@ -390,7 +390,7 @@ describe('DEMAND: ', () => {
                     response.body.data.should.have.property('name')
                     response.body.data.should.have.property('startDate')
                     response.body.data.should.have.property('items')
-                    done();
+                    done()
                 })
         })
 

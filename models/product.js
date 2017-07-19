@@ -40,16 +40,16 @@ const PriceSchema = new Schema({
         type: Date
     }
 }, {
-        versionKey: false
-    })
+    versionKey: false
+})
 
 const ComponentSchema = new Schema({
     quantity: Number,
     unit: String,
     componentId: { type: Schema.Types.ObjectId, ref: 'Product', index: true }
 }, {
-        versionKey: false
-    })
+    versionKey: false
+})
 
 const ProductSchema = new Schema({
     name: {
