@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Business = require('../models/business')
 const Role = require('../models/role')
+// const helperRole = require('./helpers/role')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
@@ -77,6 +78,8 @@ describe('ROLE: ', () => {
 				business: business._id,
 				status: 'ACTIVO'
 			}
+
+			console.log('ROLE:: ', role);
 
 			chai.request(server)
 				.post('/role')

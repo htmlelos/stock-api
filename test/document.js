@@ -18,7 +18,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 
-describe.only('DOCUMENTS: test suite', () => {
+describe('DOCUMENTS: test suite', () => {
     let token = ''
 
     beforeEach(done => {

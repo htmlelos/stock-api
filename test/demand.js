@@ -1387,4 +1387,10 @@ describe('DEMAND: ', () => {
                 })
         })
     })
+
+    describe('POST /demand/generate', () => {
+        it('deberia generar ordenes de compra', done => {
+            
+        })
+    })
 })

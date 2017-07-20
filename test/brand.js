@@ -16,7 +16,7 @@ const should = chai.should()
 
 chai.use(chaiHttp)
 //Bloque principal de las pruebas de Marcas
-describe('BRAND: ', () => {
+describe.only('BRAND: ', () => {
     let token = ''
 
     beforeEach(done => {
