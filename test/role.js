@@ -79,8 +79,6 @@ describe('ROLE: ', () => {
 				status: 'ACTIVO'
 			}
 
-			console.log('ROLE:: ', role);
-
 			chai.request(server)
 				.post('/role')
 				.set('x-access-token', token)

@@ -96,7 +96,7 @@ const getDemand = (request, response) => {
             }
         })
         .then(demand => {
-            return Demand.populate(demand, { path: 'items' })
+            return Product.populate(demand, { path: 'items' })
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud obtenida con éxito', demand)
@@ -122,6 +122,9 @@ const updateDemand = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
+        })
+        .then(demand => {
+            return Product.populate(demand, {path: 'items'})
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
@@ -211,6 +214,9 @@ const deleteItem = (request, response) => {
         .then((result) => {
             return findDemand(demandId)
         })
+        .then(demand => {
+            return Product.populate(demand, {path: 'items'})
+        })        
         .then(demand => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })

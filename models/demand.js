@@ -36,6 +36,11 @@ const ItemSchema = new Schema({
 })
 
 const DemandSchema = new Schema({
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business',
+        index: true
+    },
     name: {
         type: String,
         required: 'Debe proporcionar un nombre de solicitud de compra',

@@ -8,6 +8,7 @@ const Business = require('../models/business')
 const Branch = require('../models/branch')
 const settings = require('../settings')
 // dependencias de desarrollo
+const Factory = require('autofixture')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../server')
@@ -89,11 +90,8 @@ describe('BUSINESS', () => {
     // Crear una nueva empresa
     describe('POST /business', () => {
         it('crea una nueva empresa', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' })
 
             chai.request(server)
                 .post('/business')
@@ -113,10 +111,8 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia crear una empresa sin nombre', done => {
-            let business = new Business({
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
+            Factory.define('Business', ['tributaryCode', 'status'])
+            let business = Factory.create('Business', { tributaryCode: '20086863813', status: 'ACTIVO' })
 
             chai.request(server)
                 .post('/business')
@@ -134,10 +130,8 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia crear una empresa sin numero de cuit', done => {
-            let business = new Business({
-                name: 'Water point',
-                status: 'ACTIVO'
-            })
+            Factory.define('Business', ['name', 'status'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', status: 'ACTIVO' })
 
             chai.request(server)
                 .post('/business')
@@ -155,11 +149,8 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia crear una empresa con un numero de cuit invalido', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '302232344567',
-                status: 'ACTIVO'
-            })
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '302232344567', status: 'ACTIVO' })
 
             chai.request(server)
                 .post('/business')
@@ -177,10 +168,8 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia crear una empresa sin estado', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692'
-            })
+            Factory.define('Business', ['name', 'tributaryCode'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813' })
 
             chai.request(server)
                 .post('/business')
@@ -198,11 +187,8 @@ describe('BUSINESS', () => {
         })
 
         it('el estado de la empresa deberia ser ACTIVO o INACTIVO', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'HABILITADO'
-            })
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'HABILITADO' })
 
             chai.request(server)
                 .post('/business')
@@ -220,11 +206,8 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia crear una empresa con nombre duplicado', done => {
-            let business = {
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            }
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            let business = Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' })
 
             let newBusiness = new Business(business)
             newBusiness.save()
@@ -248,16 +231,16 @@ describe('BUSINESS', () => {
     })
     // Obtener la empresa segun su id
     describe('GET /business/{businessId}', () => {
-        it('deberia obtener una empresa por su id', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
+        let business = null;
+        before (done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
             business.save()
                 .catch(error => { console.error('Error: ', error) })
+            done();
+        })
 
+        it('deberia obtener una empresa por su id', done => {
             chai.request(server)
                 .get('/business/' + business._id)
                 .set('x-access-token', token)
@@ -275,15 +258,6 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia obtener una empresa con un id inválido', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => { console.error('Error: ', error) })
-
             chai.request(server)
                 .get('/business/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)
@@ -300,16 +274,16 @@ describe('BUSINESS', () => {
     })
     // Actualizar una empresa segun su id
     describe('PUT /business/{businessId}', () => {
-        it('deberia actualizar una empresa por su id', done => {
-            let business = new Business({
-                name: 'Water Point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
+        let business = null;
+        before (done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
             business.save()
-                .catch(error => console.error('TEST', error))
+                .catch(error => console.error('TEST', error))            
+            done();
+        })
 
+        it('deberia actualizar una empresa por su id', done => {
             chai.request(server)
                 .put('/business/' + business._id)
                 .set('x-access-token', token)
@@ -326,15 +300,6 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia actualizar una empresa con id inválido', done => {
-            let business = new Business({
-                name: 'Water Point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => console.error('TEST', error))
-
             chai.request(server)
                 .put('/business/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)
@@ -352,16 +317,16 @@ describe('BUSINESS', () => {
     })
     // Eliminar una empresa segun su id
     describe('DELETE /business/{businessId}', () => {
-        it('deberia eliminar una empresa por su id', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
+        let business = null;
+        before (done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
             business.save()
                 .catch(error => console.error('TEST: ', error))
+            done();
+        })
 
+        it('deberia eliminar una empresa por su id', done => {                
             chai.request(server)
                 .delete('/business/' + business._id)
                 .set('x-access-token', token)
@@ -377,15 +342,6 @@ describe('BUSINESS', () => {
         })
 
         it('no deberia eliminar una empresa con id inválido', done => {
-            let business = new Business({
-                name: 'Water point',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-
-            business.save()
-                .catch(error => console.error('TEST: ', error))
-
             chai.request(server)
                 .delete('/business/58dece08eb0548118ce31f11')
                 .set('x-access-token', token)

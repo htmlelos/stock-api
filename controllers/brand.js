@@ -109,7 +109,6 @@ function getBrand(request, response) {
     })
 }
 function modifyBrand(brand, newBrand) {
-  console.log('NEW_BRAND', newBrand);
   if (brand) {
     return Brand.update({ _id: brand._id }, { $set: newBrand })
   } else {
@@ -119,7 +118,6 @@ function modifyBrand(brand, newBrand) {
 }
 // Actualizar una marca por su id
 function updateBrand(request, response) {
-  console.log('UPDATE_BRAND');
   let brandId = request.params.brandId
   let newBrand = request.body
   newBrand.updatedBy = request.decoded.username
