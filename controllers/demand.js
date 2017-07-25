@@ -2,6 +2,8 @@
 const Demand = require('../models/demand')
 const Person = require('../models/person')
 const Branch = require('../models/branch')
+const Brand = require('../models/brand')
+const Category = require('../models/category')
 const Product = require('../models/product')
 const message = require('../services/response/message')
 
@@ -99,6 +101,12 @@ const getDemand = (request, response) => {
             return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })
+        .then(demand => {
             return Branch.populate(demand, {path: 'items.branch'})
         })
         .then(demand => {
@@ -133,6 +141,12 @@ const updateDemand = (request, response) => {
             return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
             return Branch.populate(demand, {path: 'items.branch'})
         })
         .then(demand => {
@@ -142,7 +156,6 @@ const updateDemand = (request, response) => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
         })
         .catch(error => {
-            console.log()
             message.failure(response, error.code, error.message, error.data)
         })
 }
@@ -198,6 +211,12 @@ const addItem = (request, response) => {
             return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
             return Branch.populate(demand, { path: 'items.branch' })
         })
         .then(demand => {
@@ -230,6 +249,12 @@ const deleteItem = (request, response) => {
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
         })
+        .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
         .then(demand => {
             return Branch.populate(demand, {path: 'items.branch'})
         })
@@ -264,6 +289,12 @@ const deleteSelectedItems = (request, response) => {
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
         })
+        .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
         .then(demand => {
             return Branch.populate(demand, {path: 'items.branch'})
         })

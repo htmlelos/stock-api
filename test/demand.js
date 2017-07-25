@@ -329,7 +329,7 @@ describe('DEMAND: ', () => {
     })
 
     describe('GET /demand/{demandId}', () => {
-        it('deberia obtener un pedido por su id', done => {
+        it.only('deberia obtener un pedido por su id', done => {
             let business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
