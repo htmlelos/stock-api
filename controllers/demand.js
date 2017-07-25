@@ -142,6 +142,7 @@ const updateDemand = (request, response) => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
         })
         .catch(error => {
+            console.log()
             message.failure(response, error.code, error.message, error.data)
         })
 }

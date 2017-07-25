@@ -347,10 +347,30 @@ describe('DEMAND: ', () => {
                 business: business._id
             })
 
+            let brand = new Brand({
+                name: 'Paladinni',
+                description: 'Embutidos',
+                suppliers: [],
+                status: 'ACTIVO',
+                business: business._id
+            })
+
+            brand.save()
+                .catch(error => {console.error(error)})
+
+            let category = new Category({
+                name: 'Fiambres',
+                description: 'Embutidos',
+                status: 'ACTIVO'
+            })
+
+            category.save()
+                .catch(error => {console.error(error)})                
+
             let product = new Product({
                 name: 'Queso Keso',
-                brand: null,
-                category: null,
+                brand: brand._id,
+                category: category._id,
                 code: '77913001400002',
                 priceList: null,
                 status: 'ACTIVO'
