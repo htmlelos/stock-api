@@ -330,10 +330,21 @@ describe('DEMAND: ', () => {
 
     describe('GET /demand/{demandId}', () => {
         it('deberia obtener un pedido por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'          
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
+
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
-                items: []
+                items: [],
+                business: business._id
             })
 
             let product = new Product({

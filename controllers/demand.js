@@ -96,7 +96,16 @@ const getDemand = (request, response) => {
             }
         })
         .then(demand => {
-            return Product.populate(demand, { path: 'items' })
+            return Product.populate(demand, {path: 'business'})
+        })        
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
+        })
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud obtenida con éxito', demand)
@@ -124,7 +133,16 @@ const updateDemand = (request, response) => {
             return findDemand(demandId)
         })
         .then(demand => {
-            return Product.populate(demand, {path: 'items'})
+            return Product.populate(demand, {path: 'business'})
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
+        })
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
@@ -215,8 +233,17 @@ const deleteItem = (request, response) => {
             return findDemand(demandId)
         })
         .then(demand => {
-            return Product.populate(demand, {path: 'items'})
-        })        
+            return Product.populate(demand, {path: 'business'})
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
+        })
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
+        })     
         .then(demand => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })
@@ -243,7 +270,19 @@ const deleteSelectedItems = (request, response) => {
             return findDemand(demandId)
         })
         .then(demand => {
-            message.success(response, 200, 'Items seleccionados eliminados con éxito', [])
+            return Product.populate(demand, {path: 'business'})
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
+        })
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
+        })             
+        .then(demand => {
+            message.success(response, 200, 'Items seleccionados eliminados con éxito', demand.items)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
