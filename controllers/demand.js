@@ -94,10 +94,7 @@ const getDemand = (request, response) => {
                 let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
-        })
-        .then(demand => {
-            return Product.populate(demand, {path: 'business'})
-        })        
+        })     
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
         })
@@ -131,9 +128,6 @@ const updateDemand = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })
-        .then(demand => {
-            return Product.populate(demand, {path: 'business'})
         })                
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
@@ -231,9 +225,6 @@ const deleteItem = (request, response) => {
         })
         .then((result) => {
             return findDemand(demandId)
-        })
-        .then(demand => {
-            return Product.populate(demand, {path: 'business'})
         })                
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
@@ -268,9 +259,6 @@ const deleteSelectedItems = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })
-        .then(demand => {
-            return Product.populate(demand, {path: 'business'})
         })                
         .then(demand => {
             return Product.populate(demand, {path: 'items.product'})
