@@ -5,7 +5,9 @@ const Branch = require('../models/branch')
 const Brand = require('../models/brand')
 const Category = require('../models/category')
 const Product = require('../models/product')
+const Document = require('../models/document')
 const message = require('../services/response/message')
+const mongoose = require('mongoose')
 
 function getAllDemands(request, response) {
     Demand.find({})
@@ -46,7 +48,7 @@ function checkDemand(request) {
     request.checkBody('startDate', 'Debe proporcionar una fecha inicial del pedido')
         .notEmpty()
     request.checkBody('business', 'Debe indicar la empresa a la que pertenece la solicitud')
-        .notEmpty()        
+        .notEmpty()
 }
 
 function createDemand(request, response) {
@@ -96,21 +98,21 @@ const getDemand = (request, response) => {
                 let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
-        })     
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Category.populate(demand, { path: 'items.product.category' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud obtenida con éxito', demand)
@@ -136,21 +138,21 @@ const updateDemand = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
@@ -211,11 +213,11 @@ const addItem = (request, response) => {
             return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
         .then(demand => {
             return Branch.populate(demand, { path: 'items.branch' })
         })
@@ -245,22 +247,22 @@ const deleteItem = (request, response) => {
         })
         .then((result) => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
-        })     
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
+        })
         .then(demand => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })
@@ -285,28 +287,80 @@ const deleteSelectedItems = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
-        })             
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
+        })
         .then(demand => {
             message.success(response, 200, 'Items seleccionados eliminados con éxito', demand.items)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
         })
+}
+
+const generateOrder = (request, response) => {
+    let demandId = request.params.demandId
+    let userId = request.decoded._id
+    let promiseDemand = Demand.findById({ _id: demandId })
+    let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
+    Promise.all([promiseDemand, promisePerson])
+        .then(values => {
+            let demand = values[0]
+            let sender = values[1]
+            console.log('DEMAND:--', demand);
+            let items = {}
+            demand.items.map(item => {
+                if (!items[item.supplier]) {
+                    items[item.supplier] = []
+                }
+                items[item.supplier].push({
+                    quantity: item.quantity,
+                    product: item.product
+                })
+            })
+            console.log('SENDER_ID--', sender);
+            for (let key in items) {
+                if (items.hasOwnProperty(key)) {
+                    let element = items[key]
+                    let order = new Document({
+                        documentType: 'ORDEN',
+                        documentName: 'Orden de Compra',
+                        documentDate: Date.now(),
+                        
+                        business: request.decoded.business,
+                        receiver: key,
+                        sender: sender._id
+                    })
+
+                    element.forEach(element => {
+                        // let detail = element
+                        order.detail.push(element)
+                    }, this)
+
+                    Counter.findOne({name: documentType.toLowerCase()})
+                        .then(counter => {
+                            order.documentNumber = counter.value + counter.incrementBy
+                        })                            
+                    order.save()
+                        .catch(error => console.error('ERROR', error))
+                }
+                number++;
+            }
+        })
+    message.success(response, 200, 'Ordenes generadas con exito', [])
 }
 
 module.exports = {
@@ -318,5 +372,6 @@ module.exports = {
     deleteDemand,
     addItem,
     deleteItem,
-    deleteSelectedItems
+    deleteSelectedItems,
+    generateOrder
 }

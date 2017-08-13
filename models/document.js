@@ -9,34 +9,38 @@ const DocumentSchema = new Schema({
         type: String,
         enum: {
             values: ['ORDEN', 'RECEPCION', 'FACTURA'],
-            message: 'El tipo de documento solo puede ser ORDEN, RECEPCION o FACTURA'
+            message: `El tipo de documento solo puede ser ORDEN, RECEPCION o FACTURA`
         },
-        required: 'Debe indicar el tipo del documento'
+        required: `Debe indicar el tipo del documento`
     }
     , documentName: {
         type: String,
-        required: 'Debe indicar el nombre del documento'
+        required: `Debe indicar el nombre del documento`
     },
     documentNumber: {
         type: Number,
-        required: `Debe indicar el numero del Documento`
+        // required: `Debe indicar el numero del Documento`
+    },
+    documentDate: {
+        type: Date,
+        required: `Debe indicar la fecha del Documento`
     },
     business: {
         type: Schema.Types.ObjectId,
-        ref: 'Business'
+        ref: `Business`
     },
     receiver: {
         type: Schema.Types.ObjectId,
-        ref: 'Person'
+        ref: `Person`
     },
     sender: {
         type: Schema.Types.ObjectId,
-        ref: 'Person'
+        ref: `Person`
     },
     detail: [{
         product: {
             type: Schema.Types.ObjectId,
-            ref: 'Product'
+            ref: `Product`
         },
         quantity: {
             type: Number,

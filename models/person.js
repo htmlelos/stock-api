@@ -13,10 +13,13 @@ const AddressSchema = new Schema({
     })
 
 const ContactSchema = new Schema({
+    name: {
+        type: String
+    },
     phone: {
         type: String
     },
-    name: {
+    email: {
         type: String
     }
 }, {
@@ -66,7 +69,12 @@ const PersonSchema = new Schema({
     },
     business: {
         type: Schema.Types.ObjectId,
-        ref: 'Business'
+        ref: 'Business',
+        required: 'Debe indicar la empresa a la que pertenece'
+    },
+    user: {
+        type: Schema.Types.Object,
+        ref: 'User'
     },
     createdAt: {
         type: Date,

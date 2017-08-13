@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require('mongoose')
+const User = require('../models/user')
 const Person = require('../models/person')
 const message = require('../services/response/message')
 
@@ -32,11 +33,13 @@ function retrieveAllPerson(request, response) {
         })
 }
 // Verifica los datos obligatorios de la persona
-function checkPerson(request, type = null) {
+function checkPerson(request) {
     // Verificar Persona
+    let type = request.body.type
+    console.log('TYPE: ', request.body);
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
-        .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'])
+        .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO', 'ORDENANTE'])
     request.checkBody('status', 'El estado no es válido')
         .isIn(['ACTIVO', 'INACTIVO'])
     request.checkBody('business', 'Debe indicar la empresa a la que pertenece la persona')
@@ -80,6 +83,8 @@ function checkSeller(request) {
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
+        request.checkbody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
+            .notEmpty()
     }
 }
 // Verifica los datos del cajero
@@ -90,6 +95,8 @@ function checkCashier(request) {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkbody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
             .notEmpty()
     }
 }
@@ -110,9 +117,14 @@ function createPerson(request, response) {
             }
             return Promise.resolve()
         })
-        .then(result => {
+        .then(() => {
+            let newUser = new User(request.body.user)
+            return newUser.save()
+        })
+        .then((user) => {
             let newPerson = new Person(request.body)
             newPerson.createdBy = request.decoded.username
+            newPerson.user = user._id;
             return newPerson.save()
         })
         .then(person => {

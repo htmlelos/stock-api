@@ -12,6 +12,7 @@ const business = require('./business')
 const branch = require('./branch')
 const demand = require('./demand')
 const document = require('./document')
+const counter = require('./counter')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -28,4 +29,5 @@ module.exports = function routes(server) {
   server.use('/', branch)
   server.use('/', demand)
   server.use('/', document)
+  server.use('/', counter)
 }

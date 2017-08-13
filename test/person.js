@@ -16,7 +16,7 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe('PERSON: ', () => {
+describe.only('PERSON: ', () => {
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -61,8 +61,8 @@ describe('PERSON: ', () => {
         })
     })
     // POST /person - Crea una persona
-    describe('POST /person', () => {
-        it('deberia crear una nueva persona (CLIENTE)', done => {
+    describe.only('POST /person', () => {
+        it.only('deberia crear una nueva persona (CLIENTE)', done => {
             let business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
@@ -89,6 +89,8 @@ describe('PERSON: ', () => {
                 .set('x-access-token', token)
                 .send(person)
                 .end((error, response) => {
+                    console.log('RESPONSE_BODY::', response.body);
+                    console.log('RESPONSE_TEXT::', response.text);
                     response.body.should.be.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message').eql(`${person.type} creado con éxito`)

@@ -3,6 +3,7 @@ const Document = require('../models/document')
 const Business = require('../models/business')
 const Persona = require('../models/person')
 const Product = require('../models/product')
+const Counter = require('../models/counter')
 
 
 const getAllDocuments = (request, response) => {
@@ -42,7 +43,9 @@ const checkDocument = (request) => {
     if (documentType !== null && documentType !== undefined) {
         request.checkBody('documentName', 'Debe indicar el nombre del documento')
             .notEmpty()
-        request.checkBody('documentNumber', `Debe indicar el numero de ${documentType.toLowerCase()}`)
+        // request.checkBody('documentNumber', `Debe indicar el numero de ${documentType.toLowerCase()}`)
+        //     .notEmpty()
+        request.checkBody('documentDate', `Debe indicar la fecha de ${documentType.toLowerCase()}`)
             .notEmpty()
         request.checkBody('business', 'Debe indicar la empresa que creó el documento')
             .notEmpty()
@@ -62,6 +65,7 @@ const checkDocument = (request) => {
 }
 
 const validateDocument = (request) => {
+    console.log('VALIDATE_DOCUMENT');
     return new Promise((resolve, reject) => {
 
         request.getValidationResult()
@@ -72,8 +76,10 @@ const validateDocument = (request) => {
                         .map(x => x.msg)
                         .join(',')
                     let error = { code: 422, message: messages, data: null }
+                    console.log('REJECT');
                     reject(error)
                 }
+                console.log('RESOLVE');
                 resolve()
             })
     })
@@ -81,20 +87,36 @@ const validateDocument = (request) => {
 
 
 const createDocument = (request, response) => {
+    console.log('CREATE_DOCUMENT');
     checkDocument(request)
-
+    console.log('VALIDATE');
     validateDocument(request)
-        .then(() => {
+        .then((x) => {
             body = request.body;
             let document = new Document(body)
             document.createdBy = request.decoded.username
             document.createdAt = Date.now();
-            return document.save()
+            Counter.findOne({name: document.documentType.toLowerCase()})
+                .then(counter => {
+                    document.documentNumber = counter.value + counter.incrementBy
+                    Counter.update({_id: counter._id}, {$set: {value: document.documentNumber}})
+                        .then(value => {
+                            return document.save()
+                        })
+                        .catch(error => {
+                            return Promise.reject(error)
+                        })
+                })
+                .catch(error => {
+                    return Promise.reject(error)
+                })
         })
         .then((document) => {
+            console.log('DOCUMENT==', document);
             message.success(response, 200, 'Documento creado con éxito', { id: document._id })
         })
         .catch(error => {
+            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }

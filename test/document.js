@@ -9,6 +9,7 @@ const Person = require('../models/person')
 const Product = require('../models/product')
 const Category = require('../models/category')
 const Document = require('../models/document')
+const Counter = require('../models/counter')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const Factory = require('autofixture')
@@ -1020,6 +1021,7 @@ describe('DOCUMENTS: test suite', () => {
         let category = null
         let product = null
         let document = null
+        let counter = null
         beforeEach(done => {
             Factory.define('Business', ['name', 'tributaryCode', 'status'])
             business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
@@ -1068,7 +1070,6 @@ describe('DOCUMENTS: test suite', () => {
             document = new Document(Factory.create('Document', {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
-                documentNumber: 1,
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -1109,7 +1110,7 @@ describe('DOCUMENTS: test suite', () => {
                 product: product._id,
                 quantity: 1,
                 price: 20
-            }            
+            }
             chai.request(server)
                 .post(`/document/58dece08eb0548118ce31f11/item`)
                 .send(item)
@@ -1216,7 +1217,8 @@ describe('DOCUMENTS: test suite', () => {
             document.save()
                 .catch(error => { console.error('TEST:', error) })
             done();
-        })        
+        })
+
         it('deberia eliminar un item de un documento por su id', done => {
             let item = {
                 product: product._id,

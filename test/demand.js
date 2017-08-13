@@ -51,7 +51,6 @@ describe('DEMAND: ', () => {
         Branch.remove({}, error => { })
         Person.remove({}, error => { })
         Demand.remove({}, error => { })
-
         done()
     })
 
@@ -329,7 +328,7 @@ describe('DEMAND: ', () => {
     })
 
     describe('GET /demand/{demandId}', () => {
-        it.only('deberia obtener un pedido por su id', done => {
+        it('deberia obtener un pedido por su id', done => {
             let business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
@@ -1425,11 +1424,13 @@ describe('DEMAND: ', () => {
         })
     })
 
-    describe('POST /demand/generate', () => {
+    describe('GET /demand/generate', () => {
         let business = null
         let demand = null
         let product = null
         let category = null
+        let supplier = null
+        let branch = null
         beforeEach(done => {
             Factory.define('Business', ['name', 'tributaryCode', 'status'])
             business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
@@ -1450,6 +1451,15 @@ describe('DEMAND: ', () => {
             }))
             category.save()
                 .catch(error => {console.error('Error: ', error)})
+            Factory.define('Branch', ['name','address','status','business'])
+            branch = new Branch(Factory.create('Branch',{
+                name: 'Sucursal Lavalle',
+                address: {province:'San Luis', city: 'San Luis', streets: 'Lavalle'},
+                status: 'ACTIVO',
+                business: business._id
+            }))
+            branch.save()
+                .catch(error => {console.error('Error: ', error)})
             Factory.define('Brand', ['name','description','suppliers','status','business'])
             let brand = new Brand(Factory.create('Brand', {
                 suppliers: null,
@@ -1457,33 +1467,66 @@ describe('DEMAND: ', () => {
                 status: 'ACTIVO'
             }))            
             brand.save()
-                .catch(error => {console.error('Error: ', error)})
+                .catch(error => {console.error('TEST: ', error)})
             Factory.define('Product', ['name', 'brand', 'category', 'code', 'priceList', 'status'])
             for (let i = 0; i <= 2; i++) {
+                Factory.define('Person', ['type', 'businessName', 'addresses', 'tributaryCode', 'taxStatus', 'grossIncomeCode', 'contacts', 'status', 'business'])
+                supplier = new Person(Factory.create('Person', {
+                    type: 'PROVEEDOR',
+                    tributaryCode: '20232021692',
+                    taxStatus: 'RESPONSABLE INSCRIPTO',
+                    grossIncomeCode: '1220232021692',
+                    business: business._id,
+                    contacts: [],
+                    addresses:[],
+                    status: 'ACTIVO'
+                }))
+
+                supplier.save()
+                    .catch(error => {console.error('TEST: ', error)})
+
+
                 product = new Product(Factory.create('Product', {
                     category: category._id,
                     brand: brand._id,
+                    supplier: supplier._id,
                     status: 'ACTIVO'
                 }))
                 // console.log('PRODUCT--', product);
                 product.save()
-                    .catch(error => {console.error('TEST1: ', error)})
+                    .catch(error => {console.error('TEST-0001: ', error)})
 
                 let item = {
                     dateDemand: Date.now(),
                     quantity: 1,
                     product: product._id,
-                    branch: null,
-                    supplier: null
+                    branch: branch._id,
+                    supplier: supplier._id
                 }
                 demand.items.push(item)
             }
+
+            demand.save()
+                .catch(error => {console.error('TEST-0002:', error)})
             // console.log('SOLICITUD:', demand);
             done()
         })
 
         it('deberia generar ordenes de compra', done => {
-            done();
+            chai.request(server)
+                .get(`/demand/${demand._id}/generate`)
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    // console.log('RESPONSE_BODY::', response.body);
+                    // console.log('RESPONSE_TEXT::', response.text);
+                    response.should.have.status(200)
+					response.body.should.be.a('object')                    
+					response.body.should.have.property('message')
+                        .eql('Ordenes generadas con exito')
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
+                    done();
+                })
         })
     })
 })
