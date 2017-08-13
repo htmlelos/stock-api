@@ -219,11 +219,20 @@ describe('GET /brand/:brandId', () => {
 // PUT /brand/:brandId - actualizar una marca por su id
 describe('PUT /brand/:brandId', () => {
     it('deberia actualizar una marca por su id', done => {
+        let business = new Business({
+            name: 'Punta del Agua',
+            tributaryCode: '20232021692',
+            status: 'ACTIVO'
+        })
+        business.save()
+            .catch(error => { console.error('TEST1', error) })
+
         let brand = new Brand({
             name: 'Loca cola',
             description: 'Bebida Gaseosa',
             suppliers: [],
-            status: 'ACTIVO'
+            status: 'ACTIVO',
+            business: business._id
         })
 
         brand.save()
@@ -249,11 +258,20 @@ describe('PUT /brand/:brandId', () => {
     })
 
     it('no deberia actualizar una marca con id inválido', done => {
+        let business = new Business({
+            name: 'Punta del Agua',
+            tributaryCode: '20232021692',
+            status: 'ACTIVO'
+        })
+        business.save()
+            .catch(error => { console.error('TEST1', error) })
+
         let brand = new Brand({
             name: 'Loca cola',
             description: 'Bebida Gaseosa',
             suppliers: [],
-            status: 'ACTIVO'
+            status: 'ACTIVO',
+            business: business._id
         })
 
         brand.save()
@@ -278,11 +296,20 @@ describe('PUT /brand/:brandId', () => {
     })
 
     it('no deberia actualizar una marca con name duplicado', done => {
+        let business = new Business({
+            name: 'Punta del Agua',
+            tributaryCode: '20232021692',
+            status: 'ACTIVO'
+        })
+        business.save()
+            .catch(error => { console.error('TEST1', error) })
+
         let brand = new Brand({
             name: 'Loca cola',
             description: 'Bebida Gaseosa',
             suppliers: [],
-            status: 'ACTIVO'
+            status: 'ACTIVO',
+            business: business._id
         })
 
         brand.save()

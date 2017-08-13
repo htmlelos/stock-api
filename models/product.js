@@ -25,6 +25,10 @@ const PriceSchema = new Schema({
         required: 'Debe definir el estado del producto'
         , default: 'PENDIENTE'
     },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business'
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -40,16 +44,16 @@ const PriceSchema = new Schema({
         type: Date
     }
 }, {
-    versionKey: false
-})
+        versionKey: false
+    })
 
 const ComponentSchema = new Schema({
     quantity: Number,
     unit: String,
     componentId: { type: Schema.Types.ObjectId, ref: 'Product', index: true }
 }, {
-    versionKey: false
-})
+        versionKey: false
+    })
 
 const ProductSchema = new Schema({
     name: {
@@ -77,7 +81,7 @@ const ProductSchema = new Schema({
         type: String,
         enum: {
             values: ['ACTIVO', 'INACTIVO'],
-            message: 'El estado de un usuario solo puede ser ACTIVO o INACTIVO'
+            message: 'El estado de un producto solo puede ser ACTIVO o INACTIVO'
         },
         required: 'Debe definir el estado del producto',
         default: 'INACTIVO'

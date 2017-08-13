@@ -2,6 +2,8 @@
 const Demand = require('../models/demand')
 const Person = require('../models/person')
 const Branch = require('../models/branch')
+const Brand = require('../models/brand')
+const Category = require('../models/category')
 const Product = require('../models/product')
 const message = require('../services/response/message')
 
@@ -94,9 +96,21 @@ const getDemand = (request, response) => {
                 let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
+        })     
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Demand.populate(demand, { path: 'items' })
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud obtenida con éxito', demand)
@@ -122,6 +136,21 @@ const updateDemand = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
+        })
+        .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
@@ -182,6 +211,12 @@ const addItem = (request, response) => {
             return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
             return Branch.populate(demand, { path: 'items.branch' })
         })
         .then(demand => {
@@ -210,7 +245,22 @@ const deleteItem = (request, response) => {
         })
         .then((result) => {
             return findDemand(demandId)
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
         })
+        .then(demand => {
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
+        })     
         .then(demand => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })
@@ -235,9 +285,24 @@ const deleteSelectedItems = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
+        })                
+        .then(demand => {
+            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            message.success(response, 200, 'Items seleccionados eliminados con éxito', [])
+            return Brand.populate(demand, {path: 'items.product.brand'})
+        })
+        .then(demand => {
+            return Category.populate(demand, {path: 'items.product.category'})
+        })        
+        .then(demand => {
+            return Branch.populate(demand, {path: 'items.branch'})
+        })
+        .then(demand => {
+            return Person.populate(demand, {path: 'items.supplier'})
+        })             
+        .then(demand => {
+            message.success(response, 200, 'Items seleccionados eliminados con éxito', demand.items)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)

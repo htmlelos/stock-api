@@ -5,12 +5,15 @@ process.env.NODE_ENV = 'test'
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Business = require('../models/business')
+const Brand = require('../models/brand')
+const Category = require('../models/category')
 const Product = require('../models/product')
 const Branch = require('../models/branch')
 const Person = require('../models/person')
 const Demand = require('../models/demand')
 const settings = require('../settings')
 // Dependencias de desarrollo
+const Factory = require('autofixture')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../server')
@@ -41,11 +44,14 @@ describe('DEMAND: ', () => {
     })
 
     afterEach(done => {
+        Business.remove({}, error => { })
+        Brand.remove({}, error => {})
+        Category.remove({}, error => {})
         Product.remove({}, error => { })
         Branch.remove({}, error => { })
         Person.remove({}, error => { })
         Demand.remove({}, error => { })
-        Business.remove({}, error => { })
+
         done()
     })
 
@@ -118,7 +124,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -194,7 +200,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -254,7 +260,7 @@ describe('DEMAND: ', () => {
                 status: 'ACTIVO'
             })
             business.save()
-                .catch(error => { console.error('TEST', error) })      
+                .catch(error => { console.error('TEST', error) })
 
             let demand = {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString()}`,
@@ -268,7 +274,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -323,20 +329,51 @@ describe('DEMAND: ', () => {
     })
 
     describe('GET /demand/{demandId}', () => {
-        it('deberia obtener un pedido por su id', done => {
+        it.only('deberia obtener un pedido por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'          
+            })
+
+            business.save()
+                .catch(error => {console.error('TEST:', error)})
+
+
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
-                items: []
+                items: [],
+                business: business._id
             })
+
+            let brand = new Brand({
+                name: 'Paladinni',
+                description: 'Embutidos',
+                suppliers: [],
+                status: 'ACTIVO',
+                business: business._id
+            })
+
+            brand.save()
+                .catch(error => {console.error(error)})
+
+            let category = new Category({
+                name: 'Fiambres',
+                description: 'Embutidos',
+                status: 'ACTIVO'
+            })
+
+            category.save()
+                .catch(error => {console.error(error)})                
 
             let product = new Product({
                 name: 'Queso Keso',
-                brand: null,
-                category: null,
+                brand: brand._id,
+                category: category._id,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -407,7 +444,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -478,7 +515,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -547,7 +584,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -618,7 +655,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -689,7 +726,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -749,7 +786,7 @@ describe('DEMAND: ', () => {
     })
 
     describe('PUT /demand/{demandId}/add/item', () => {
-        it('deberia agregar un itema a la solicitud de pedido', done => {
+        it('deberia agregar un item a la solicitud de pedido', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -762,7 +799,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -829,7 +866,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -896,7 +933,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -963,7 +1000,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1030,7 +1067,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1097,7 +1134,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1153,7 +1190,7 @@ describe('DEMAND: ', () => {
     })
 
     describe('DELETE /demand/{demandId}/delete/item', () => {
-        it('deberia agregar un itema a la solicitud de pedido', done => {
+        it('deberia eliminar un itema a la solicitud de pedido', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -1166,7 +1203,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1237,7 +1274,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1308,7 +1345,7 @@ describe('DEMAND: ', () => {
                 category: null,
                 code: '77913001400002',
                 priceList: null,
-                stauts: 'ACTIVO'
+                status: 'ACTIVO'
             })
 
             product.save()
@@ -1385,6 +1422,68 @@ describe('DEMAND: ', () => {
                     response.body.should.have.property('data')
                     done()
                 })
+        })
+    })
+
+    describe('POST /demand/generate', () => {
+        let business = null
+        let demand = null
+        let product = null
+        let category = null
+        beforeEach(done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
+            business.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Demand', ['name', 'startDate', 'item', 'business'])
+            demand = new Demand(Factory.create('Demand', {
+                name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
+                startDate: Date.now(),
+                items: [],
+                business: business._id
+            }))
+            Factory.define('Category', ['name','description','status'])
+            category = new Category(Factory.create('Category', {
+                name: 'Fiambre',
+                description: 'Embutidos',
+                status: 'ACTIVO'
+            }))
+            category.save()
+                .catch(error => {console.error('Error: ', error)})
+            Factory.define('Brand', ['name','description','suppliers','status','business'])
+            let brand = new Brand(Factory.create('Brand', {
+                suppliers: null,
+                business: business._id,
+                status: 'ACTIVO'
+            }))            
+            brand.save()
+                .catch(error => {console.error('Error: ', error)})
+            Factory.define('Product', ['name', 'brand', 'category', 'code', 'priceList', 'status'])
+            for (let i = 0; i <= 2; i++) {
+                product = new Product(Factory.create('Product', {
+                    category: category._id,
+                    brand: brand._id,
+                    status: 'ACTIVO'
+                }))
+                // console.log('PRODUCT--', product);
+                product.save()
+                    .catch(error => {console.error('TEST1: ', error)})
+
+                let item = {
+                    dateDemand: Date.now(),
+                    quantity: 1,
+                    product: product._id,
+                    branch: null,
+                    supplier: null
+                }
+                demand.items.push(item)
+            }
+            // console.log('SOLICITUD:', demand);
+            done()
+        })
+
+        it('deberia generar ordenes de compra', done => {
+            done();
         })
     })
 })
