@@ -6,6 +6,7 @@ const Brand = require('../models/brand')
 const Category = require('../models/category')
 const Product = require('../models/product')
 const Document = require('../models/document')
+const Counter = require('../models/counter')
 const message = require('../services/response/message')
 const mongoose = require('mongoose')
 
@@ -316,11 +317,14 @@ const generateOrder = (request, response) => {
     let userId = request.decoded._id
     let promiseDemand = Demand.findById({ _id: demandId })
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-    Promise.all([promiseDemand, promisePerson])
+    let promiseCounter = Counter.findOne({ name: 'orden' })
+    let counterValue = 0;
+    Promise.all([promiseDemand, promisePerson, promiseCounter])
         .then(values => {
+            console.log('VALUES--', values);
             let demand = values[0]
             let sender = values[1]
-            console.log('DEMAND:--', demand);
+            let counter = values[2]
             let items = {}
             demand.items.map(item => {
                 if (!items[item.supplier]) {
@@ -331,7 +335,6 @@ const generateOrder = (request, response) => {
                     product: item.product
                 })
             })
-            console.log('SENDER_ID--', sender);
             for (let key in items) {
                 if (items.hasOwnProperty(key)) {
                     let element = items[key]
@@ -339,28 +342,42 @@ const generateOrder = (request, response) => {
                         documentType: 'ORDEN',
                         documentName: 'Orden de Compra',
                         documentDate: Date.now(),
-                        
+
                         business: request.decoded.business,
                         receiver: key,
                         sender: sender._id
                     })
 
+                    counterValue = counter.value + 1;            
+
                     element.forEach(element => {
                         // let detail = element
+                        order.documentNumber = counterValue
                         order.detail.push(element)
+                        counterValue++
                     }, this)
-
-                    Counter.findOne({name: documentType.toLowerCase()})
-                        .then(counter => {
-                            order.documentNumber = counter.value + counter.incrementBy
-                        })                            
                     order.save()
-                        .catch(error => console.error('ERROR', error))
+                        .then(result => {
+                            console.log(result);
+                            // return Promise.resolve()
+                        })
+                        .catch(error => {
+                            return Promise.reject(error)
+                        })
                 }
-                number++;
             }
         })
-    message.success(response, 200, 'Ordenes generadas con exito', [])
+        .then(() => {
+            return Counter.update({name: 'orden'}, {$set:{value: counterValue}})
+        })
+        .then(result => {
+            console.log('RESULT==', result);
+            message.success(response, 200, 'Ordenes generadas con exito', [])
+        })
+        .catch(error => {
+            console.log('ERROR--', error);
+            message.failure(response, 500, 'Error', error)
+        })
 }
 
 module.exports = {
