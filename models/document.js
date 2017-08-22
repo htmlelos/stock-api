@@ -11,7 +11,8 @@ const DocumentSchema = new Schema({
             values: ['ORDEN', 'RECEPCION', 'FACTURA'],
             message: `El tipo de documento solo puede ser ORDEN, RECEPCION o FACTURA`
         },
-        required: `Debe indicar el tipo del documento`
+        required: `Debe indicar el tipo del documento`,
+        index: true
     }
     , documentName: {
         type: String,
@@ -19,23 +20,27 @@ const DocumentSchema = new Schema({
     },
     documentNumber: {
         type: Number,
-        // required: `Debe indicar el numero del Documento`
+        index: true
     },
     documentDate: {
         type: Date,
-        required: `Debe indicar la fecha del Documento`
+        required: `Debe indicar la fecha del Documento`,
+        index: true
     },
     business: {
         type: Schema.Types.ObjectId,
-        ref: `Business`
+        ref: `Business`,
+        index: true
     },
     receiver: {
         type: Schema.Types.ObjectId,
-        ref: `Person`
+        ref: `Person`,
+        index: true
     },
     sender: {
         type: Schema.Types.ObjectId,
-        ref: `Person`
+        ref: `Person`,
+        index: true
     },
     detail: [{
         product: {

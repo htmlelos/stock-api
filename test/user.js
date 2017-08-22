@@ -81,8 +81,6 @@ describe('USERS: test suite', () => {
 					response.body.should.have.property('message').eql('')
 					response.body.should.have.property('data')
 					response.body.data.should.be.a('array')
-					// response.body.data.should.have.property('status')
-					// response.body.data.should.have.property('name')
 					done()
 				})
 		})

@@ -36,7 +36,6 @@ function retrieveAllPerson(request, response) {
 function checkPerson(request) {
     // Verificar Persona
     let type = request.body.type
-    console.log('TYPE: ', request.body);
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
         .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO', 'ORDENANTE'])
@@ -118,20 +117,54 @@ function createPerson(request, response) {
             return Promise.resolve()
         })
         .then(() => {
-            let newUser = new User(request.body.user)
-            return newUser.save()
+
+            let person = request.body;
+            if (person.type !== 'PROVEEDOR') {
+                let user = request.body.user;
+                if (user !== null && user !== undefined) {
+                    if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
+                        User.find({username: user.username})
+                            .then(user => {
+                                if (user === null) {
+                                    user.status = 'ACTIVO'
+                                    let newUser = new User(user);
+                                    return newUser.save()
+                                } else {
+                                    let error = {code: 422, message: 'El usuario ya existe', data: null}
+                                    return Promise.reject(error)
+                                }
+                            })
+                            .catch(error => {
+                                return Promise.reject(error)
+                            })
+                    } else {
+                        return User.findById(user)
+                    }
+                }
+            }
+            return Promise.resolve(null)
         })
         .then((user) => {
             let newPerson = new Person(request.body)
+            if (user!==null) {
+                newPerson.user = user._id;
+            }
             newPerson.createdBy = request.decoded.username
-            newPerson.user = user._id;
             return newPerson.save()
         })
         .then(person => {
             message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
+            // console.log('ERROR--', error);
+            if (error.code && error.code === 11000) {
+                let error =  { code: 422, message: 'La persona ya existe', data: null }
+                message.failure(response, error.code, error.message, error.data)
+            } else if (error.code) {
+                message.failure(response, error.code, error.message, error.data)
+            } else {
+                message.failure(response, 500, error.message, error)
+            }
         })
 }
 // Obtener una persona

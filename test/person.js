@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Business = require('../models/business')
 const Person = require('../models/person')
+const User = require('../models/user')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const chai = require('chai')
@@ -16,7 +17,8 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 // Bloque principal de las pruebas de usuarios
-describe.only('PERSON: ', () => {
+describe('PERSON: ', () => {
+
     let token = ''
     // Se ejecuta antes de cada test
     beforeEach(done => {
@@ -40,6 +42,7 @@ describe.only('PERSON: ', () => {
     afterEach(done => {
         Person.remove({}, error => { })
         Business.remove({}, error => { })
+        User.remove({}, error => { })
         done()
     })
     // GET /persons - Obtener todas las personas
@@ -61,8 +64,8 @@ describe.only('PERSON: ', () => {
         })
     })
     // POST /person - Crea una persona
-    describe.only('POST /person', () => {
-        it.only('deberia crear una nueva persona (CLIENTE)', done => {
+    describe('POST /person', () => {
+        it('deberia crear una nueva persona (CLIENTE)', done => {
             let business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
@@ -70,6 +73,15 @@ describe.only('PERSON: ', () => {
             })
             business.save()
                 .catch(error => { console.error('TEST', error) })
+
+            let user = new User({
+                username: 'jperez@mail.com',
+                password: 'jperez',
+                status: 'ACTIVO'
+            })
+
+            user.save()
+                .catch(error => { console.error('TEST 1', error) })
 
             let person = {
                 type: 'CLIENTE',
@@ -81,7 +93,8 @@ describe.only('PERSON: ', () => {
                 grossIncomeCode: '12202202231962',
                 contacts: [],
                 status: 'ACTIVO',
-                business: business._id
+                business: business._id,
+                user: user._id
             }
 
             chai.request(server)
@@ -89,8 +102,6 @@ describe.only('PERSON: ', () => {
                 .set('x-access-token', token)
                 .send(person)
                 .end((error, response) => {
-                    console.log('RESPONSE_BODY::', response.body);
-                    console.log('RESPONSE_TEXT::', response.text);
                     response.body.should.be.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
@@ -480,6 +491,14 @@ describe.only('PERSON: ', () => {
     // GET /person/:personId
     describe('GET /person/{personId}', () => {
         it('deberia obtener una persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -489,7 +508,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
                 contacts: [],
-                status: 'INACTIVO'
+                status: 'INACTIVO',
+                business: business._id
             });
 
             person.save()
@@ -525,6 +545,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia obtener una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -534,7 +562,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
                 contacts: [],
-                status: 'INACTIVO'
+                status: 'INACTIVO',
+                business: business._id
             });
 
             person.save()
@@ -558,6 +587,14 @@ describe.only('PERSON: ', () => {
     // PUT /person/:personId - Actualiza una persona
     describe('PUT /person/{personId}', () => {
         it('deberia actualizar una persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -567,7 +604,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'INACTIVO'
+                status: 'INACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -589,6 +627,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('No deberia actualizar una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -598,7 +644,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'INACTIVO'
+                status: 'INACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -622,6 +669,14 @@ describe.only('PERSON: ', () => {
     // DELETE /person/:personId
     describe('DELETE /person/{personId}', () => {
         it('deberia eliminar una persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -631,7 +686,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -651,6 +707,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia eliminar una persona con un id de persona inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'CLIENTE',
                 firstName: 'Juan',
@@ -660,7 +724,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -682,6 +747,14 @@ describe.only('PERSON: ', () => {
     // GET /person/:personId/contacts
     describe('GET /person/{personId}/contact', () => {
         it('deberia obtener todos los contactos de una persona', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -689,7 +762,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -710,6 +784,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia obtener los contactos de una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -717,7 +799,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
                 grossIncomeCode: '120232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -740,6 +823,14 @@ describe.only('PERSON: ', () => {
     // POST /person/:personId/contact
     describe('POST /person/{personId}/contact', () => {
         it('deberia crear un contacto para un persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -747,7 +838,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -773,6 +865,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia agregar un contacto para una person con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -780,7 +880,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -809,6 +910,14 @@ describe.only('PERSON: ', () => {
     // DELETE /person/:personId/contact
     describe('DELETE /person/{personId}/contact/{contactId}', () => {
         it('deberia eliminar un contacto de usuario por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -816,7 +925,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             let contact = {
@@ -843,65 +953,69 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia eliminar un contacto de una persona con id inválido', done => {
-            let superUser = {
-                username: 'super@mail.com',
-                password: 'super'
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            let person = new Person({
+                type: 'PROVEEDOR',
+                businessName: 'La Estrella',
+                address: [],
+                tributaryCode: '20232021692',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '1220232021692',
+                status: 'ACTIVO',
+                business: business._id
+            })
+
+            let contact = {
+                name: 'Cersei Lannister',
+                phone: '555-777888'
             }
 
+            person.contacts.push(contact)
+
+            person.save()
+                .catch(error => console.log('TEST: ', error))
+
             chai.request(server)
-                .post('/login')
-                .send(superUser)
+                .delete('/person/58dece08eb0548118ce31f11/contact/' + person.contacts[0]._id)
+                .set('x-access-token', token)
                 .end((error, response) => {
-                    response.should.be.status(200)
+                    response.should.have.status(404)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('No se encontró la persona')
                     response.body.should.have.property('data')
-                    response.body.data.should.have.property('token')
-                    token = response.body.data.token
-                    // Test from here
-                    let person = new Person({
-                        type: 'PROVEEDOR',
-                        businessName: 'La Estrella',
-                        address: [],
-                        tributaryCode: '20232021692',
-                        taxStatus: 'RESPONSABLE INSCRIPTO',
-                        grossIncomeCode: '1220232021692',
-                        status: 'ACTIVO'
-                    })
-
-                    let contact = {
-                        name: 'Cersei Lannister',
-                        phone: '555-777888'
-                    }
-
-                    person.contacts.push(contact)
-
-                    person.save()
-                        .catch(error => console.log('TEST: ', error))
-
-                    chai.request(server)
-                        .delete('/person/58dece08eb0548118ce31f11/contact/' + person.contacts[0]._id)
-                        .set('x-access-token', token)
-                        .end((error, response) => {
-                            response.should.have.status(404)
-                            response.body.should.be.a('object')
-                            response.body.should.have.property('message')
-                                .eql('No se encontró la persona')
-                            response.body.should.have.property('data')
-                                .to.be.null
-                            done()
-                        })
+                        .to.be.null
+                    done()
                 })
         })
     })
     // DELETE /person/:personId/contacts
     describe('DELETE /person/{personId}/contacts', () => {
         it('deberia eliminar todos los contactos indicados', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
+
             })
             let contacts = []
 
@@ -941,6 +1055,14 @@ describe.only('PERSON: ', () => {
     // GET /person/:personId/addresses
     describe('GET /person/{personId}/addresses', () => {
         it('deberia obtener todas las direcciones de una persona', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })            
+            
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -948,7 +1070,8 @@ describe.only('PERSON: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE NO INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -968,13 +1091,22 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia obtener la direccion de una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })            
+            
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -996,6 +1128,14 @@ describe.only('PERSON: ', () => {
     // POST /person/:personId/address
     describe('POST /person/{personId}/address', () => {
         it('deberia agregar una direccion a una persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -1003,7 +1143,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -1028,6 +1169,14 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia agregar una direccion a una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })            
+            
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
@@ -1035,7 +1184,8 @@ describe.only('PERSON: ', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             person.save()
@@ -1061,13 +1211,22 @@ describe.only('PERSON: ', () => {
     })
     describe('DELETE /person/{personId}/address', () => {
         it('deberia eliminar una direccion de una persona por su id', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })            
+            
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12202202231962',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             let address = {
@@ -1093,13 +1252,22 @@ describe.only('PERSON: ', () => {
                 })
         })
         it('no deberia eliminar una direccion de una persona con id inválido', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxtStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '122022022319623',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             let address = {
@@ -1126,13 +1294,22 @@ describe.only('PERSON: ', () => {
     })
     describe('DELETE /person/{personId}/addresses', () => {
         it('deberia eliminar todas las direcciones indicadas', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
             let person = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'La Estrella',
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '1220232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             let addresses = []
 

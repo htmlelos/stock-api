@@ -53,7 +53,6 @@ function checkDemand(request) {
 }
 
 function createDemand(request, response) {
-
     checkDemand(request)
 
     request.getValidationResult()
@@ -79,7 +78,7 @@ function createDemand(request, response) {
                 message.failure(response, error.code, error.message, error.data)
             } else if (error.code) {
                 message.failure(response, error.code, error.message, error.data)
-            } else {
+            } else {                
                 messge.failure(response, 500, error.message, null)
             }
         })
@@ -90,6 +89,7 @@ const findDemand = (demandId) => {
 }
 
 const getDemand = (request, response) => {
+    console.log('GET_DEMAND');
     let demandId = request.params.demandId
     findDemand(demandId)
         .then(demand => {
@@ -319,9 +319,9 @@ const generateOrder = (request, response) => {
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
     let promiseCounter = Counter.findOne({ name: 'orden' })
     let counterValue = 0;
+    let orders = []
     Promise.all([promiseDemand, promisePerson, promiseCounter])
         .then(values => {
-            console.log('VALUES--', values);
             let demand = values[0]
             let sender = values[1]
             let counter = values[2]
@@ -356,23 +356,18 @@ const generateOrder = (request, response) => {
                         order.detail.push(element)
                         counterValue++
                     }, this)
-                    order.save()
-                        .then(result => {
-                            console.log(result);
-                            // return Promise.resolve()
-                        })
-                        .catch(error => {
-                            return Promise.reject(error)
-                        })
+                    orders.push(order)
                 }
             }
         })
+        .then((result) => {
+            return  Counter.update({name: 'orden'}, {$set:{value: counterValue}})
+        })
         .then(() => {
-            return Counter.update({name: 'orden'}, {$set:{value: counterValue}})
+            return Promise.all(orders.map(order => order.save()))
         })
         .then(result => {
-            console.log('RESULT==', result);
-            message.success(response, 200, 'Ordenes generadas con exito', [])
+            message.success(response, 200, 'Ordenes generadas con exito', orders)
         })
         .catch(error => {
             console.log('ERROR--', error);

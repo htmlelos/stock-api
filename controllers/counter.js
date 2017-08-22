@@ -88,7 +88,6 @@ const getCounter = (request, response) => {
             message.success(response, 200, 'Contador obtenido con éxito', counter)
         })
         .catch(error => {
-            console.log('ERROR--', error);
             if (error.code) {
                 message.failure(response, error.code, error.message, error.data)
             } else {
@@ -160,10 +159,8 @@ const incrementCounter = (request, response) => {
             }
         })
         .then(counter => {
-            console.log('COUNTER:--'.counter);
             let newCounter = {}
             newCounter.value = counter.value + counter.incrementBy
-            console.log('NEW_COUNTER:--', newCounter)
             return modifyCounter(counter, newCounter)
         })
         .then(() => {
@@ -208,10 +205,8 @@ const resetCounter = (request, response) => {
             }
         })
         .then(counter => {
-            console.log('COUNTER:--', counter)
             let newCounter = {}
             newCounter.value = 0
-            console.log('NEW_COUNTER:--', newCounter)
             return modifyCounter(counter, newCounter)
         })
         .then(() => {
