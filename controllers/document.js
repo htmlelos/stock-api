@@ -91,21 +91,21 @@ const createDocument = (request, response) => {
             document = new Document(body)
             document.createdBy = request.decoded.username
             document.createdAt = Date.now();
-            return Counter.findOne({name: document.documentType.toLowerCase()})          
+            return Counter.findOne({ name: document.documentType.toLowerCase() })
         })
         .then(counter => {
             document.documentNumber = counter.value + counter.incrementBy
-            return Counter.update({_id: counter._id}, {$set: {value: document.documentNumber}})                        
+            return Counter.update({ _id: counter._id }, { $set: { value: document.documentNumber } })
         })
         .then(value => {
             return document.save()
         })
         .then(value => {
             return Promise.resolve(document)
-        })                
+        })
         .catch(error => {
             return Promise.reject(error)
-        })        
+        })
         .then((document) => {
             message.success(response, 200, 'Documento creado con éxito', { id: document._id })
         })
@@ -207,12 +207,12 @@ const addItem = (request, response) => {
             let document = values[1]
 
             if (!document) {
-                let error = {code: 404, message: 'No se encontró el documento', data: null}
+                let error = { code: 404, message: 'No se encontró el documento', data: null }
                 return Promise.reject(error)
             }
 
             if (!product) {
-                let error = {code: 404, message: 'No se encontró el producto', data: null}
+                let error = { code: 404, message: 'No se encontró el producto', data: null }
                 return Promise.reject(error)
             }
 
@@ -238,9 +238,9 @@ const deleteItem = (request, response) => {
         .then(document => {
             if (document) {
                 itemId = request.body.itemId
-                return Document.update({_id: documentId}, {$pull: {detail: {_id: itemId}}})
+                return Document.update({ _id: documentId }, { $pull: { detail: { _id: itemId } } })
             } else {
-                let error = {code:404, message:'No se encontró el documento', data: null}
+                let error = { code: 404, message: 'No se encontró el documento', data: null }
                 return Promise.reject(error)
             }
         })
@@ -248,13 +248,48 @@ const deleteItem = (request, response) => {
             return findDocument(documentId)
         })
         .then(document => {
-            return Product.populate(document, {path: 'detail.product'})
+            return Product.populate(document, { path: 'detail.product' })
         })
-        .then(document => {            
+        .then(document => {
             message.success(response, 200, 'Item eliminado con exito', document.detail)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const generate = (request, response) => {
+    let documentId = request.params.documentId
+    let counterValue = 0
+    let newDocument = null
+    let promiseDocument = findDocument(documentId)
+    let promiseCounter = Counter.findOne({ name: 'recepcion' })
+    // findDocument(documentId)
+    Promise.all([promiseDocument, promiseCounter])
+        .then(values => {
+            let document = values[0]
+            let counter = values[1]
+            let receipt = {
+                documentNumber: counter.value,
+                documentType: 'RECEPCION',
+                documentName: 'Recepcion de Productos',
+                documentDate: document.documentDate,
+                sender: document.receiver,
+                receiver: request.decoded._id,
+                detail: document.detail
+            }
+
+            counterValue = counter.value + 1
+
+            newDocument = new Document(receipt)
+            return [newDocument.save(), 
+                    Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
+        })
+        .then((result) => {
+            return Promise.all(result)
+        })
+        .then(document => {
+            message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
 }
 
@@ -266,5 +301,6 @@ module.exports = {
     deleteDocument,
     getDocument,
     addItem,
-    deleteItem
+    deleteItem,
+    generate
 }

@@ -1105,4 +1105,113 @@ describe('DOCUMENTS: test suite', () => {
                 })
         })
     })
+
+    describe('GET /document/{documentId}/generate-order', () => {
+        let business = null
+        let receiver = null
+        let sender = null
+        let category = null
+        let product = null
+        let document = null
+        let counter = null
+        beforeEach(done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
+            business.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Person', ['type', 'businessName', 'addresses', 'tributaryCode', 'grossIncommeCode', 'contacts', 'status'])
+            receiver = new Person(Factory.create('Person', {
+                type: 'PROVEEDOR',
+                businessName: 'Palladini',
+                addresses: [{ address: 'San Martin 417, San Telmo, Buenos Aires' }],
+                tributaryCode: 20232021692,
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncommeCode: 1220232021692,
+                contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
+                status: 'ACTIVO',
+                business: business._id
+            }))
+            receiver.save()
+                .catch(error => { console.error('Error: ', error) })
+            sender = new Person(Factory.create('Person', {
+                type: 'ORDENANTE',
+                firstName: 'Fernando',
+                lastName: 'Lucero',
+                addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
+                tributaryCode: 20232021692,
+                contacts: [],
+                status: 'ACTIVO',
+                business: business._id                
+            }))
+            sender.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Category', ['name', 'description', 'status'])
+            category = new Category(Factory.create('Category', { name: 'Salame', description: 'Salame tipo milan', status: 'ACTIVO' }))
+            category.save()
+                .catch(error => { console.log('TEST: ', error) })
+            Factory.define('Product', ['name', 'marca', 'category', 'code', 'priceList', 'status'])
+            product = new Product(Factory.create('Product', {
+                name: 'Salame',
+                marca: 1,
+                category: category._id,
+                code: '779130014000',
+                priceList: [],
+                status: 'ACTIVO'
+            }))
+            product.save()
+                .catch(error => { console.error('TEST: ', error) })
+            Factory.define('Counter', ["name", "value", "incrementBy", "start"])
+            counter = new Counter(Factory.create('Counter', {
+                name: "recepcion",
+                value: 0,
+                incrementBy: 1,
+                start: 0
+            }))
+            counter.save()
+                .catch(error => { console.error('TEST: ', error)})
+            Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
+            document = new Document(Factory.create('Document', {
+                documentType: 'RECEPCION',
+                documentName: 'Orden de Compra',
+                documentDate: Date.now(),
+                documentName: counter.value,
+                business: business._id,
+                receiver: receiver._id,
+                sender: sender.id,
+                detail: [],
+                subtotal: 50,
+                salesTaxes: .05,
+                total: 52.5
+            }))
+            let item = {
+                product: product._id,
+                quantity: 1,
+                price: 20
+            }
+
+            document.detail.push(item);
+
+            document.save()
+                .catch(error => { console.error('TEST:', error) })
+            done();
+        })
+
+        it('Deberia generar un documento a partir de otro', done => {
+            // console.log('DOCUMENT::', document);
+
+            chai.request(server)
+                .post(`/document/${document._id}/generate`)
+                .send({documentType: 'RECEPCION'})
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    // console.log('RESPONSE_BODY::', response.body);
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql(`${document.documentType.toLowerCase()} generada con exito`)
+                    response.body.should.have.property('data')
+                    done()
+                })
+        })
+    })
 })
