@@ -317,13 +317,16 @@ const generateOrder = (request, response) => {
     let userId = request.decoded._id
     console.log('DECODED_ID--', request.decoded._id);
     let promiseDemand = Demand.findById({ _id: demandId })
-    let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
+    // let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
+    let promisePerson = Person.findOne({ user: userId })
     let promiseCounter = Counter.findOne({ name: 'orden' })
     let counterValue = 0;
     let orders = []
     Promise.all([promiseDemand, promisePerson, promiseCounter])
         .then(values => {
-            console.log('VALUES--', values);
+            console.log('DEMAND--', values[0]);
+            console.log('SENDER--', values[1]);
+            console.log('COUNTER--', values[2]);
             let demand = values[0]
             let sender = values[1]
             let counter = values[2]
