@@ -65,7 +65,16 @@ const DocumentSchema = new Schema({
     },
     total: {
         type: Number
-    }
+    },
+    status: {
+        type: String,
+        enum: {
+            values: ['CREADO', 'GENERADO'],
+            messages: 'El estado de la orden de compra solo puede ser CREADO o GENERADO'
+        },
+        required: 'Debe definir el estado de la orden de compra',
+        default: 'CREADO'
+    },
 })
 
 module.exports = mongoose.model('Document', DocumentSchema)

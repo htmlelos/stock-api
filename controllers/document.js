@@ -279,6 +279,11 @@ const generate = (request, response) => {
                 detail: document.detail
             }
 
+            if (document.status === 'GENERADO') {
+                let error = {code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null}
+                return Promise.reject(error)
+            }
+
             counterValue = counter.value + 1
 
             newDocument = new Document(receipt)

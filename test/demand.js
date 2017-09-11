@@ -1516,7 +1516,8 @@ describe('DEMAND: ', () => {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
                 items: [],
-                business: business._id
+                business: business._id,
+                status: 'CREADO'
             }))
             Factory.define('Category', ['name', 'description', 'status'])
             category = new Category(Factory.create('Category', {

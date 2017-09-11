@@ -47,7 +47,7 @@ describe('DOCUMENTS: test suite', () => {
         Product.remove({}, error => { })
         Category.remove({}, error => { })
         Document.remove({}, error => { })
-        Counter.remove({}, error => {})
+        Counter.remove({}, error => { })
         done()
     })
     // Obtener todos los documentos
@@ -94,7 +94,7 @@ describe('DOCUMENTS: test suite', () => {
 
     describe('POST /document', () => {
         let business = null
-        beforeEach(done => {                
+        beforeEach(done => {
             let counter = new Counter({
                 name: 'orden',
                 value: 0,
@@ -369,7 +369,7 @@ describe('DOCUMENTS: test suite', () => {
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
                 status: 'ACTIVO',
-                business: business._id                
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -449,7 +449,7 @@ describe('DOCUMENTS: test suite', () => {
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
                 status: 'ACTIVO',
-                business: business._id                
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -489,7 +489,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
-                documentDate: Date.now(),                
+                documentDate: Date.now(),
                 business: business._id,
                 sender: sender.id,
                 detail: [],
@@ -578,7 +578,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
-                documentDate: Date.now(),                
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -668,7 +668,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
-                documentDate: Date.now(),                
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -763,7 +763,7 @@ describe('DOCUMENTS: test suite', () => {
                 business: business._id
             }))
             receiver.save()
-            .catch(error => { console.error('Error: ', error) })
+                .catch(error => { console.error('Error: ', error) })
             sender = new Person(Factory.create('Person', {
                 type: 'ORDENANTE',
                 firstName: 'Fernando',
@@ -796,7 +796,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
-                documentDate: Date.now(),                
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -867,7 +867,7 @@ describe('DOCUMENTS: test suite', () => {
                 business: business._id
             }))
             receiver.save()
-            .catch(error => { console.error('Error: ', error) })
+                .catch(error => { console.error('Error: ', error) })
             sender = new Person(Factory.create('Person', {
                 type: 'ORDENANTE',
                 firstName: 'Fernando',
@@ -1013,7 +1013,7 @@ describe('DOCUMENTS: test suite', () => {
                 tributaryCode: 20232021692,
                 contacts: [],
                 status: 'ACTIVO',
-                business: business._id                
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1141,7 +1141,7 @@ describe('DOCUMENTS: test suite', () => {
                 tributaryCode: 20232021692,
                 contacts: [],
                 status: 'ACTIVO',
-                business: business._id                
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1168,7 +1168,7 @@ describe('DOCUMENTS: test suite', () => {
                 start: 0
             }))
             counter.save()
-                .catch(error => { console.error('TEST: ', error)})
+                .catch(error => { console.error('TEST: ', error) })
             Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
             document = new Document(Factory.create('Document', {
                 documentType: 'RECEPCION',
@@ -1181,7 +1181,8 @@ describe('DOCUMENTS: test suite', () => {
                 detail: [],
                 subtotal: 50,
                 salesTaxes: .05,
-                total: 52.5
+                total: 52.5,
+                status: 'CREADO'
             }))
             let item = {
                 product: product._id,
@@ -1196,15 +1197,13 @@ describe('DOCUMENTS: test suite', () => {
             done();
         })
 
-        it('Deberia generar un documento a partir de otro', done => {
-            // console.log('DOCUMENT::', document);
+        it('Deberia generar una orden a partir de un pedido', done => {
 
             chai.request(server)
                 .post(`/document/${document._id}/generate`)
-                .send({documentType: 'RECEPCION'})
+                .send({ documentType: 'RECEPCION' })
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    // console.log('RESPONSE_BODY::', response.body);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
