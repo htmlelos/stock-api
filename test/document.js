@@ -9,6 +9,7 @@ const Person = require('../models/person')
 const Product = require('../models/product')
 const Category = require('../models/category')
 const Document = require('../models/document')
+const Counter = require('../models/counter')
 const settings = require('../settings')
 // Dependencias de desarrollo
 const Factory = require('autofixture')
@@ -46,6 +47,7 @@ describe('DOCUMENTS: test suite', () => {
         Product.remove({}, error => { })
         Category.remove({}, error => { })
         Document.remove({}, error => { })
+        Counter.remove({}, error => { })
         done()
     })
     // Obtener todos los documentos
@@ -91,16 +93,29 @@ describe('DOCUMENTS: test suite', () => {
     })
 
     describe('POST /document', () => {
-        it('deberia crear un documento de tipo ORDEN de compra', done => {
+        let business = null
+        beforeEach(done => {
+            let counter = new Counter({
+                name: 'orden',
+                value: 0,
+                incrementBy: 1,
+                start: 0
+            })
 
-            let business = new Business({
+            counter.save()
+                .catch(error => console.error('TEST', error))
+
+            business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
                 status: 'ACTIVO'
             })
             business.save()
-                .catch(error => { console.error('TEST1: ', error) })
+                .catch(error => { console.error('TEST: ', error) })
 
+            done()
+        })
+        it('deberia crear un documento de tipo ORDEN de compra', done => {
             let receiver = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'Palladini',
@@ -109,17 +124,20 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             receiver.save()
-                .catch(error => { console.error('TEST2:', error) })
+                .catch(error => { console.error('TEST:', error) })
+
             let sender = new Person({
                 type: 'ORDENANTE',
                 firstName: 'Fernando',
                 lastName: 'Lucero',
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             let category = new Category({
@@ -149,6 +167,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: new Date(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -169,6 +188,7 @@ describe('DOCUMENTS: test suite', () => {
                 .send(document)
                 .set('x-access-token', token)
                 .end((error, response) => {
+                    // console.log('RESPONSE_TEXT', response.text);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')
@@ -181,14 +201,6 @@ describe('DOCUMENTS: test suite', () => {
         })
 
         it('no deberia crear un documento sin tipo de Documento', done => {
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
             let receiver = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'Palladini',
@@ -197,7 +209,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -267,14 +280,6 @@ describe('DOCUMENTS: test suite', () => {
         })
 
         it('no deberia crear un documento sin nombre de documento', done => {
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
             let receiver = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'Palladini',
@@ -283,7 +288,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -322,6 +328,7 @@ describe('DOCUMENTS: test suite', () => {
             let document = {
                 documentType: 'ORDEN',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -352,103 +359,7 @@ describe('DOCUMENTS: test suite', () => {
                 })
         })
 
-        it('no deberia crear un documento sin numero de documento', done => {
-
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
-            let receiver = new Person({
-                type: 'PROVEEDOR',
-                businessName: 'Palladini',
-                addresses: [{ address: 'San Martin 417, San Telmo, Buenos Aires' }],
-                tributaryCode: 20232021692,
-                taxStatus: 'RESPONSABLE INSCRIPTO',
-                grossIncommeCode: 1220232021692,
-                contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
-            })
-            receiver.save()
-                .catch(error => { console.error('TEST2:', error) })
-            let sender = new Person({
-                type: 'ORDENANTE',
-                firstName: 'Fernando',
-                lastName: 'Lucero',
-                addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
-                tributaryCode: 20232021692,
-                status: 'ACTIVO'
-            })
-
-            let category = new Category({
-                name: 'Salame',
-                description: 'Salame tipo milan',
-                status: 'ACTIVO'
-            })
-
-            category.save()
-                .catch(error => { console.log('TEST: ', error) })
-
-            let product = new Product({
-                name: 'Salame',
-                marca: 1,
-                category: category._id,
-                code: '779130014000',
-                priceList: [],
-                status: 'ACTIVO'
-            })
-
-            product.save()
-                .catch(error => {
-                    console.error('TEST: ', error)
-                })
-
-            let document = {
-                documentType: 'ORDEN',
-                documentName: 'Orden de Compra',
-                business: business._id,
-                receiver: receiver._id,
-                sender: sender.id,
-                detail: [],
-                subtotal: 50,
-                salesTaxes: .05,
-                total: 52.5
-            }
-
-            document.detail.push({
-                product: product._id,
-                quantity: 5,
-                price: 50
-            })
-
-            chai.request(server)
-                .post('/document')
-                .send(document)
-                .set('x-access-token', token)
-                .end((error, response) => {
-                    response.should.have.status(422)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql(`Debe indicar el numero de ${document.documentType.toLowerCase()}`)
-                    response.body.should.have.property('data')
-                        .to.be.null;
-                    done()
-                })
-        })
-
         it('no deberia crear un documento sin la empresa que crea el documento', done => {
-
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
             let receiver = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'Palladini',
@@ -457,7 +368,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -497,6 +409,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 receiver: receiver._id,
                 sender: sender.id,
                 detail: [],
@@ -527,15 +440,6 @@ describe('DOCUMENTS: test suite', () => {
         })
 
         it('no deberia crear un documento sin el destinatario del documento', done => {
-
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
             let receiver = new Person({
                 type: 'PROVEEDOR',
                 businessName: 'Palladini',
@@ -544,7 +448,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
             receiver.save()
                 .catch(error => { console.error('TEST2:', error) })
@@ -584,6 +489,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 sender: sender.id,
                 detail: [],
@@ -612,94 +518,6 @@ describe('DOCUMENTS: test suite', () => {
                     done()
                 })
         })
-
-        it('no deberia crear un documento sin el destinatario del documento', done => {
-
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST1: ', error) })
-
-            let receiver = new Person({
-                type: 'PROVEEDOR',
-                businessName: 'Palladini',
-                addresses: [{ address: 'San Martin 417, San Telmo, Buenos Aires' }],
-                tributaryCode: 20232021692,
-                taxStatus: 'RESPONSABLE INSCRIPTO',
-                grossIncommeCode: 1220232021692,
-                contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
-            })
-            receiver.save()
-                .catch(error => { console.error('TEST2:', error) })
-            let sender = new Person({
-                type: 'ORDENANTE',
-                firstName: 'Fernando',
-                lastName: 'Lucero',
-                addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
-                tributaryCode: 20232021692,
-                status: 'ACTIVO'
-            })
-
-            let category = new Category({
-                name: 'Salame',
-                description: 'Salame tipo milan',
-                status: 'ACTIVO'
-            })
-
-            category.save()
-                .catch(error => { console.log('TEST: ', error) })
-
-            let product = new Product({
-                name: 'Salame',
-                marca: 1,
-                category: category._id,
-                code: '779130014000',
-                priceList: [],
-                status: 'ACTIVO'
-            })
-
-            product.save()
-                .catch(error => {
-                    console.error('TEST: ', error)
-                })
-
-            let document = {
-                documentType: 'ORDEN',
-                documentName: 'Orden de Compra',
-                documentNumber: 1,
-                business: business._id,
-                receiver: receiver.id,
-                // sender: sender.id,                
-                detail: [],
-                subtotal: 50,
-                salesTaxes: .05,
-                total: 52.5
-            }
-
-            document.detail.push({
-                product: product._id,
-                quantity: 5,
-                price: 50
-            })
-
-            chai.request(server)
-                .post('/document')
-                .send(document)
-                .set('x-access-token', token)
-                .end((error, response) => {
-                    response.should.have.status(422)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql(`Debe indicar el emisor de ${document.documentType.toLowerCase()}`)
-                    response.body.should.have.property('data')
-                        .to.be.null;
-                    done()
-                })
-        })
     })
 
     describe('GET /document/{documentId}', () => {
@@ -723,7 +541,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id,
             }))
             receiver.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -734,7 +553,8 @@ describe('DOCUMENTS: test suite', () => {
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id,
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -758,13 +578,15 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
                 detail: [],
                 subtotal: 50,
                 salesTaxes: .05,
-                total: 52.5
+                total: 52.5,
+                business: business._id
             }))
 
             document.save()
@@ -809,7 +631,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             receiver.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -820,7 +643,8 @@ describe('DOCUMENTS: test suite', () => {
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -844,6 +668,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -934,7 +759,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             receiver.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -945,7 +771,8 @@ describe('DOCUMENTS: test suite', () => {
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -969,6 +796,7 @@ describe('DOCUMENTS: test suite', () => {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
                 documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -1020,6 +848,7 @@ describe('DOCUMENTS: test suite', () => {
         let category = null
         let product = null
         let document = null
+        let counter = null
         beforeEach(done => {
             Factory.define('Business', ['name', 'tributaryCode', 'status'])
             business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
@@ -1034,7 +863,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             receiver.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1045,7 +875,8 @@ describe('DOCUMENTS: test suite', () => {
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1064,11 +895,11 @@ describe('DOCUMENTS: test suite', () => {
             }))
             product.save()
                 .catch(error => { console.error('TEST: ', error) })
-            Factory.define('Document', ['documentType', 'documentName', 'documentNumber', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
+            Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
             document = new Document(Factory.create('Document', {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
-                documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -1109,7 +940,7 @@ describe('DOCUMENTS: test suite', () => {
                 product: product._id,
                 quantity: 1,
                 price: 20
-            }            
+            }
             chai.request(server)
                 .post(`/document/58dece08eb0548118ce31f11/item`)
                 .send(item)
@@ -1169,7 +1000,8 @@ describe('DOCUMENTS: test suite', () => {
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncommeCode: 1220232021692,
                 contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             receiver.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1180,7 +1012,8 @@ describe('DOCUMENTS: test suite', () => {
                 addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
                 tributaryCode: 20232021692,
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             }))
             sender.save()
                 .catch(error => { console.error('Error: ', error) })
@@ -1199,11 +1032,11 @@ describe('DOCUMENTS: test suite', () => {
             }))
             product.save()
                 .catch(error => { console.error('TEST: ', error) })
-            Factory.define('Document', ['documentType', 'documentName', 'documentNumber', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
+            Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
             document = new Document(Factory.create('Document', {
                 documentType: 'ORDEN',
                 documentName: 'Orden de Compra',
-                documentNumber: 1,
+                documentDate: Date.now(),
                 business: business._id,
                 receiver: receiver._id,
                 sender: sender.id,
@@ -1216,7 +1049,8 @@ describe('DOCUMENTS: test suite', () => {
             document.save()
                 .catch(error => { console.error('TEST:', error) })
             done();
-        })        
+        })
+
         it('deberia eliminar un item de un documento por su id', done => {
             let item = {
                 product: product._id,
@@ -1267,6 +1101,114 @@ describe('DOCUMENTS: test suite', () => {
                         .eql('No se encontró el documento')
                     response.body.should.have.property('data')
                         .to.be.null
+                    done()
+                })
+        })
+    })
+
+    describe('GET /document/{documentId}/generate-order', () => {
+        let business = null
+        let receiver = null
+        let sender = null
+        let category = null
+        let product = null
+        let document = null
+        let counter = null
+        beforeEach(done => {
+            Factory.define('Business', ['name', 'tributaryCode', 'status'])
+            business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
+            business.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Person', ['type', 'businessName', 'addresses', 'tributaryCode', 'grossIncommeCode', 'contacts', 'status'])
+            receiver = new Person(Factory.create('Person', {
+                type: 'PROVEEDOR',
+                businessName: 'Palladini',
+                addresses: [{ address: 'San Martin 417, San Telmo, Buenos Aires' }],
+                tributaryCode: 20232021692,
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncommeCode: 1220232021692,
+                contacts: [{ phone: '154242707', name: 'Sergio Lucero' }],
+                status: 'ACTIVO',
+                business: business._id
+            }))
+            receiver.save()
+                .catch(error => { console.error('Error: ', error) })
+            sender = new Person(Factory.create('Person', {
+                type: 'ORDENANTE',
+                firstName: 'Fernando',
+                lastName: 'Lucero',
+                addresses: [{ address: 'Peatonal 6 Casa 226 Barrio Nuevo Rawson' }],
+                tributaryCode: 20232021692,
+                contacts: [],
+                status: 'ACTIVO',
+                business: business._id
+            }))
+            sender.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Category', ['name', 'description', 'status'])
+            category = new Category(Factory.create('Category', { name: 'Salame', description: 'Salame tipo milan', status: 'ACTIVO' }))
+            category.save()
+                .catch(error => { console.log('TEST: ', error) })
+            Factory.define('Product', ['name', 'marca', 'category', 'code', 'priceList', 'status'])
+            product = new Product(Factory.create('Product', {
+                name: 'Salame',
+                marca: 1,
+                category: category._id,
+                code: '779130014000',
+                priceList: [],
+                status: 'ACTIVO'
+            }))
+            product.save()
+                .catch(error => { console.error('TEST: ', error) })
+            Factory.define('Counter', ["name", "value", "incrementBy", "start"])
+            counter = new Counter(Factory.create('Counter', {
+                name: "recepcion",
+                value: 0,
+                incrementBy: 1,
+                start: 0
+            }))
+            counter.save()
+                .catch(error => { console.error('TEST: ', error) })
+            Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
+            document = new Document(Factory.create('Document', {
+                documentType: 'RECEPCION',
+                documentName: 'Orden de Compra',
+                documentDate: Date.now(),
+                documentName: counter.value,
+                business: business._id,
+                receiver: receiver._id,
+                sender: sender.id,
+                detail: [],
+                subtotal: 50,
+                salesTaxes: .05,
+                total: 52.5,
+                status: 'CREADO'
+            }))
+            let item = {
+                product: product._id,
+                quantity: 1,
+                price: 20
+            }
+
+            document.detail.push(item);
+
+            document.save()
+                .catch(error => { console.error('TEST:', error) })
+            done();
+        })
+
+        it('Deberia generar una orden a partir de un pedido', done => {
+
+            chai.request(server)
+                .post(`/document/${document._id}/generate`)
+                .send({ documentType: 'RECEPCION' })
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql(`${document.documentType.toLowerCase()} generada con exito`)
+                    response.body.should.have.property('data')
                     done()
                 })
         })

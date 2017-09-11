@@ -5,7 +5,10 @@ const Branch = require('../models/branch')
 const Brand = require('../models/brand')
 const Category = require('../models/category')
 const Product = require('../models/product')
+const Document = require('../models/document')
+const Counter = require('../models/counter')
 const message = require('../services/response/message')
+const mongoose = require('mongoose')
 
 function getAllDemands(request, response) {
     Demand.find({})
@@ -46,11 +49,10 @@ function checkDemand(request) {
     request.checkBody('startDate', 'Debe proporcionar una fecha inicial del pedido')
         .notEmpty()
     request.checkBody('business', 'Debe indicar la empresa a la que pertenece la solicitud')
-        .notEmpty()        
+        .notEmpty()
 }
 
 function createDemand(request, response) {
-
     checkDemand(request)
 
     request.getValidationResult()
@@ -76,7 +78,7 @@ function createDemand(request, response) {
                 message.failure(response, error.code, error.message, error.data)
             } else if (error.code) {
                 message.failure(response, error.code, error.message, error.data)
-            } else {
+            } else {                
                 messge.failure(response, 500, error.message, null)
             }
         })
@@ -87,6 +89,7 @@ const findDemand = (demandId) => {
 }
 
 const getDemand = (request, response) => {
+    console.log('GET_DEMAND');
     let demandId = request.params.demandId
     findDemand(demandId)
         .then(demand => {
@@ -96,21 +99,21 @@ const getDemand = (request, response) => {
                 let error = { code: 404, message: 'No se encontró la solicitud', data: null }
                 return Promise.reject(error)
             }
-        })     
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Category.populate(demand, { path: 'items.product.category' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud obtenida con éxito', demand)
@@ -136,21 +139,21 @@ const updateDemand = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
             message.success(response, 200, 'Solicitud actualizada con éxito', demand)
@@ -211,11 +214,11 @@ const addItem = (request, response) => {
             return Person.populate(demand, { path: 'items.supplier' })
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
         .then(demand => {
             return Branch.populate(demand, { path: 'items.branch' })
         })
@@ -245,22 +248,22 @@ const deleteItem = (request, response) => {
         })
         .then((result) => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
-        })     
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
+        })
         .then(demand => {
             message.success(response, 200, 'Item eliminado con éxito', demand.items)
         })
@@ -285,27 +288,95 @@ const deleteSelectedItems = (request, response) => {
         })
         .then(() => {
             return findDemand(demandId)
-        })                
-        .then(demand => {
-            return Product.populate(demand, {path: 'items.product'})
         })
         .then(demand => {
-            return Brand.populate(demand, {path: 'items.product.brand'})
+            return Product.populate(demand, { path: 'items.product' })
         })
         .then(demand => {
-            return Category.populate(demand, {path: 'items.product.category'})
-        })        
-        .then(demand => {
-            return Branch.populate(demand, {path: 'items.branch'})
+            return Brand.populate(demand, { path: 'items.product.brand' })
         })
         .then(demand => {
-            return Person.populate(demand, {path: 'items.supplier'})
-        })             
+            return Category.populate(demand, { path: 'items.product.category' })
+        })
+        .then(demand => {
+            return Branch.populate(demand, { path: 'items.branch' })
+        })
+        .then(demand => {
+            return Person.populate(demand, { path: 'items.supplier' })
+        })
         .then(demand => {
             message.success(response, 200, 'Items seleccionados eliminados con éxito', demand.items)
         })
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const generateOrder = (request, response) => {
+    let demandId = request.params.demandId
+    let userId = request.decoded._id
+    console.log('DECODED_ID--', request.decoded._id);
+    let promiseDemand = Demand.findById({ _id: demandId })
+    // let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
+    let promisePerson = Person.findOne({ user: userId })
+    let promiseCounter = Counter.findOne({ name: 'orden' })
+    let counterValue = 0;
+    let orders = []
+    Promise.all([promiseDemand, promisePerson, promiseCounter])
+        .then(values => {
+            console.log('DEMAND--', values[0]);
+            console.log('SENDER--', values[1]);
+            console.log('COUNTER--', values[2]);
+            let demand = values[0]
+            let sender = values[1]
+            let counter = values[2]
+            let items = {}
+            demand.items.map(item => {
+                if (!items[item.supplier]) {
+                    items[item.supplier] = []
+                }
+                items[item.supplier].push({
+                    quantity: item.quantity,
+                    product: item.product
+                })
+            })
+            for (let key in items) {
+                if (items.hasOwnProperty(key)) {
+                    let element = items[key]
+                    let order = new Document({
+                        documentType: 'ORDEN',
+                        documentName: 'Orden de Compra',
+                        documentDate: Date.now(),
+
+                        business: request.decoded.business,
+                        receiver: key,
+                        sender: sender._id
+                    })
+
+                    counterValue = counter.value + 1          
+
+                    element.forEach(element => {
+                        // let detail = element
+                        order.documentNumber = counterValue
+                        order.detail.push(element)
+                        counterValue++
+                    }, this)
+                    orders.push(order)
+                }
+            }
+        })
+        .then((result) => {
+            return  Counter.update({name: 'orden'}, {$set:{value: counterValue}})
+        })
+        .then(() => {
+            return Promise.all(orders.map(order => order.save()))
+        })
+        .then(result => {
+            message.success(response, 200, 'Ordenes generadas con exito', orders)
+        })
+        .catch(error => {
+            console.log('ERROR--', error);
+            message.failure(response, 500, 'Error', error)
         })
 }
 
@@ -318,5 +389,6 @@ module.exports = {
     deleteDemand,
     addItem,
     deleteItem,
-    deleteSelectedItems
+    deleteSelectedItems,
+    generateOrder
 }

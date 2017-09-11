@@ -177,6 +177,14 @@ describe('PRODUCTS: ', () => {
     describe('GET /products/{productId}', () => {
         // Deberia obtener un producto por su id
         it('deberia obtener un producto por su id', done => {
+			let business = new Business({
+				name: 'Punta del Agua',
+				tributaryCode: '20232021692',
+				status: 'ACTIVO'
+			})
+			business.save()
+                .catch(error => {console.error('TEST', error)})
+                            
             let product = new Product({
                 name: 'Gaseosa 2L',
                 brand: null,
@@ -197,7 +205,8 @@ describe('PRODUCTS: ', () => {
                 businessName: 'La Estrella',
                 addresses: [],
                 contacts: [],
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()

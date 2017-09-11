@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require('mongoose')
+const User = require('../models/user')
 const Person = require('../models/person')
 const message = require('../services/response/message')
 
@@ -32,11 +33,12 @@ function retrieveAllPerson(request, response) {
         })
 }
 // Verifica los datos obligatorios de la persona
-function checkPerson(request, type = null) {
+function checkPerson(request) {
     // Verificar Persona
+    let type = request.body.type
     request.checkBody('type', 'Tipo de persona no definido')
         .notEmpty()
-        .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'])
+        .isIn(['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO', 'ORDENANTE'])
     request.checkBody('status', 'El estado no es válido')
         .isIn(['ACTIVO', 'INACTIVO'])
     request.checkBody('business', 'Debe indicar la empresa a la que pertenece la persona')
@@ -80,6 +82,8 @@ function checkSeller(request) {
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
+        request.checkbody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
+            .notEmpty()
     }
 }
 // Verifica los datos del cajero
@@ -90,6 +94,8 @@ function checkCashier(request) {
         request.checkBody('firstName', `El nombre del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
+            .notEmpty()
+        request.checkbody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
             .notEmpty()
     }
 }
@@ -110,8 +116,39 @@ function createPerson(request, response) {
             }
             return Promise.resolve()
         })
-        .then(result => {
+        .then(() => {
+
+            let person = request.body;
+            if (person.type !== 'PROVEEDOR') {
+                let user = request.body.user;
+                if (user !== null && user !== undefined) {
+                    if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
+                        User.find({username: user.username})
+                            .then(user => {
+                                if (user === null) {
+                                    user.status = 'ACTIVO'
+                                    let newUser = new User(user);
+                                    return newUser.save()
+                                } else {
+                                    let error = {code: 422, message: 'El usuario ya existe', data: null}
+                                    return Promise.reject(error)
+                                }
+                            })
+                            .catch(error => {
+                                return Promise.reject(error)
+                            })
+                    } else {
+                        return User.findById(user)
+                    }
+                }
+            }
+            return Promise.resolve(null)
+        })
+        .then((user) => {
             let newPerson = new Person(request.body)
+            if (user!==null) {
+                newPerson.user = user._id;
+            }
             newPerson.createdBy = request.decoded.username
             return newPerson.save()
         })
@@ -119,7 +156,15 @@ function createPerson(request, response) {
             message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
+            // console.log('ERROR--', error);
+            if (error.code && error.code === 11000) {
+                let error =  { code: 422, message: 'La persona ya existe', data: null }
+                message.failure(response, error.code, error.message, error.data)
+            } else if (error.code) {
+                message.failure(response, error.code, error.message, error.data)
+            } else {
+                message.failure(response, 500, error.message, error)
+            }
         })
 }
 // Obtener una persona

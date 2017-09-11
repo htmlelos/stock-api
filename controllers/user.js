@@ -38,7 +38,7 @@ function checkUser(request) {
 	request.checkBody('username', 'Debe proporcionar un nombre de usuario')
 		.notEmpty()
 	request.checkBody('password', 'Debe proporcionar una contraseña')
-		.notEmpty()		
+		.notEmpty()
 	request.checkBody('status', 'Debe definir el estado del usuario')
 		.notEmpty()
 	request.checkBody('status', 'El estado de usuario solo puede ser ACTIVO o INACTIVO')
@@ -48,7 +48,7 @@ function checkUser(request) {
 }
 
 //Crea un nuevo usuario
-function createUser(request, response) {	
+function createUser(request, response) {
 	checkUser(request)
 
 	request.getValidationResult()
@@ -75,7 +75,7 @@ function createUser(request, response) {
 			} else if (error.code) {
 				message.failure(response, error.code, error.message, error.data)
 			} else {
-				message.failure(response, 500, error.message, error)
+				message.failure(response, 500, error.message, null)
 			}
 		})
 }
@@ -204,8 +204,8 @@ function addUserRole(request, response) {
 				return Promise.reject({ code: 404, message: 'No se encontró el Rol', data: null })
 			}
 			let isIncluded = user.roles
-								.map(current => current.toString())
-								.includes(role._id.toString())
+				.map(current => current.toString())
+				.includes(role._id.toString())
 			if (isIncluded) {
 				return Promise.reject({ code: 422, message: 'El rol ya se encuentra asociado al usuario', data: null })
 			} else {

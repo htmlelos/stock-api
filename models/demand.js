@@ -55,6 +55,15 @@ const DemandSchema = new Schema({
         default: Date.now()
     },
     items: [ItemSchema],
+    status: {
+        type: String,
+        enum: {
+            values: ['CREADO', 'GENERADO'],
+            messages: 'El estado de la solicitud solo puede ser CREADO o GENERADO'
+        },
+        required: 'Debe definir el estado de la solicitud',
+        default: 'CREADO'
+    },
     createdBy: {
         type: String,
         required: 'Debe proporcionar el usuario que creo el registro' ,

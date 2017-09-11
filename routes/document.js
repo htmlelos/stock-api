@@ -20,4 +20,7 @@ router.route('/document/:documentId/item')
     .post(document.addItem)
     .delete(document.deleteItem)
 
+router.route('/document/:documentId/generate')
+    .post(document.generate)
+
 module.exports = router

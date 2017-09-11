@@ -45,13 +45,12 @@ describe('DEMAND: ', () => {
 
     afterEach(done => {
         Business.remove({}, error => { })
-        Brand.remove({}, error => {})
-        Category.remove({}, error => {})
+        Brand.remove({}, error => { })
+        Category.remove({}, error => { })
         Product.remove({}, error => { })
         Branch.remove({}, error => { })
         Person.remove({}, error => { })
         Demand.remove({}, error => { })
-
         done()
     })
 
@@ -102,8 +101,9 @@ describe('DEMAND: ', () => {
     })
 
     describe('POST /demand', () => {
-        it('deberia crear una solicitud', done => {
-            let business = new Business({
+        let business = null
+        beforeEach(done => {
+            business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
                 status: 'ACTIVO'
@@ -111,6 +111,9 @@ describe('DEMAND: ', () => {
             business.save()
                 .catch(error => { console.error('TEST', error) })
 
+            done()
+        })
+        it('deberia crear una solicitud', done => {
             let demand = {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -146,7 +149,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -180,14 +184,6 @@ describe('DEMAND: ', () => {
         })
 
         it('no deberia crear una solicitud sin nombre', done => {
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST', error) })
-
             let demand = {
                 startDate: new Date(Date.now()).toLocaleDateString(),
                 items: [],
@@ -222,7 +218,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -254,14 +251,6 @@ describe('DEMAND: ', () => {
         })
 
         it('no deberia crear una solicitud sin fecha de pedido', done => {
-            let business = new Business({
-                name: 'Punta del Agua',
-                tributaryCode: '20232021692',
-                status: 'ACTIVO'
-            })
-            business.save()
-                .catch(error => { console.error('TEST', error) })
-
             let demand = {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString()}`,
                 items: [],
@@ -296,7 +285,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -329,17 +319,20 @@ describe('DEMAND: ', () => {
     })
 
     describe('GET /demand/{demandId}', () => {
-        it.only('deberia obtener un pedido por su id', done => {
-            let business = new Business({
+        let business = null
+        beforeEach(done => {
+            business = new Business({
                 name: 'Punta del Agua',
                 tributaryCode: '20232021692',
-                status: 'ACTIVO'          
+                status: 'ACTIVO'
             })
-
             business.save()
-                .catch(error => {console.error('TEST:', error)})
+                .catch(error => { console.error('TEST', error) })
 
+            done()
+        })
 
+        it('deberia obtener un pedido por su id', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
@@ -356,7 +349,7 @@ describe('DEMAND: ', () => {
             })
 
             brand.save()
-                .catch(error => {console.error(error)})
+                .catch(error => { console.error(error) })
 
             let category = new Category({
                 name: 'Fiambres',
@@ -365,7 +358,7 @@ describe('DEMAND: ', () => {
             })
 
             category.save()
-                .catch(error => {console.error(error)})                
+                .catch(error => { console.error(error) })
 
             let product = new Product({
                 name: 'Queso Keso',
@@ -395,7 +388,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -466,7 +460,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -502,6 +497,19 @@ describe('DEMAND: ', () => {
     })
 
     describe('PUT /demand/{demandId}', () => {
+        let business = null
+        beforeEach(done => {
+            business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            done()
+        })
+
         it('deberia actualizar una solicitud por su id', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
@@ -537,7 +545,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -606,7 +615,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -642,6 +652,19 @@ describe('DEMAND: ', () => {
     })
 
     describe('DELETE /demand/{demandId}', () => {
+        let business = null
+        beforeEach(done => {
+            business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            done()
+        })
+
         it('deberia eliminar una solicitud por su id', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
@@ -677,7 +700,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -748,7 +772,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -786,6 +811,19 @@ describe('DEMAND: ', () => {
     })
 
     describe('PUT /demand/{demandId}/add/item', () => {
+        let business = null
+        beforeEach(done => {
+            business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            done()
+        })
+
         it('deberia agregar un item a la solicitud de pedido', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
@@ -821,7 +859,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -888,7 +927,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -955,7 +995,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1022,7 +1063,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1089,7 +1131,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1156,7 +1199,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1190,6 +1234,19 @@ describe('DEMAND: ', () => {
     })
 
     describe('DELETE /demand/{demandId}/delete/item', () => {
+        let business = null
+        beforeEach(done => {
+            business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            done()
+        })
+
         it('deberia eliminar un itema a la solicitud de pedido', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
@@ -1225,7 +1282,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1296,7 +1354,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1332,6 +1391,19 @@ describe('DEMAND: ', () => {
     })
 
     describe('DELETE /demand({demandId}/delete/items', () => {
+        let business = null
+        beforeEach(done => {
+            business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            done()
+        })
+
         it('deberia eliminar los items seleccionados', done => {
             let demand = new Demand({
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
@@ -1367,7 +1439,8 @@ describe('DEMAND: ', () => {
                 tributaryCode: '20232021692',
                 taxStatus: 'RESPONSABLE INSCRIPTO',
                 grossIncomeCode: '12232021692',
-                status: 'ACTIVO'
+                status: 'ACTIVO',
+                business: business._id
             })
 
             supplier.save()
@@ -1425,11 +1498,14 @@ describe('DEMAND: ', () => {
         })
     })
 
-    describe('POST /demand/generate', () => {
+    describe.skip('GET /demand/generate', () => {
         let business = null
         let demand = null
         let product = null
         let category = null
+        let supplier = null
+        let branch = null
+        let sender = null
         beforeEach(done => {
             Factory.define('Business', ['name', 'tributaryCode', 'status'])
             business = new Business(Factory.create('Business', { name: 'Punta del Agua', tributaryCode: '20086863813', status: 'ACTIVO' }))
@@ -1440,50 +1516,104 @@ describe('DEMAND: ', () => {
                 name: `Solicitud ${new Date(Date.now()).toLocaleDateString('es-AR', { timeZone: "UTC" })}`,
                 startDate: Date.now(),
                 items: [],
-                business: business._id
+                business: business._id,
+                status: 'CREADO'
             }))
-            Factory.define('Category', ['name','description','status'])
+            Factory.define('Category', ['name', 'description', 'status'])
             category = new Category(Factory.create('Category', {
                 name: 'Fiambre',
                 description: 'Embutidos',
                 status: 'ACTIVO'
             }))
             category.save()
-                .catch(error => {console.error('Error: ', error)})
-            Factory.define('Brand', ['name','description','suppliers','status','business'])
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Branch', ['name', 'address', 'status', 'business'])
+            branch = new Branch(Factory.create('Branch', {
+                name: 'Sucursal Lavalle',
+                address: { province: 'San Luis', city: 'San Luis', streets: 'Lavalle' },
+                status: 'ACTIVO',
+                business: business._id
+            }))
+            branch.save()
+                .catch(error => { console.error('Error: ', error) })
+            Factory.define('Brand', ['name', 'description', 'suppliers', 'status', 'business'])
             let brand = new Brand(Factory.create('Brand', {
                 suppliers: null,
                 business: business._id,
                 status: 'ACTIVO'
-            }))            
+            }))
             brand.save()
-                .catch(error => {console.error('Error: ', error)})
+                .catch(error => { console.error('TEST: ', error) })
             Factory.define('Product', ['name', 'brand', 'category', 'code', 'priceList', 'status'])
+            Factory.define('Person', ['type', 'businessName', 'address', 'tributaryCode', 'taxStatus', 'grossIncommeCode', 'contacts', 'status', 'business'])
+            sender = new Person(Factory.create('Person', {
+                type: 'ORDENANTE',
+                tributaryCode: null,
+                taxStatus: 'RESPONSABLE_INSCRIPTO',
+                grossIncomeCode: null,
+                business: business._id,
+                contacts: [],
+                address: [],
+                status: 'ACTIVO'
+            }))
             for (let i = 0; i <= 2; i++) {
+                Factory.define('Person', ['type', 'businessName', 'addresses', 'tributaryCode', 'taxStatus', 'grossIncomeCode', 'contacts', 'status', 'business'])
+                supplier = new Person(Factory.create('Person', {
+                    type: 'PROVEEDOR',
+                    tributaryCode: '20232021692',
+                    taxStatus: 'RESPONSABLE INSCRIPTO',
+                    grossIncomeCode: '1220232021692',
+                    business: business._id,
+                    contacts: [],
+                    addresses: [],
+                    status: 'ACTIVO'
+                }))
+
+                supplier.save()
+                    .catch(error => { console.error('TEST: ', error) })
+
+
                 product = new Product(Factory.create('Product', {
                     category: category._id,
                     brand: brand._id,
+                    supplier: supplier._id,
                     status: 'ACTIVO'
                 }))
                 // console.log('PRODUCT--', product);
                 product.save()
-                    .catch(error => {console.error('TEST1: ', error)})
+                    .catch(error => { console.error('TEST-0001: ', error) })
 
                 let item = {
                     dateDemand: Date.now(),
                     quantity: 1,
                     product: product._id,
-                    branch: null,
-                    supplier: null
+                    branch: branch._id,
+                    supplier: supplier._id
                 }
                 demand.items.push(item)
             }
+
+            demand.save()
+                .catch(error => { console.error('TEST-0002:', error) })
             // console.log('SOLICITUD:', demand);
             done()
         })
 
         it('deberia generar ordenes de compra', done => {
-            done();
+            chai.request(server)
+                .get(`/demand/${demand._id}/generate`)
+                .set('x-access-token', token)
+                .end((error, response) => {
+                    console.log('RESPONSE_BODY::', response.body);
+                    console.log('RESPONSE_TEXT::', response.text);
+                    response.should.have.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message')
+                        .eql('Ordenes generadas con exito')
+                    response.body.should.have.property('data')
+                    response.body.data.should.be.a('array')
+                    done();
+                })
         })
     })
 })
