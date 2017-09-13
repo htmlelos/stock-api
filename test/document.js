@@ -1106,7 +1106,7 @@ describe('DOCUMENTS: test suite', () => {
         })
     })
 
-    describe('GET /document/{documentId}/generate-order', () => {
+    describe.only('GET /document/{documentId}/generate-order', () => {
         let business = null
         let receiver = null
         let sender = null
@@ -1170,47 +1170,101 @@ describe('DOCUMENTS: test suite', () => {
             counter.save()
                 .catch(error => { console.error('TEST: ', error) })
             Factory.define('Document', ['documentType', 'documentName', 'business', 'receiver', 'sender', 'detail', 'subtotal', 'salesTaxes', 'total'])
-            document = new Document(Factory.create('Document', {
-                documentType: 'RECEPCION',
-                documentName: 'Orden de Compra',
-                documentDate: Date.now(),
-                documentName: counter.value,
-                business: business._id,
-                receiver: receiver._id,
-                sender: sender.id,
-                detail: [],
-                subtotal: 50,
-                salesTaxes: .05,
-                total: 52.5,
-                status: 'CREADO'
-            }))
-            let item = {
-                product: product._id,
-                quantity: 1,
-                price: 20
-            }
-
-            document.detail.push(item);
-
-            document.save()
-                .catch(error => { console.error('TEST:', error) })
             done();
         })
 
-        it('Deberia generar una orden a partir de un pedido', done => {
+        describe.only('sublevel1', () => {
+            beforeEach(done => {
+                document = new Document(Factory.create('Document', {
+                    documentType: 'RECEPCION',
+                    documentName: 'Orden de Compra',
+                    documentDate: Date.now(),
+                    documentName: counter.value,
+                    business: business._id,
+                    receiver: receiver._id,
+                    sender: sender.id,
+                    detail: [],
+                    subtotal: 50,
+                    salesTaxes: .05,
+                    total: 52.5,
+                    status: 'CREADO'
+                }))
+                let item = {
+                    product: product._id,
+                    quantity: 1,
+                    price: 20
+                }
 
-            chai.request(server)
-                .post(`/document/${document._id}/generate`)
-                .send({ documentType: 'RECEPCION' })
-                .set('x-access-token', token)
-                .end((error, response) => {
-                    response.should.have.status(200)
-                    response.body.should.be.a('object')
-                    response.body.should.have.property('message')
-                        .eql(`${document.documentType.toLowerCase()} generada con exito`)
-                    response.body.should.have.property('data')
-                    done()
-                })
+                document.detail.push(item);
+
+                document.save()
+                    .catch(error => { console.error('TEST:', error) })
+            })
+
+            it('Deberia generar una orden a partir de un pedido', done => {
+
+                chai.request(server)
+                    .post(`/document/${document._id}/generate`)
+                    .send({ documentType: 'RECEPCION' })
+                    .set('x-access-token', token)
+                    .end((error, response) => {
+                        response.should.have.status(200)
+                        response.body.should.be.a('object')
+                        response.body.should.have.property('message')
+                            .eql(`${document.documentType.toLowerCase()} generada con exito`)
+                        response.body.should.have.property('data')
+                        done()
+                    })
+            })
+
+            done()
+        })
+
+        describe('sublevel2', () => {
+            beforeEach(done => {
+                document = new Document(Factory.create('Document', {
+                    documentType: 'RECEPCION',
+                    documentName: 'Orden de Compra',
+                    documentDate: Date.now(),
+                    documentName: counter.value,
+                    business: business._id,
+                    receiver: receiver._id,
+                    sender: sender.id,
+                    detail: [],
+                    subtotal: 50,
+                    salesTaxes: .05,
+                    total: 52.5,
+                    status: 'GENERADO'
+                }))
+                let item = {
+                    product: product._id,
+                    quantity: 1,
+                    price: 20
+                }
+
+                document.detail.push(item);
+
+                document.save()
+                    .catch(error => { console.error('TEST:', error) })
+            })
+
+            it('Deberia generar una orden a partir de un pedido', done => {
+
+                chai.request(server)
+                    .post(`/document/${document._id}/generate`)
+                    .send({ documentType: 'RECEPCION' })
+                    .set('x-access-token', token)
+                    .end((error, response) => {
+                        response.should.have.status(200)
+                        response.body.should.be.a('object')
+                        response.body.should.have.property('message')
+                            .eql(`No se puede generar una recepcion si la orden ya fue generada`)
+                        response.body.should.have.property('data')
+                        done()
+                    })
+            })
+
+            // done()
         })
     })
 })

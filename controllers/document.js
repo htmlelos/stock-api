@@ -296,6 +296,9 @@ const generate = (request, response) => {
         .then(document => {
             message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)            
+        })
 }
 
 module.exports = {
