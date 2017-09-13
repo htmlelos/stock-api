@@ -317,8 +317,8 @@ const generateOrder = (request, response) => {
     let userId = request.decoded._id
     console.log('DECODED_ID--', request.decoded._id);
     let promiseDemand = Demand.findById({ _id: demandId })
-    // let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-    let promisePerson = Person.findOne({ user: userId })
+    let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
+    // let promisePerson = Person.findOne({ user: userId })
     let promiseCounter = Counter.findOne({ name: 'orden' })
     let counterValue = 0;
     let orders = []
