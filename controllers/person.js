@@ -95,8 +95,8 @@ function checkCashier(request) {
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
-        request.checkBody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
-            .notEmpty()
+        // request.checkBody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
+        //     .notEmpty()
     }
 }
 // Crea una nueva persona en la base de datos
