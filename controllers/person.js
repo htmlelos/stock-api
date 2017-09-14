@@ -82,8 +82,8 @@ function checkSeller(request) {
             .notEmpty()
         request.checkBody('lastName', `El apellido del ${type.toLowerCase()} esta vacio`)
             .notEmpty()
-        request.checkBody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
-            .notEmpty()
+        // request.checkBody('user', `Debe indicar el usuario del ${type.toLowerCase()}`)
+        //     .notEmpty()
     }
 }
 // Verifica los datos del cajero
@@ -108,6 +108,7 @@ function createPerson(request, response) {
     checkSeller(request)
     checkCashier(request)
 
+    let person = request.body;
     request.getValidationResult()
         .then(result => {
             if (!result.isEmpty()) {
@@ -117,36 +118,37 @@ function createPerson(request, response) {
             return Promise.resolve()
         })
         .then(() => {
-
-            let person = request.body;
             if (person.type !== 'PROVEEDOR') {
                 let user = request.body.user;
                 if (user !== null && user !== undefined) {
                     if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
-                        User.find({username: user.username})
-                            .then(user => {
-                                if (user === null) {
-                                    user.status = 'ACTIVO'
-                                    let newUser = new User(user);
-                                    return newUser.save()
-                                } else {
-                                    let error = {code: 422, message: 'El usuario ya existe', data: null}
-                                    return Promise.reject(error)
-                                }
-                            })
-                            .catch(error => {
-                                return Promise.reject(error)
-                            })
+                        return User.findOne({ username: user.username })
                     } else {
                         return User.findById(user)
                     }
+                } else {
+                    let error = { code: 422, message: 'No se puede generar el usuario', data: null }
+                    return Promise.reject(error)
+                }
+            }
+            return Promise.resolve(null)
+        })
+        .then(user => {
+            if (person.type !== 'PROVEEDOR') {
+                if (user === null) {
+                    let user = request.body.user
+                    user.status = 'ACTIVO'
+                    let newUser = new User(user);
+                    return newUser.save()
+                } else {
+                    return User.findById(user)
                 }
             }
             return Promise.resolve(null)
         })
         .then((user) => {
             let newPerson = new Person(request.body)
-            if (user!==null) {
+            if (user !== null) {
                 newPerson.user = user._id;
             }
             newPerson.createdBy = request.decoded.username
@@ -156,9 +158,8 @@ function createPerson(request, response) {
             message.success(response, 200, `${person.type} creado con éxito`, { id: person._id })
         })
         .catch(error => {
-            // console.log('ERROR--', error);
             if (error.code && error.code === 11000) {
-                let error =  { code: 422, message: 'La persona ya existe', data: null }
+                let error = { code: 422, message: 'La persona ya existe', data: null }
                 message.failure(response, error.code, error.message, error.data)
             } else if (error.code) {
                 message.failure(response, error.code, error.message, error.data)
