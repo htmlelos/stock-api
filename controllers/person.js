@@ -138,6 +138,9 @@ function createPerson(request, response) {
                 if (user === null) {
                     let user = request.body.user
                     user.status = 'ACTIVO'
+                    user.createdBy = request.decoded.username
+                    user.createdAt = Date.now()
+                    user.business = request.decoded.business
                     let newUser = new User(user);
                     return newUser.save()
                 } else {
