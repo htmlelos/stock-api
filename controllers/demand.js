@@ -331,6 +331,10 @@ const generateOrder = (request, response) => {
             let sender = values[1]
             let counter = values[2]
             let items = {}
+            if (demand.status === 'GENERADO') {
+                let error = {code: 422, message: 'No se puede generar una orden si el pedido ya fue generado'}
+                return Promise.reject(error)              
+            }
             demand.items.map(item => {
                 if (!items[item.supplier]) {
                     items[item.supplier] = []
@@ -369,6 +373,9 @@ const generateOrder = (request, response) => {
             return  Counter.update({name: 'orden'}, {$set:{value: counterValue}})
         })
         .then(() => {
+            return Demand.update({_id:demandId},{$set:{status:'GENERADO', updatedBy:request.decoded.username, updatedAt: Date.now()}})
+        })
+        .then(() => {
             return Promise.all(orders.map(order => order.save()))
         })
         .then(result => {
@@ -376,7 +383,7 @@ const generateOrder = (request, response) => {
         })
         .catch(error => {
             console.log('ERROR--', error);
-            message.failure(response, 500, 'Error', error)
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 

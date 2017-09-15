@@ -110,6 +110,132 @@ describe('PERSON: ', () => {
                     done()
                 })
         })
+
+        it('deberia crear una nueva persona (VENDEDOR)', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            let user = new User({
+                username: 'plopez@mail.com',
+                password: 'plopez',
+                status: 'ACTIVO'
+            })
+
+            user.save()
+                .catch(error => { console.error('TEST 1', error) })
+
+            let person = {
+                type: 'VENDEDOR',
+                firstName: 'Pedro',
+                lastName: 'Lopez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '12202202231962',
+                contacts: [],
+                status: 'ACTIVO',
+                business: business._id,
+                user: user._id
+            }
+
+            chai.request(server)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
+                .end((error, response) => {
+                    response.body.should.be.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('id').to.be.not.null
+                    done()
+                })
+        }) 
+
+        it('deberia crear una nueva persona (VENDEDOR) con password', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            let user = {
+                username: 'plopez@mail.com',
+                password: 'plopez'
+            }
+
+            let person = {
+                type: 'VENDEDOR',
+                firstName: 'Pedro',
+                lastName: 'Lopez',
+                address: [],
+                tributaryCode: '202202231962',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '12202202231962',
+                contacts: [],
+                status: 'ACTIVO',
+                business: business._id,
+                user
+            }
+
+            chai.request(server)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
+                .end((error, response) => {
+                    response.body.should.be.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('id').to.be.not.null
+                    done()
+                })
+        })
+
+        it('deberia crear una nueva persona (PROVEEDOR)', done => {
+            let business = new Business({
+                name: 'Punta del Agua',
+                tributaryCode: '20232021692',
+                status: 'ACTIVO'
+            })
+            business.save()
+                .catch(error => { console.error('TEST', error) })
+
+            let person = {
+                type: 'PROVEEDOR',
+                firstName: 'Pedro',
+                lastName: 'Lopez',
+                businessName: 'Palladini',
+                address: [],
+                tributaryCode: '20068145032',
+                taxStatus: 'RESPONSABLE INSCRIPTO',
+                grossIncomeCode: '1220068145032',
+                contacts: [],
+                status: 'ACTIVO',
+                business: business._id,
+            }
+
+            chai.request(server)
+                .post('/person')
+                .set('x-access-token', token)
+                .send(person)
+                .end((error, response) => {
+                    response.body.should.be.status(200)
+                    response.body.should.be.a('object')
+                    response.body.should.have.property('message').eql(`${person.type} creado con éxito`)
+                    response.body.should.have.property('data')
+                    response.body.data.should.have.property('id').to.be.not.null
+                    done()
+                })
+        })         
+
         it('no deberia crear una nueva persona sin tipo de persona', done => {
             let business = new Business({
                 name: 'Punta del Agua',

@@ -291,9 +291,11 @@ const generate = (request, response) => {
                     Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
         })
         .then((result) => {
+            console.log('RESULT--', result);
             return Promise.all(result)
         })
         .then(document => {
+            console.log('DOCUMENT--', document);
             message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
         .catch(error => {
