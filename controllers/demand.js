@@ -382,7 +382,6 @@ const generateOrder = (request, response) => {
             message.success(response, 200, 'Ordenes generadas con exito', orders)
         })
         .catch(error => {
-            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
