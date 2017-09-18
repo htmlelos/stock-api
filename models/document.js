@@ -54,6 +54,13 @@ const DocumentSchema = new Schema({
         price: {
             type: Number,
             default: 0
+        },
+        status: {
+            type: String,
+            enume: {
+                values: ['ACEPTADO', 'FALTANTE', 'RECHAZADO'],
+                message: 'El estado del detalle solo puede ser ACEPTADO, FALTANTE o RECHAZADO'
+            }
         }
     }],
     subtotal: {

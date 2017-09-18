@@ -1604,8 +1604,6 @@ describe('DEMAND: ', () => {
                 .get(`/demand/${demand._id}/generate`)
                 .set('x-access-token', token)
                 .end((error, response) => {
-                    console.log('RESPONSE_BODY::', response.body);
-                    console.log('RESPONSE_TEXT::', response.text);
                     response.should.have.status(200)
                     response.body.should.be.a('object')
                     response.body.should.have.property('message')

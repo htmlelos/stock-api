@@ -121,10 +121,11 @@ function createPerson(request, response) {
             if (person.type !== 'PROVEEDOR') {
                 let user = request.body.user;
                 if (user !== null && user !== undefined) {
-                    if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
+                    if (user.hasOwnProperty('user')) {
+                        return User.findById(user.user)
+                    }
+                    else if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
                         return User.findOne({ username: user.username })
-                    } else {
-                        return User.findById(user)
                     }
                 } else {
                     let error = { code: 422, message: 'No se puede generar el usuario', data: null }
