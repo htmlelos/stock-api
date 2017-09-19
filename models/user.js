@@ -13,14 +13,14 @@ let match = [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'El username debe ser un cor
 const UserSchema = new Schema({
 	username: {
 		type: String,
-		required: 'Debe proporcionar un nombre de usuario',
+		// required: 'Debe proporcionar un nombre de usuario',
 		match: match,
 		unique: true,
 		index: true
 	},
 	password: {
 		type: String,
-		required: 'Debe proporcionar una contraseña'
+		// required: 'Debe proporcionar una contraseña'
 	},
 	status: {
 		type: String,
@@ -28,7 +28,8 @@ const UserSchema = new Schema({
 			values: ['ACTIVO', 'INACTIVO'],
 			message: 'El estado de usuario solo puede ser ACTIVO o INACTIVO'
 		},
-		required: 'Debe definir el estado del usuario'
+		required: 'Debe definir el estado del usuario',
+		default: 'ACTIVO'
 	},
 	roles: [{
 		type: Schema.Types.ObjectId,
@@ -38,6 +39,10 @@ const UserSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Profile'
 	}],
+	business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'
+	},
 	createdAt: {
 		type: Date,
 		required: true,
@@ -95,4 +100,4 @@ UserSchema.statics.comparePasswordAndHash = function (password, passwordHash, ne
 	bcrypt.compare(password, passwordHash, next)
 }
 
-module.exports = mongoose.model('user', UserSchema)
+module.exports = mongoose.model('User', UserSchema)

@@ -21,7 +21,7 @@ function createProfile(request, response) {
 
 	newProfile.save()
 		.then(profile => {
-			response.json({ message: 'Perfil creado con exito' })
+			response.json({ message: 'Perfil creado con éxito' })
 			response.end()
 		})
 		.catch(error => {
@@ -48,9 +48,9 @@ function getProfile(request, response) {
 	findProfile(request.params.profileId)
 		.then(profile => {
 			if (profile) {
-				response.json({ message: 'Perfil obtenido con exito', profile })
+				response.json({ message: 'Perfil obtenido con éxito', profile })
 			} else {
-				response.status(404).json({ message: 'No se encontro el perfil', profile })
+				response.status(404).json({ message: 'No se encontró el perfil', profile })
 			}
 		})
 		.catch(error => {
@@ -64,11 +64,11 @@ function updateProfile(request, response) {
 		.then(profile => {
 			if (profile) {
 				let newProfile = request.body
-				newProfile.updateBy = require.decoded.username
+				newProfile.updatedBy = require.decoded.username
 				newProfile.updatedAt = Date.now()
-				Profile.update({ _id: request.params.userId }, { $set: newProfile })
+				Profile.update({ _id: request.params.userId }, { $set: newProfile }, { runValidators: true })
 					.then(profile => {
-						response.json({ message: 'Perfil actualizado con exito', profile })
+						response.json({ message: 'Perfil actualizado con éxito', profile })
 					})
 					.catch(error => {
 						if (error.code === 11000) {
@@ -80,7 +80,7 @@ function updateProfile(request, response) {
 					})
 			} else {
 				response.status(404)
-					.send({ message: 'El perfil, no es un perfil valido' })
+					.send({ message: 'El perfil, no es un perfil válido' })
 			}
 		})
 		.catch(error => {
@@ -95,14 +95,14 @@ function deleteProfile(request, response) {
 			if (profile) {
 				Profile.remove({ _id: profile.id })
 					.then(profile => {
-						response.json({ message: 'Perfil eliminado con exito' })
+						response.json({ message: 'Perfil eliminado con éxito' })
 					})
 					.catch(error => {
 						response.send(error)
 						response.end()
 					})
 			} else {
-				response.status(404).json({ message: 'El perfil, no es un perfil valido' })
+				response.status(404).json({ message: 'El perfil, no es un perfil válido' })
 			}
 		})
 		.catch(error => {

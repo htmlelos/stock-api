@@ -1,17 +1,18 @@
 {
   "name": "stock-api",
-  "version": "0.1.1",
-  "description": "Servicio de authenticacion",
+  "version": "0.3.1",
+  "description": "API para control de inventario",
   "main": "server.js",
   "scripts": {
-    "start": "SET NODE_ENV=dev&& nodemon server.js",
+    "start": "node server.js",
     "test": "mocha --timeout 5000",
-    "run": "SET NODE_ENV=prod&& nodemon server.js",
+    "dev": "SET NODE_ENV=dev&& nodemon server.js",
     "build": "echo buildme!"
   },
   "author": "Lucero Sergio Alejandro",
   "license": "MIT",
   "devDependencies": {
+    "autofixture": "^1.1.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "mocha": "^3.0.2"
@@ -24,6 +25,7 @@
     "debug": "^2.4.4",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "express-validator": "^3.1.2",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.0",
     "morgan": "^1.7.0",

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -8,20 +8,24 @@ mongoose.Promise = global.Promise
 let RoleSchema = new Schema({
 	name: {
 		type: String,
-		required: 'Debe proporcionar un nombre de rol',
+		required: 'Debe proporcionar un nombre de Rol',
 		unique: true
 	},
 	description: {
 		type: String,
-		required: 'Debe proporcionar una descripcion del rol'
+		required: 'Debe proporcionar una descripción del Rol'
 	},
 	status: {
 		type: String,
 		enum: {
 			values: ['ACTIVO', 'INACTIVO'],
-			message: 'El estado del rol solo puede ser ACTIVO o INACTIVO'
+			message: 'El estado del Rol solo puede ser ACTIVO o INACTIVO'
 		},
-		required: 'Debe definir el estado del rol'
+		required: 'Debe definir el estado del Rol'
+	},
+	business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'
 	},
 	createdAt: {
 		type: Date,
@@ -43,4 +47,4 @@ let RoleSchema = new Schema({
 	versionKey: false
 })
 
-module.exports = mongoose.model('role', RoleSchema)
+module.exports = mongoose.model('Role', RoleSchema)

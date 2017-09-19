@@ -33,14 +33,14 @@ let ProfileSchema = new Schema({
 		required: true,
 		default: 'anonimo'
 	},
-	modifiedAt: {
+	updatedAt: {
 		type: Date
 	},
-	modifiedBy: {
+	updatedBy: {
 		type: false
 	}
 }, {
 	versionKey: false
 })
 
-module.exports = mongoose.model('profile', ProfileSchema)
+module.exports = mongoose.model('Profile', ProfileSchema)

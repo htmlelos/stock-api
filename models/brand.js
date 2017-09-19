@@ -1,41 +1,52 @@
 'use strict';
 const mongoose = require('mongoose')
-const Supplier = require('./supplier')
 const Schema = mongoose.Schema
-	// Establece las promesas de mongoose a las promesas nativas de javascript
+// Establece las promesas de mongoose a las promesas nativas de javascript
 mongoose.Promise = global.Promise
 
 const BrandSchema = new Schema({
-  name: {
-    type: String,
-    required: 'Debe proporcionar un nombre para la marca',
-    unique: true
-  },
-  description: {
-    type: String
-  },
-  suppliers: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Supplier'
-  }],
-  createdAt: {
+	name: {
+		type: String,
+		required: 'Debe proporcionar un nombre para la marca',
+		unique: true
+	},
+	description: {
+		type: String
+	},
+	suppliers: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Person'
+	}],
+	status: {
+		type: String,
+		enum: {
+			values: ['ACTIVO', 'INACTIVO'],
+			message: 'El estado de la marca solo puede ser ACTIVO o INACTIVO'
+		},
+		required: 'Debe definir el estado de la marca'
+	},
+	business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'
+	},
+	createdAt: {
 		type: Date,
 		required: true,
 		default: Date.now
 	},
-  createdBy: {
+	createdBy: {
 		type: String,
 		required: true,
 		default: 'anonimo'
 	},
-	modifiedAt: {
+	updatedAt: {
 		type: Date
 	},
-	modifiedBy: {
+	updatedBy: {
 		type: String
 	}
 }, {
-	versionKey: false
-})
+		versionKey: false
+	})
 
-module.exports = mongoose.model('brand', BrandSchema)
+module.exports = mongoose.model('Brand', BrandSchema)

@@ -13,10 +13,13 @@ const AddressSchema = new Schema({
     })
 
 const ContactSchema = new Schema({
+    name: {
+        type: String
+    },
     phone: {
         type: String
     },
-    name: {
+    email: {
         type: String
     }
 }, {
@@ -27,20 +30,21 @@ const PersonSchema = new Schema({
     type: {
         type: String,
         enum: {
-            values: ['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO'],
-            message: 'El tipo de persona solo puede ser o CLIENTE, PROVEEDOR, VENDEDOR o CAJERO'
+            values: ['CLIENTE', 'PROVEEDOR', 'VENDEDOR', 'CAJERO', 'ORDENANTE'],
+            message: 'El tipo de persona solo puede ser o CLIENTE, PROVEEDOR, VENDEDOR, CAJERO u ORDENANTE'
         },
         required: 'Debe proporcionar un tipo de persona'
     },
     firstName: {
-        type: String,
-        required: 'Debe proporcionar el nombre de la persona'
+        type: String
     },
     lastName: {
-        type: String,
-        required: 'Debe proporcionar el apellido de la persona'
+        type: String
     },
-    address: [AddressSchema],
+    businessName: {
+        type: String
+    },
+    addresses: [AddressSchema],
     tributaryCode: {
         type: String
     },
@@ -62,6 +66,15 @@ const PersonSchema = new Schema({
             message: 'El estado de la persona solo puede ser ACTIVO o INACTIVO'
         },
         required: 'Debe definir el estado del proveedor'
+    },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business',
+        required: 'Debe indicar la empresa a la que pertenece'
+    },
+    user: {
+        type: Schema.Types.Object,
+        ref: 'User'
     },
     createdAt: {
         type: Date,
@@ -87,4 +100,4 @@ PersonSchema.virtual('fullname').get(function () {
     return `${this.firstName} ${this.lastName}`
 })
 
-module.exports = mongoose.model('person', PersonSchema)
+module.exports = mongoose.model('Person', PersonSchema)
