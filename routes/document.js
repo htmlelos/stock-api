@@ -23,4 +23,7 @@ router.route('/document/:documentId/item')
 router.route('/document/:documentId/generate')
     .post(document.generate)
 
+router.route('/document/:documentId/accept-item/:itemId')
+    .post(document.acceptItem)
+
 module.exports = router

@@ -256,15 +256,15 @@ const deleteItem = (request, response) => {
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
         })
-}
-
-const generate = (request, response) => {
-    let documentId = request.params.documentId
-    let counterValue = 0
-    let newDocument = null
-    let promiseDocument = findDocument(documentId)
-    let promiseCounter = Counter.findOne({ name: 'recepcion' })
-    // findDocument(documentId)
+    }
+    
+    const generate = (request, response) => {
+        let documentId = request.params.documentId
+        let counterValue = 0
+        let newDocument = null
+        let promiseDocument = findDocument(documentId)
+        let promiseCounter = Counter.findOne({ name: 'recepcion' })
+        // findDocument(documentId)
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {
             let document = values[0]
@@ -303,6 +303,19 @@ const generate = (request, response) => {
         })
 }
 
+const acceptItem = (request, response) => {
+    let documentId = request.params.documentId
+    let itemId = request.params.itemsId
+
+    let promiseDocument = Document.findById(documentId)
+        .where({'data._id':itemId})
+        .then(document => {
+            console.log('DETALLE', document);
+            message.success(response, 200, 'Dato recuperado', document.detail)            
+        })
+
+}
+
 module.exports = {
     getAllDocuments,
     retrieveAllDocuments,
@@ -312,5 +325,6 @@ module.exports = {
     getDocument,
     addItem,
     deleteItem,
-    generate
+    generate,
+    acceptItem
 }
