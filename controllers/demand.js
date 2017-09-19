@@ -318,7 +318,6 @@ const generateOrder = (request, response) => {
     console.log('DECODED_ID--', request.decoded._id);
     let promiseDemand = Demand.findById({ _id: demandId })
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-    // let promisePerson = Person.findOne({ user: userId })
     let promiseCounter = Counter.findOne({ name: 'orden' })
     let counterValue = 0;
     let orders = []
@@ -331,6 +330,10 @@ const generateOrder = (request, response) => {
             let sender = values[1]
             let counter = values[2]
             let items = {}
+            if (!sender) {
+                let error = {code: 404, message: 'El usuario no posee permisos para realizar esta operacion'}
+                return Promise.reject(error)
+            }
             if (demand.status === 'GENERADO') {
                 let error = {code: 422, message: 'No se puede generar una orden si el pedido ya fue generado'}
                 return Promise.reject(error)              
@@ -382,6 +385,7 @@ const generateOrder = (request, response) => {
             message.success(response, 200, 'Ordenes generadas con exito', orders)
         })
         .catch(error => {
+            console.log('ERROR--', error);
             message.failure(response, error.code, error.message, error.data)
         })
 }
