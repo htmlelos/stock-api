@@ -120,7 +120,6 @@ function createPerson(request, response) {
         .then(() => {
             if (person.type !== 'PROVEEDOR') {
                 let user = request.body.user;
-                console.log('USER--', user);
                 if (user !== null && user !== undefined) {
                     if (user.hasOwnProperty('user') && user.user !== '') {
                         return User.findById(user.user)
@@ -142,7 +141,7 @@ function createPerson(request, response) {
                     user.status = 'ACTIVO'
                     user.createdBy = request.decoded.username
                     user.createdAt = Date.now()
-                    user.business = request.decoded.business
+                    user.business = person.business
                     let newUser = new User(user);
                     return newUser.save()
                 } else {
