@@ -23,7 +23,16 @@ router.route('/document/:documentId/item')
 router.route('/document/:documentId/generate')
     .post(document.generate)
 
-router.route('/document/:documentId/accept-item/:itemId')
+router.route('/document/:documentId/accept-item')
     .post(document.acceptItem)
+
+router.route('/document/:documentId/reject-item')
+    .post(document.rejectItem)
+
+router.route('/document/:documentId/missing-item')
+    .post(document.missingItem)
+
+router.route('/document/:documentId/confirm-receipt')
+    .post(document.confirmReceipt)
 
 module.exports = router

@@ -4,6 +4,7 @@ const Business = require('../models/business')
 const Persona = require('../models/person')
 const Product = require('../models/product')
 const Counter = require('../models/counter')
+const mongoose = require('mongoose')
 
 
 const getAllDocuments = (request, response) => {
@@ -256,18 +257,19 @@ const deleteItem = (request, response) => {
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
         })
-    }
-    
-    const generate = (request, response) => {
-        let documentId = request.params.documentId
-        let counterValue = 0
-        let newDocument = null
-        let promiseDocument = findDocument(documentId)
-        let promiseCounter = Counter.findOne({ name: 'recepcion' })
-        // findDocument(documentId)
+}
+
+const generate = (request, response) => {
+    let documentId = request.params.documentId
+    let counterValue = 0
+    let newDocument = null
+    let promiseDocument = findDocument(documentId)
+    let promiseCounter = Counter.findOne({ name: 'recepcion' })
+    // findDocument(documentId)
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {
             let document = values[0]
+            console.log('DOCUMENT', document);
             let counter = values[1]
             let receipt = {
                 documentNumber: counter.value,
@@ -280,15 +282,15 @@ const deleteItem = (request, response) => {
             }
 
             if (document.status === 'GENERADO') {
-                let error = {code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null}
+                let error = { code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null }
                 return Promise.reject(error)
             }
 
             counterValue = counter.value + 1
 
             newDocument = new Document(receipt)
-            return [newDocument.save(), 
-                    Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
+            return [newDocument.save(),
+            Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
         })
         .then((result) => {
             console.log('RESULT--', result);
@@ -299,21 +301,130 @@ const deleteItem = (request, response) => {
             message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)            
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 
 const acceptItem = (request, response) => {
     let documentId = request.params.documentId
-    let itemId = request.params.itemsId
-
+    let items = request.body.items
     let promiseDocument = Document.findById(documentId)
-        .where({'data._id':itemId})
         .then(document => {
-            console.log('DETALLE', document);
-            message.success(response, 200, 'Dato recuperado', document.detail)            
+            if (document) {
+                if (document.status === 'CONFIRMADO') {
+                    let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
+                    return Promise.reject(error)
+                }
+                return document.detail.map(item => {
+                    return (items.includes(item._id.toString()) && item.status !== 'ACEPTADO') ? Object.assign(item, { status: 'ACEPTADO' }) : item
+                })
+            } else {
+                let error = { code: 404, message: 'no se pudo encontrar el documento', data: null }
+                return Promise.reject(error)
+            }
         })
+        .then(detail => {
+            return Document.update({ _id: documentId }, { $set: { detail, status: 'PROCESANDO' } })
+        })
+        .then(() => {
+            return Document.findById(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, 'Dato recuperado', document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
 
+const rejectItem = (request, response) => {
+    let documentId = request.params.documentId
+    let items = request.body.items
+    let promiseDocument = Document.findById(documentId)
+        .then(document => {
+            if (document) {
+                if (document.status === 'CONFIRMADO') {
+                    let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
+                    return Promise.reject(error)
+                }
+                return document.detail.map(item => {
+                    return (items.includes(item._id.toString()) && item.status !== 'RECHAZADO') ? Object.assign(item, { status: 'RECHAZADO' }) : item
+                })
+            } else {
+                let error = { code: 404, message: 'no se pudo encontrar el documento', data: null }
+                return Promise.reject(error)
+            }
+        })
+        .then(detail => {
+            return Document.update({ _id: documentId }, { $set: { detail, status: 'PROCESANDO' } })
+        })
+        .then(() => {
+            return Document.findById(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, 'Dato recuperado', document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const missingItem = (request, response) => {
+    let documentId = request.params.documentId
+    let items = request.body.items
+    let promiseDocument = Document.findById(documentId)
+        .then(document => {
+            if (document) {
+                if (document.status === 'CONFIRMADO') {
+                    let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
+                    return Promise.reject(error)
+                }
+                return document.detail.map(item => {
+                    return (items.includes(item._id.toString()) && item.status !== 'FALTANTE') ? Object.assign(item, { status: 'FALTANTE' }) : item
+                })
+            } else {
+                let error = { code: 404, message: 'no se pudo encontrar el documento', data: null }
+                return Promise.reject(error)
+            }
+        })
+        .then(detail => {
+            return Document.update({ _id: documentId }, { $set: { detail, status: 'PROCESANDO' } })
+        })
+        .then(() => {
+            return Document.findById(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, 'Dato recuperado', document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+const confirmReceipt = (request, response) => {
+    let documentId = request.params.documentId;
+    Document.findById(documentId)
+        .then(document => {
+            if (document) {
+                if (document.status === 'CONFIRMADO') {
+                    let error = {code: 400, message: 'La recepcion ya se encuentra confirmada', data: null}
+                    return Promise.reject(error)
+                }
+                return Document.update({_id:documentId},{$set:{status:'CONFIRMADO'}})
+            } else {
+                let error = {code: 404, message: 'Documento no encontrado', data: null}
+                return Promise.reject(error)
+            }
+        })
+        .then(() => {
+            return Document.findById(documentId)
+        })
+        .then(document => {
+            message.success(response, 200, `${document.type} ha sido confirmado`, document)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
 }
 
 module.exports = {
@@ -326,5 +437,8 @@ module.exports = {
     addItem,
     deleteItem,
     generate,
-    acceptItem
+    acceptItem,
+    rejectItem,
+    missingItem,
+    confirmReceipt
 }
