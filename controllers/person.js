@@ -121,7 +121,7 @@ function createPerson(request, response) {
             if (person.type !== 'PROVEEDOR') {
                 let user = request.body.user;
                 if (user !== null && user !== undefined) {
-                    if (user.hasOwnProperty('user')) {
+                    if (user.hasOwnProperty('user') && user.user !== '') {
                         return User.findById(user.user)
                     }
                     else if (user.hasOwnProperty('username') && user.hasOwnProperty('password')) {
@@ -141,7 +141,7 @@ function createPerson(request, response) {
                     user.status = 'ACTIVO'
                     user.createdBy = request.decoded.username
                     user.createdAt = Date.now()
-                    user.business = request.decoded.business
+                    user.business = person.business
                     let newUser = new User(user);
                     return newUser.save()
                 } else {
