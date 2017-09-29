@@ -91,7 +91,7 @@ const createDocument = (request, response) => {
             document = new Document(body)
             document.createdBy = request.decoded.username
             document.createdAt = Date.now();
-            return Counter.findOne({ name: document.documentType.toLowerCase() })
+            return Counter.findOne({ type: document.documentType.toLowerCase() })
         })
         .then(counter => {
             document.documentNumber = counter.value + counter.incrementBy
@@ -263,7 +263,7 @@ const deleteItem = (request, response) => {
         let counterValue = 0
         let newDocument = null
         let promiseDocument = findDocument(documentId)
-        let promiseCounter = Counter.findOne({ name: 'recepcion' })
+        let promiseCounter = Counter.findOne({ type: 'RECEPCION' })
         // findDocument(documentId)
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {

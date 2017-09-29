@@ -318,7 +318,7 @@ const generateOrder = (request, response) => {
     console.log('DECODED_ID--', request.decoded._id);
     let promiseDemand = Demand.findById({ _id: demandId })
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-    let promiseCounter = Counter.findOne({ name: 'orden' })
+    let promiseCounter = Counter.findOne({ type: 'ORDEN' })
     let counterValue = 0;
     let orders = []
     Promise.all([promiseDemand, promisePerson, promiseCounter])
@@ -347,6 +347,7 @@ const generateOrder = (request, response) => {
                     product: item.product
                 })
             })
+            counterValue = counter.value
             for (let key in items) {
                 if (items.hasOwnProperty(key)) {
                     let element = items[key]
@@ -360,7 +361,6 @@ const generateOrder = (request, response) => {
                         sender: sender._id
                     })
 
-                    counterValue = counter.value + 1          
 
                     element.forEach(element => {
                         // let detail = element

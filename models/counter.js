@@ -11,11 +11,6 @@ let CounterSchema = new Schema({
         unique: true,
         index: true
     },
-    start: {
-        type: Number,
-        required: 'Debe indicar el valor inicial del contador',
-        default: 0
-    },
     incrementBy: {
         type: Number,
         required: 'Debe indicar el incremento del contador',
@@ -24,6 +19,18 @@ let CounterSchema = new Schema({
     value: {
         type: Number,
         default: null
+    },
+    type: {
+        type: String,
+        enum: {
+            values: ['FACTURA','ORDEN','PEDIDO', 'RECEPCION', 'REMITO'],
+            message: 'El tipo solo puede ser FACTURA, ORDEN, PEDIDO, RECEPCION o REMITO'
+        },
+        required: 'Debe definir el tipo de contador'
+    },
+    business: {
+        type: Schema.Types.ObjectId,
+        ref: 'Business'
     },
     createdAt: {
         type: Date,
