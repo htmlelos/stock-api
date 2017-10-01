@@ -24,7 +24,7 @@ router.route('/demand/:demandId/delete/item')
 router.route('/demand/:demandId/delete/items')
 	.put(demand.deleteSelectedItems)
 
-router.route('/demand/:demandId/generate')
+router.route('/demand/:demandId/generate-order')
 	.get(demand.generateOrder)
 
 module.exports = router

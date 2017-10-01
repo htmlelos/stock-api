@@ -52,6 +52,7 @@ const createCounter = (request, response) => {
         .then(() => {
             let newCounter = new Counter(request.body)
             newCounter.createdBy = request.decoded.username
+            newCounter.business = request.decoded.business
             return newCounter.save()
         })
         .then(counter => {

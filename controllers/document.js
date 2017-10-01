@@ -92,7 +92,7 @@ const createDocument = (request, response) => {
             document = new Document(body)
             document.createdBy = request.decoded.username
             document.createdAt = Date.now();
-            return Counter.findOne({ name: document.documentType.toLowerCase() })
+            return Counter.findOne({ type: document.documentType.toLowerCase() })
         })
         .then(counter => {
             document.documentNumber = counter.value + counter.incrementBy
@@ -264,8 +264,9 @@ const generate = (request, response) => {
     let counterValue = 0
     let newDocument = null
     let promiseDocument = findDocument(documentId)
-    let promiseCounter = Counter.findOne({ name: 'recepcion' })
+    let promiseCounter = Counter.findOne({ type: 'RECEPCION' })
     // findDocument(documentId)
+
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {
             let document = values[0]
@@ -407,12 +408,12 @@ const confirmReceipt = (request, response) => {
         .then(document => {
             if (document) {
                 if (document.status === 'CONFIRMADO') {
-                    let error = {code: 400, message: 'La recepcion ya se encuentra confirmada', data: null}
+                    let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
                     return Promise.reject(error)
                 }
-                return Document.update({_id:documentId},{$set:{status:'CONFIRMADO'}})
+                return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
             } else {
-                let error = {code: 404, message: 'Documento no encontrado', data: null}
+                let error = { code: 404, message: 'Documento no encontrado', data: null }
                 return Promise.reject(error)
             }
         })
