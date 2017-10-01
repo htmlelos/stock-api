@@ -7,7 +7,9 @@
     "start": "node server.js",
     "test": "mocha --timeout 5000",
     "dev": "SET NODE_ENV=dev&& nodemon server.js",
-    "build": "echo buildme!"
+    "build": "echo buildme!",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Lucero Sergio Alejandro",
   "license": "MIT",
@@ -30,6 +32,8 @@
     "mongoose": "^4.6.0",
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
-    "passport-jwt": "^2.2.1"
-  }
+    "passport-jwt": "^2.2.1",
+    "snyk": "^1.41.1"
+  },
+  "snyk": true
 }
