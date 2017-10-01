@@ -256,15 +256,14 @@ const deleteItem = (request, response) => {
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
         })
-    }
-    
-    const generate = (request, response) => {
-        let documentId = request.params.documentId
-        let counterValue = 0
-        let newDocument = null
-        let promiseDocument = findDocument(documentId)
-        let promiseCounter = Counter.findOne({ type: 'RECEPCION' })
-        // findDocument(documentId)
+}
+
+const generate = (request, response) => {
+    let documentId = request.params.documentId
+    let counterValue = 0
+    let newDocument = null
+    let promiseDocument = findDocument(documentId)
+    let promiseCounter = Counter.findOne({ type: 'RECEPCION' })
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {
             let document = values[0]
@@ -280,26 +279,24 @@ const deleteItem = (request, response) => {
             }
 
             if (document.status === 'GENERADO') {
-                let error = {code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null}
+                let error = { code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null }
                 return Promise.reject(error)
             }
 
             counterValue = counter.value + 1
 
             newDocument = new Document(receipt)
-            return [newDocument.save(), 
-                    Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
+            return [newDocument.save(),
+            Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
         })
         .then((result) => {
-            console.log('RESULT--', result);
             return Promise.all(result)
         })
         .then(document => {
-            console.log('DOCUMENT--', document);
             message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
         .catch(error => {
-            message.failure(response, error.code, error.message, error.data)            
+            message.failure(response, error.code, error.message, error.data)
         })
 }
 
@@ -308,10 +305,10 @@ const acceptItem = (request, response) => {
     let itemId = request.params.itemsId
 
     let promiseDocument = Document.findById(documentId)
-        .where({'data._id':itemId})
+        .where({ 'data._id': itemId })
         .then(document => {
             console.log('DETALLE', document);
-            message.success(response, 200, 'Dato recuperado', document.detail)            
+            message.success(response, 200, 'Dato recuperado', document.detail)
         })
 
 }
