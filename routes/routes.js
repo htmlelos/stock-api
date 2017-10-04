@@ -13,6 +13,8 @@ const branch = require('./branch')
 const demand = require('./demand')
 const document = require('./document')
 const counter = require('./counter')
+const movement = require('./movement')
+const batch = require('./batch')
 
 module.exports = function routes(server) {
   server.use('/', common)
@@ -30,4 +32,6 @@ module.exports = function routes(server) {
   server.use('/', demand)
   server.use('/', document)
   server.use('/', counter)
+  server.use('/', movement)
+  server.use('/', batch)
 }
