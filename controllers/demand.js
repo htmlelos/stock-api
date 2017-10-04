@@ -316,9 +316,10 @@ const generateOrder = (request, response) => {
     let demandId = request.params.demandId
     let userId = request.decoded._id
     console.log('DECODED_ID--', request.decoded._id);
+    console.log('BUSINES--', request.decoded.business)
     let promiseDemand = Demand.findById({ _id: demandId })
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-    let promiseCounter = Counter.findOne({ type: 'ORDEN' })
+    let promiseCounter = Counter.findOne({ type: 'ORDEN', business: request.decoded.business })
     let counterValue = 0;
     let orders = []
     Promise.all([promiseDemand, promisePerson, promiseCounter])
@@ -337,6 +338,10 @@ const generateOrder = (request, response) => {
             if (demand.status === 'GENERADO') {
                 let error = {code: 422, message: 'No se puede generar una orden si el pedido ya fue generado'}
                 return Promise.reject(error)              
+            }
+            if (counter === null) {
+                let error = {code:422, message: 'No se pudo obtener el numero de orden'}
+                return Promise.reject(error)
             }
             demand.items.map(item => {
                 if (!items[item.supplier]) {

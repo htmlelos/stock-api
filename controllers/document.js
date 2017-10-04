@@ -264,7 +264,8 @@ const generate = (request, response) => {
     let counterValue = 0
     let newDocument = null
     let promiseDocument = findDocument(documentId)
-    let promiseCounter = Counter.findOne({ type: 'RECEPCION' })
+    console.log('BUSINESS:--', request.decoded.business);
+    let promiseCounter = Counter.findOne({ type: 'RECEPCION', business: request.decoded.business })
     // findDocument(documentId)
 
     Promise.all([promiseDocument, promiseCounter])

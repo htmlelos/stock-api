@@ -33,7 +33,7 @@ function retrieveAllUsers(request, response) {
 		.then(users => { message.success(response, 200, '', users) })
 		.catch(error => { message.failure(response, 404, 'No se pudieron recuperar los usuarios', error) })
 }
-// Verifica que el nombre del usuario esté presente
+// Valida los datos del usuario
 function checkUser(request) {
 	request.checkBody('username', 'Debe proporcionar un nombre de usuario')
 		.notEmpty()
