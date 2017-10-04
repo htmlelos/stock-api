@@ -22,6 +22,10 @@ let CategorySchema = new Schema({
     },
     required: 'Debe definir el estado de la categoría'
   },
+  business: {
+    type: Schema.Types.ObjectId,
+    ref: 'Business'
+  },
   createdAt: {
     type: Date,
     required: true,

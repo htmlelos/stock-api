@@ -57,10 +57,11 @@ const DocumentSchema = new Schema({
         },
         status: {
             type: String,
-            enume: {
-                values: ['ACEPTADO', 'FALTANTE', 'RECHAZADO'],
-                message: 'El estado del detalle solo puede ser ACEPTADO, FALTANTE o RECHAZADO'
-            }
+            enum: {
+                values: ['PENDIENTE','ACEPTADO', 'FALTANTE', 'RECHAZADO'],
+                message: 'El estado del detalle solo puede ser PENDIENTE, ACEPTADO o FALTANTE o RECHAZADO',
+            },
+            default: 'PENDIENTE'
         }
     }],
     subtotal: {
@@ -76,7 +77,7 @@ const DocumentSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: ['CREADO', 'GENERADO'],
+            values: ['CREADO', 'GENERADO', 'PROCESANDO', 'CONFIRMADO'],
             messages: 'El estado de la orden de compra solo puede ser CREADO o GENERADO'
         },
         required: 'Debe definir el estado de la orden de compra',

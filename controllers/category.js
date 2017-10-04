@@ -69,6 +69,7 @@ function createCategory(request, response) {
       .then(() => {
         let newCategory = new Category(request.body)
         newCategory.createdBy = request.decoded.username
+        newCategory.business = request.decoded.business
         return newCategory.save()
       })  
       .then(category => {

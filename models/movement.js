@@ -7,24 +7,44 @@ let MovementSchema = new Schema({
     type: {
         type: String,
         enum: {
-            values: ['INGRESO', 'EGRESO']
+            values: ['INGRESO', 'EGRESO'],
+            message: 'El tipo de movimiento solo puede ser INGRESO o EGRESO'
         },
         required: 'Debe proporcionar un tipo de movimiento'
     },
+    kind: {
+        type: String,
+        enum: {
+            values: ['COMPRA', 'VENTA', 'TRANSFERENCIA', 'AJUSTE'],
+            required: 'La clase de movimiento solo puede ser COMPRA, VENTA, TRANSFERENCIA o AJUSTE'
+        },
+        required: 'Debe proporcionar la clase de movimiento'
+    },
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Movement'
+    },
+    quantity: {
+        type: Number,
+        required: 'Debe indicar la cantidad del movimiento'
+    },
     origin: {
-        type: {
-            type: Schema.Types.ObjectId,
-            ref: 'Branch'
-        }
+        type: Schema.Types.ObjectId,
+        ref: 'Branch'
     },
     destination: {
-        type: {
-            type: Schema.Types.ObjectId,
-            ref: 'Branch'
-        }
+        type: Schema.Types.ObjectId,
+        ref: 'Branch'
     },
     batchCode: {
         type: String
+    },
+    observation: {
+        type: String
+    },
+    documentOrigin: {
+        type: Schema.Types.ObjectId,
+        ref: 'Documents'
     },
     dateMovement: {
         type: Date,
@@ -46,8 +66,8 @@ let MovementSchema = new Schema({
     updateBy: {
         type: String
     }
-},{
-    versionKey: false
-})
+}, {
+        versionKey: false
+    })
 
 module.exports = mongoose.model('Movement', MovementSchema)

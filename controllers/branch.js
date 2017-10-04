@@ -12,9 +12,9 @@ function getAllBranchs(request, response) {
 
 function retrieveAllBranchs(request, response) {
     let limit = parseInt(request.body.limit)
-    let fields = request.body.fields;
-    let filter = request.body.filter;
-    let sort = request.body.sort;
+    let fields = request.body.fields
+    let filter = request.body.filter
+    let sort = request.body.sort
 
     Branch.find(filter)
         .select(fields)
@@ -68,6 +68,7 @@ function createBranch(request, response) {
             // Crea una nueva instancia de Branch con los parametros recibidos en el body
             let branch = new Branch(request.body)
             branch.createdBy = request.decoded.username
+            branch.business = request.decoded.business
             return branch.save()
         })
         .then(branch => {

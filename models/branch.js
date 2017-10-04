@@ -4,13 +4,6 @@ const Schema = mongoose.Schema
 // Establece las promesas de mongoose como las promesas nativas de javascript
 mongoose.Promise = global.Promise
 
-// const AddressSchema = new Schema({
-//     id: { type: Schema.Types.ObjectId },
-//     province: { type: String },
-//     city: { type: String },
-//     street: { type: String }
-// })
-
 const BranchSchema = new Schema({
     name: {
         type: String,
