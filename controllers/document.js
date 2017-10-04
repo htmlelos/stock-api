@@ -264,10 +264,8 @@ const generate = (request, response) => {
     let counterValue = 0
     let newDocument = null
     let promiseDocument = findDocument(documentId)
-    console.log('BUSINESS:--', request.decoded.business);
-    let promiseCounter = Counter.findOne({ type: 'RECEPCION', business: request.decoded.business })
-    // findDocument(documentId)
 
+    let promiseCounter = Counter.findOne({ type: 'RECEPCION', business: request.decoded.business })
     Promise.all([promiseDocument, promiseCounter])
         .then(values => {
             let document = values[0]
@@ -295,11 +293,9 @@ const generate = (request, response) => {
             Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
         })
         .then((result) => {
-            console.log('RESULT--', result);
             return Promise.all(result)
         })
         .then(document => {
-            console.log('DOCUMENT--', document);
             message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
         })
         .catch(error => {
