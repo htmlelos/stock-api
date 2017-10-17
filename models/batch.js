@@ -13,8 +13,12 @@ const BatchSchema = new Schema({
     },
     dateExpiration: {
         type: Date,
-        required: '',
+        required: 'Debe especificar una fecha de vencimiento',
         index: true
+    },
+    business: {
+		type: Schema.Types.ObjectId,
+		ref: 'Business'        
     },
     createdBy: {
         type: String,

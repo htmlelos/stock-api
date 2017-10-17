@@ -37,7 +37,8 @@ let MovementSchema = new Schema({
         ref: 'Branch'
     },
     batchCode: {
-        type: String
+        type: String,
+        ref: 'Batch'
     },
     observation: {
         type: String

@@ -13,5 +13,9 @@ router.route('/movement/:movementId')
     .get(movement.getMovement)
     .put(movement.updateMovement)
 
+router.route('/movement/:movementId/batch/:batchId')
+    .get(movement.addBatch)
+    .delete(movement.deleteBatch)
+
 module.exports = router  
 

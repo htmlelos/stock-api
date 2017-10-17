@@ -128,10 +128,43 @@ function updateMovement(request, response) {
         })
 }
 
+function addBatch(request, response) {
+    let movementId = request.params.movementId
+    let batchId = request.params.batchId
+    findMovement(movementId)
+        .then(movement => {
+            if (movement) {
+                return Movement.update({ _id: movementId }, { $set: { batchCode: batchId } })
+            }
+        })
+        .then(() => {
+            return Movement.findById(movementId)
+        })
+        .then(movement => {
+            message.success(response, 200, 'Lote añadido a el movimiento', movement)
+        })
+        .catch(error => {
+            message.failure(response, error.code, error.message, error.data)
+        })
+}
+
+function deleteBatch(request, response) {
+let movementId = request.params.movementId
+let batchId = request.params.batchId
+findMovement(movementId)
+    .then(document => {
+        if (document) {
+            return Movement.update({_id: movement})
+        }
+    })
+}
+
 module.exports = {
     getAllMovements,
     retrieveAllMovements,
     createMovement,
     getMovement,
-    updateMovement
+    updateMovement,
+    addBatch,
+    deleteBatch
 }

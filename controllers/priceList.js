@@ -58,6 +58,7 @@ function createPriceList(request, response) {
           // Crea una nueva instancia de PriceList con los parametros recibidos
           let newPriceList = new PriceList(request.body)
           newPriceList.createdBy = request.decoded.username
+          newPriceList.business = request.decoded.business
           return newPriceList.save()
         })
         .then(priceList => {

@@ -23,6 +23,10 @@ const PriceListSchema = new Schema({
     },
     required: 'Debe proporcionar el estado de la Lista de Precios'
   },
+  business: {
+    type: Schema.Types.ObjectId,
+    ref: 'Business'
+  },
   createdAt: {
     type: Date,
     required: true,
