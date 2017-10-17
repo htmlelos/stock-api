@@ -154,8 +154,19 @@ let batchId = request.params.batchId
 findMovement(movementId)
     .then(document => {
         if (document) {
-            return Movement.update({_id: movement})
+            return Movement.update({_id: movement}, {batchCode: null})
+        } else {
+            return Promise.reject({code: 404, message: 'No se encontro el movimiento', data: null})
         }
+    })
+    .then(() => {
+        return findMovement(movementId)
+    })
+    .then(movement => {
+        message.success(response, 200, 'Lote eliminado con éxito', movement)
+    })
+    .catch(error => {
+        message.failure(response, error.code, error.message, error.data)
     })
 }
 

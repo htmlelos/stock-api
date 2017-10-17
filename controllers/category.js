@@ -220,8 +220,8 @@ function removeCategory(request, response) {
         return Promise.reject({ code: 404, message: 'No se encontró la categoría', data: null })
       }
     })
-    .then(result => {
-      return findCategory(request.params.categoryId)
+    .then(() => {
+      return findCategory(categoryId)
     })
     .then(category => {
       message.success(response, 200, 'Sub categoría eliminada con éxito', category.categories)
