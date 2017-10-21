@@ -405,6 +405,10 @@ const missingItem = (request, response) => {
 
 const confirmReceipt = (request, response) => {
     let documentId = request.params.documentId;
+    let origin = request.body.origin
+    let destination = request.body.destination
+
+    let newMovement = null
     Document.findById(documentId)
         .then(document => {
             if (document) {
@@ -412,6 +416,29 @@ const confirmReceipt = (request, response) => {
                     let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
                     return Promise.reject(error)
                 }
+                
+                console.log('REQUEST-->', request.decoded)
+                Promise.all(document.detail.map(item => {
+                    console.log('ITEM-->', item)
+                    let newMovement = new newMovement({
+                        type: 'INGRESO',
+                        kind: 'COMPRA',
+                        product: item.product,
+                        quantity: item.quantity,
+                        origin: origin,
+                        destination: destination
+                    })
+                }))
+                    
+
+                // document.detail.forEach(detail => {
+                //     console.log('DETAIL', detail)
+                //     let newMovement = new Movement()
+
+                //     return newMovement.save()
+                    
+                // })
+
                 return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
             } else {
                 let error = { code: 404, message: 'Documento no encontrado', data: null }

@@ -315,8 +315,6 @@ const deleteSelectedItems = (request, response) => {
 const generateOrder = (request, response) => {
     let demandId = request.params.demandId
     let userId = request.decoded._id
-    console.log('DECODED_ID--', request.decoded._id);
-    console.log('BUSINES--', request.decoded.business)
     let promiseDemand = Demand.findById({ _id: demandId })
     let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
     let promiseCounter = Counter.findOne({ type: 'ORDEN', business: request.decoded.business })
@@ -324,9 +322,6 @@ const generateOrder = (request, response) => {
     let orders = []
     Promise.all([promiseDemand, promisePerson, promiseCounter])
         .then(values => {
-            console.log('DEMAND--', values[0]);
-            console.log('SENDER--', values[1]);
-            console.log('COUNTER--', values[2]);
             let demand = values[0]
             let sender = values[1]
             let counter = values[2]
