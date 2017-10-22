@@ -4,6 +4,7 @@ const Business = require('../models/business')
 const Persona = require('../models/person')
 const Product = require('../models/product')
 const Counter = require('../models/counter')
+const Movement = require('../models/movement')
 const mongoose = require('mongoose')
 
 
@@ -409,6 +410,7 @@ const confirmReceipt = (request, response) => {
     let destination = request.body.destination
 
     let newMovement = null
+    let movements = []
     Document.findById(documentId)
         .then(document => {
             if (document) {
@@ -418,32 +420,30 @@ const confirmReceipt = (request, response) => {
                 }
                 
                 console.log('REQUEST-->', request.decoded)
-                Promise.all(document.detail.map(item => {
-                    console.log('ITEM-->', item)
-                    let newMovement = new newMovement({
+
+                document.detail.forEach(item => {
+                    let newMovement = new Movement({
                         type: 'INGRESO',
                         kind: 'COMPRA',
                         product: item.product,
                         quantity: item.quantity,
-                        origin: origin,
-                        destination: destination
+                        origin,
+                        destination,
+                        dateMovement: Date.now(),
+                        documentOrigin: document._id
                     })
-                }))
-                    
-
-                // document.detail.forEach(detail => {
-                //     console.log('DETAIL', detail)
-                //     let newMovement = new Movement()
-
-                //     return newMovement.save()
-                    
-                // })
+    
+                    movements.push(newMovement);
+                })
 
                 return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
             } else {
                 let error = { code: 404, message: 'Documento no encontrado', data: null }
                 return Promise.reject(error)
             }
+        })
+        .then(() => {
+            return Promise.all(movements.map(movement => movement.save()))
         })
         .then(() => {
             return Document.findById(documentId)
