@@ -66,9 +66,11 @@ function createUser(request, response) {
 			return newUser.save()
 		})
 		.then(user => {
+			console.error('USUARIO--', usuario);
 			message.success(response, 200, 'Usuario creado con éxito', { id: user._id })
 		})
 		.catch(error => {
+			console.error('ERROR--', err);
 			if (error.code && error.code === 11000) {
 				let error = { code: 422, message: 'El usuario ya existe', data: null }
 				message.failure(response, error.code, error.message, error.data)

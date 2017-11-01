@@ -9,4 +9,7 @@ router.route('/ping')
 router.route('/login')
   .post(security.login)
 
+router.route('/logout')  
+  .get(security.logout)
+
 module.exports = router

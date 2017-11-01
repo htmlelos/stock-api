@@ -44,9 +44,13 @@ const authenticate = (request, response, next) => {
   }
 }
 
+const logout = (request, response) => {
+  message.failure(response, 401, 'Token invalido', {token:null})
+}
 
 
 module.exports = {
   login,
+  logout,
   authenticate
 }
