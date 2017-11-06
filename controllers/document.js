@@ -407,20 +407,21 @@ const missingItem = (request, response) => {
 const confirmReceipt = (request, response) => {
     let documentId = request.params.documentId;
     let origin = request.body.origin
+    console.log('ORIGIN--', origin);
     let destination = request.body.destination
+    console.log('DETINATION--', destination);
 
     let newMovement = null
     let movements = []
     Document.findById(documentId)
         .then(document => {
             if (document) {
+                console.log('DOCUMENTO--', document)
                 if (document.status === 'CONFIRMADO') {
                     let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
                     return Promise.reject(error)
                 }
                 
-                console.log('REQUEST-->', request.decoded)
-
                 document.detail.forEach(item => {
                     let newMovement = new Movement({
                         type: 'INGRESO',
@@ -432,6 +433,8 @@ const confirmReceipt = (request, response) => {
                         dateMovement: Date.now(),
                         documentOrigin: document._id
                     })
+
+                    console.log('MOVEMENT', newMovement);
     
                     movements.push(newMovement);
                 })

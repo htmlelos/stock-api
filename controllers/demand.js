@@ -355,6 +355,7 @@ const generateOrder = (request, response) => {
                         documentType: 'ORDEN',
                         documentName: 'Orden de Compra',
                         documentDate: Date.now(),
+                        documentOrigin: demandId,
 
                         business: request.decoded.business,
                         receiver: key,
