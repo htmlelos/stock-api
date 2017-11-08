@@ -27,4 +27,7 @@ router.route('/demand/:demandId/delete/items')
 router.route('/demand/:demandId/generate-order')
 	.get(demand.generateOrder)
 
+router.route('/demand/:demandId/list-orders')	
+	.get(demand.listOrders)
+
 module.exports = router

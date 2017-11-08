@@ -335,19 +335,6 @@ function removeComponents(request, response) {
             return Product.populate(product.components, { path: 'componentId' })
         })
         .then(components => {
-            // components = components.map(component => {
-            //     return {
-            //         _id: component._id,
-            //         quantity: component.quantity,
-            //         unit: component.unit,
-            //         name: component.componentId.name,
-            //         code: component.componentId.code,
-            //         brand: component.componentId.brand,
-            //         status: component.componentId.status,
-            //         createdBy: component.componentId.createdBy,
-            //         createdAt: component.componentId.createdAt
-            //     }
-            // })
             message.success(response, 200, 'Componentes eliminados con éxito', components)
         })
         .catch(error => {
