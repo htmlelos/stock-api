@@ -27,6 +27,10 @@ const DocumentSchema = new Schema({
         required: `Debe indicar la fecha del Documento`,
         index: true
     },
+    documentOrigin: {
+        type: Schema.Types.ObjectId,
+        ref: `Demand`,        
+    },
     business: {
         type: Schema.Types.ObjectId,
         ref: `Business`,
