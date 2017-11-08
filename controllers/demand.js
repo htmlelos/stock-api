@@ -314,50 +314,6 @@ const deleteSelectedItems = (request, response) => {
 }
 
 const generateOrder = (request, response) => {
-<<<<<<< HEAD
-  let demandId = request.params.demandId
-  let userId = request.decoded._id
-  let promiseDemand = Demand.findById({ _id: demandId })
-  let promisePerson = Person.findOne({ user: mongoose.Types.ObjectId(request.decoded._id) })
-  let promiseCounter = Counter.findOne({ type: 'ORDEN', business: request.decoded.business })
-  let counterValue = 0;
-  let orders = []
-  Promise.all([promiseDemand, promisePerson, promiseCounter])
-    .then(values => {
-      let demand = values[0]
-      let sender = values[1]
-      let counter = values[2]
-      let items = {}
-      if (!sender) {
-        let error = { code: 404, message: 'El usuario no posee permisos para realizar esta operacion' }
-        return Promise.reject(error)
-      }
-      if (demand.status === 'GENERADO') {
-        let error = { code: 422, message: 'No se puede generar una orden si el pedido ya fue generado' }
-        return Promise.reject(error)
-      }
-      if (counter === null) {
-        let error = { code: 422, message: 'No se pudo obtener el numero de orden' }
-        return Promise.reject(error)
-      }
-      demand.items.map(item => {
-        if (!items[item.supplier]) {
-          items[item.supplier] = []
-        }
-        items[item.supplier].push({
-          quantity: item.quantity,
-          product: item.product
-        })
-      })
-      counterValue = counter.value
-      for (let key in items) {
-        if (items.hasOwnProperty(key)) {
-          let element = items[key]
-          let order = new Document({
-            documentType: 'ORDEN',
-            documentName: 'Orden de Compra',
-            documentDate: Date.now(),
-=======
     let demandId = request.params.demandId
     let userId = request.decoded._id
     let promiseDemand = Demand.findById({ _id: demandId })
@@ -401,7 +357,6 @@ const generateOrder = (request, response) => {
                         documentName: 'Orden de Compra',
                         documentDate: Date.now(),
                         documentOrigin: demandId,
->>>>>>> 35e47a540d0801453cc1cb98d9c77aca58dca61f
 
             business: request.decoded.business,
             receiver: key,
