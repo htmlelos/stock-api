@@ -407,57 +407,6 @@ const missingItem = (request, response) => {
 }
 
 const confirmReceipt = (request, response) => {
-<<<<<<< HEAD
-  let documentId = request.params.documentId;
-  let origin = request.body.origin
-  let destination = request.body.destination
-
-  let newMovement = null
-  let movements = []
-  Document.findById(documentId)
-    .then(document => {
-      if (document) {
-        if (document.status === 'CONFIRMADO') {
-          let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
-          return Promise.reject(error)
-        }
-
-        console.log('REQUEST-->', request.decoded)
-
-        document.detail.forEach(item => {
-          let newMovement = new Movement({
-            type: 'INGRESO',
-            kind: 'COMPRA',
-            product: item.product,
-            quantity: item.quantity,
-            origin,
-            destination,
-            dateMovement: Date.now(),
-            documentOrigin: document._id
-          })
-
-          movements.push(newMovement);
-        })
-
-        return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
-      } else {
-        let error = { code: 404, message: 'Documento no encontrado', data: null }
-        return Promise.reject(error)
-      }
-    })
-    .then(() => {
-      return Promise.all(movements.map(movement => movement.save()))
-    })
-    .then(() => {
-      return Document.findById(documentId)
-    })
-    .then(document => {
-      message.success(response, 200, `${document.type} ha sido confirmado`, document)
-    })
-    .catch(error => {
-      message.failure(response, error.code, error.message, error.data)
-    })
-=======
     let documentId = request.params.documentId;
     let origin = request.body.origin
     console.log('ORIGIN--', origin);
@@ -510,7 +459,6 @@ const confirmReceipt = (request, response) => {
         .catch(error => {
             message.failure(response, error.code, error.message, error.data)
         })
->>>>>>> 35e47a540d0801453cc1cb98d9c77aca58dca61f
 }
 
 module.exports = {
