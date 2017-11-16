@@ -35,4 +35,7 @@ router.route('/document/:documentId/missing-item')
 router.route('/document/:documentId/confirm-receipt')
     .post(document.confirmReceipt)
 
+router.route('/document/:documentId/confirm-transfer')
+    .post(document.confirmTransfer)
+
 module.exports = router

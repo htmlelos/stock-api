@@ -407,58 +407,122 @@ const missingItem = (request, response) => {
 }
 
 const confirmReceipt = (request, response) => {
-    let documentId = request.params.documentId;
-    let origin = request.body.origin
-    console.log('ORIGIN--', origin);
-    let destination = request.body.destination
-    console.log('DETINATION--', destination);
+  let documentId = request.params.documentId;
+  let origin = request.body.origin
+  console.log('ORIGIN--', origin);
+  let destination = request.body.destination
+  console.log('DETINATION--', destination);
 
-    let newMovement = null
-    let movements = []
-    Document.findById(documentId)
-        .then(document => {
-            if (document) {
-                console.log('DOCUMENTO--', document)
-                if (document.status === 'CONFIRMADO') {
-                    let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
-                    return Promise.reject(error)
-                }
-                
-                document.detail.forEach(item => {
-                    let newMovement = new Movement({
-                        type: 'INGRESO',
-                        kind: 'COMPRA',
-                        product: item.product,
-                        quantity: item.quantity,
-                        origin,
-                        destination,
-                        dateMovement: Date.now(),
-                        documentOrigin: document._id
-                    })
+  let newMovement = null
+  let movements = []
+  Document.findById(documentId)
+    .then(document => {
+      if (document) {
+        console.log('DOCUMENTO--', document)
+        if (document.status === 'CONFIRMADO') {
+          let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
+          return Promise.reject(error)
+        }
 
-                    console.log('MOVEMENT', newMovement);
-    
-                    movements.push(newMovement);
-                })
+        document.detail.forEach(item => {
+          let newMovement = new Movement({
+            type: 'INGRESO',
+            kind: 'COMPRA',
+            product: item.product,
+            quantity: item.quantity,
+            origin,
+            destination,
+            dateMovement: Date.now(),
+            documentOrigin: document._id
+          })
 
-                return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
-            } else {
-                let error = { code: 404, message: 'Documento no encontrado', data: null }
-                return Promise.reject(error)
-            }
+          console.log('MOVEMENT', newMovement);
+
+          movements.push(newMovement);
         })
-        .then(() => {
-            return Promise.all(movements.map(movement => movement.save()))
+
+        return Document.update({ _id: documentId }, { $set: { status: 'CONFIRMADO' } })
+      } else {
+        let error = { code: 404, message: 'Documento no encontrado', data: null }
+        return Promise.reject(error)
+      }
+    })
+    .then(() => {
+      return Promise.all(movements.map(movement => movement.save()))
+    })
+    .then(() => {
+      return Document.findById(documentId)
+    })
+    .then(document => {
+      message.success(response, 200, `${document.type} ha sido confirmado`, document)
+    })
+    .catch(error => {
+      message.failure(response, error.code, error.message, error.data)
+    })
+}
+
+const confirmTransfer = (request, response) => {
+  let documentId = request.params.documentID;
+  let origin = request.body.origin
+  let destination = request.body.destination
+
+  let incomeMovement = null
+  let outcomeMovement = null
+  let movements = []
+  Document.findById(documentId)
+    .then(document => {
+      if (document) {
+        console.log('DOCUMENTO--', document)
+        if (document.status === 'CONFIRMADO') {
+          let error = { code: 400, message: 'La transferencia ya se encuentra confirmada' }
+          return Promise.reject(error)
+        }
+
+        document.detail.forEach(item => {
+          let incomeMovement = new Movement({
+            type: 'INGRESO',
+            kind: 'TRANSFERENCIA',
+            product: item.product,
+            quantity: item.quantity,
+            origin,
+            destination,
+            dateMovement: Date.now(),
+            documentOrigin: document._id
+          })
+
+          let outcomeMovement = new Movement({
+            type: 'INGRESO',
+            kind: 'TRANSFERENCIA',
+            product: item.product,
+            quantity: item.quantity,
+            origin: destination,
+            destination: origin,
+            dateMovement: Date.now(),
+            documentOrigin: document._id
+          })
+
+          movements.push(incomeMovement)
+          movements.push(outcomeMovement)
         })
-        .then(() => {
-            return Document.findById(documentId)
-        })
-        .then(document => {
-            message.success(response, 200, `${document.type} ha sido confirmado`, document)
-        })
-        .catch(error => {
-            message.failure(response, error.code, error.message, error.data)
-        })
+
+        return Document.update({_id: documentId}, {$set: {status:'CONFIRMADO'}})
+      } else {
+        let error = { code: 404, message: 'Documento no encontrado', data: null}
+        return Promise.reject(error)        
+      }
+    })
+    .then(()=> {
+      return Promise.all(movements.map(movement => movement.save()))
+    })
+    .then(() => {
+      return Document.findById(documentId)
+    })
+    .then(document => {
+      message.success(response, 200, `${document.type} ha sido conirmado`, document)
+    })
+    .catch(error => {
+      message.failure(response, error.code, error.message, error.data)
+    })
 }
 
 module.exports = {
@@ -474,5 +538,6 @@ module.exports = {
   acceptItem,
   rejectItem,
   missingItem,
-  confirmReceipt
+  confirmReceipt,
+  confirmTransfer
 }
