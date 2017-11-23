@@ -20,7 +20,7 @@ router.route('/document/:documentId/item')
     .post(document.addItem)
     .delete(document.deleteItem)
 
-router.route('/document/:documentId/generate')
+router.route('/document/:documentId/generate-receipt')
     .post(document.generate)
 
 router.route('/document/:documentId/accept-item')

@@ -277,8 +277,9 @@ const generate = (request, response) => {
   Promise.all([promiseDocument, promiseCounter])
     .then(values => {
       let document = values[0]
-      console.log('DOCUMENT', document);
+      console.log('DOCUMENT', document)
       let counter = values[1]
+      console.log('COUNTER', counter)
       let receipt = {
         documentNumber: counter.value,
         documentType: 'RECEPCION',
@@ -309,6 +310,7 @@ const generate = (request, response) => {
       message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
     })
     .catch(error => {
+      console.log('ERROR-->', error);
       message.failure(response, error.code, error.message, error.data)
     })
 }
@@ -414,7 +416,7 @@ const confirmReceipt = (request, response) => {
   let origin = request.body.origin
   console.log('ORIGIN--', origin);
   let destination = request.body.destination
-  console.log('DETINATION--', destination);
+  console.log('DESTINATION--', destination);
 
   let newMovement = null
   let movements = []
