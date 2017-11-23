@@ -277,9 +277,7 @@ const generate = (request, response) => {
   Promise.all([promiseDocument, promiseCounter])
     .then(values => {
       let document = values[0]
-      console.log('DOCUMENT', document)
       let counter = values[1]
-      console.log('COUNTER', counter)
       let receipt = {
         documentNumber: counter.value,
         documentType: 'RECEPCION',
@@ -298,15 +296,16 @@ const generate = (request, response) => {
       counterValue = counter.value + 1
 
       newDocument = new Document(receipt)
+      document.status = 'GENERADO'
       return [newDocument.save(),
-      Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } })]
+      Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } }),
+      document.save()]
     })
     .then((result) => {
       console.log('RESULT--', result);
       return Promise.all(result)
     })
     .then(document => {
-      console.log('DOCUMENT--', document);
       message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document[0]);
     })
     .catch(error => {
