@@ -187,6 +187,9 @@ const getDocument = (request, response) => {
       return Persona.populate(document, { path: 'sender' })
     })
     .then(document => {
+      return Product.populate(document, {path: 'detail.product'})
+    })
+    .then(document => {
       message.success(response, 200, 'Documento obtenido con éxito', document)
     })
     .catch(error => {
