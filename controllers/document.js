@@ -307,10 +307,9 @@ const generate = (request, response) => {
     })
     .then(document => {
       console.log('DOCUMENT--', document);
-      message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document);
+      message.success(response, 200, `${document[0].documentType.toLowerCase()} generada con exito`, document[0]);
     })
     .catch(error => {
-      console.log('ERROR-->', error);
       message.failure(response, error.code, error.message, error.data)
     })
 }
