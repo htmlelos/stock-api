@@ -278,25 +278,33 @@ const generate = (request, response) => {
     .then(values => {
       let document = values[0]
       let counter = values[1]
+
+      
       let receipt = {
         documentNumber: counter.value,
         documentType: 'RECEPCION',
         documentName: 'Recepcion de Productos',
         documentDate: document.documentDate,
+        business: document.business,
         sender: document.receiver,
         receiver: request.decoded._id,
         detail: document.detail
       }
-
+      
       if (document.status === 'GENERADO') {
         let error = { code: 422, message: 'No se puede generar una recepcion si la orden ya fue generada', data: null }
         return Promise.reject(error)
       }
-
+      
       counterValue = counter.value + 1
-
+      
       newDocument = new Document(receipt)
       document.status = 'GENERADO'
+      // let detail = document.detail.map(detail => {
+      //       detail.status = 'GENERADO'
+      //     })
+      // console.log('DETAIL', detail)
+      // document.detail = detail
       return [newDocument.save(),
       Counter.update({ name: 'recepcion' }, { $set: { value: counterValue } }),
       document.save()]
