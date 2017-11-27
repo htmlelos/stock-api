@@ -80,7 +80,7 @@ function createDemand(request, response) {
       } else if (error.code) {
         message.failure(response, error.code, error.message, error.data)
       } else {
-        messge.failure(response, 500, error.message, null)
+        message.failure(response, 500, error.message, null)
       }
     })
 }
