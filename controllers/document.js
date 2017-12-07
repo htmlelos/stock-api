@@ -331,9 +331,15 @@ const acceptItem = (request, response) => {
           let error = { code: 400, message: 'La recepcion ya se encuentra confirmada', data: null }
           return Promise.reject(error)
         }
-        return document.detail.map(item => {
-          return (items.includes(item._id.toString()) && item.status !== 'ACEPTADO') ? Object.assign(item, { status: 'ACEPTADO' }) : item
+        console.log('BODY-ITEMS', items)
+        // return document.detail.map(item => {
+        //   console.log('DETAIL-ITEM', item)
+        //   return (items.includes(item._id.toString()) && item.status !== 'ACEPTADO') ? Object.assign(item, { status: 'ACEPTADO' }) : item
+        // })
+        return items.map(item => {
+          return document.detail.find(x => { (x._id === item._id && item.status !== 'ACEPTADO') ? Object.assign(item, {status: 'ACEPTADO'}): item})
         })
+        
       } else {
         let error = { code: 404, message: 'no se pudo encontrar el documento', data: null }
         return Promise.reject(error)
