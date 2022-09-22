@@ -10,7 +10,9 @@
     "start": "node server.js",
     "test": "mocha --timeout 5000",
     "dev": "SET NODE_ENV=dev&& nodemon server.js",
-    "build": "echo buildme!"
+    "build": "echo buildme!",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": "Lucero Sergio Alejandro",
   "license": "MIT",
@@ -28,11 +30,13 @@
     "debug": "^2.4.4",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
-    "express-validator": "^3.1.2",
-    "jsonwebtoken": "^7.1.9",
+    "express-validator": "^6.5.0",
+    "jsonwebtoken": "^8.0.0",
     "mongoose": "^5.12.3",
     "morgan": "^1.7.0",
-    "passport": "^0.3.2",
-    "passport-jwt": "^2.2.1"
-  }
+    "passport": "^0.6.0",
+    "passport-jwt": "^2.2.1",
+    "@snyk/protect": "latest"
+  },
+  "snyk": true
 }
